@@ -1,0 +1,26 @@
+[package]
+name = "jppe_rs"
+version = "0.1.0"
+authors = [
+    "jankincai <jankincai12@gmail.com>"
+]
+edition = "2021"
+
+[workspace]
+members = [
+    "derive"
+]
+
+[features]
+derive = ["jppe_rs_derive"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+jppe_rs_derive = { path = "derive", version = "0.1.0", optional = true }
+jkcenum = { git = "https://github.com/caizhengxin/jkcenum.git", features = ["derive"] }
+serde = { version = "*", features = ["derive"] }
+thiserror = "*"
+
+[dev-dependencies]
+jppe_rs_derive = { path = "derive", version = "0.1.0" }
