@@ -1,6 +1,6 @@
 use std::collections::HashMap; 
-use jppe_rs_derive::{BorrowByteEncode, BorrowByteDecode};
-use jppe_rs::{BorrowByteDecode, BorrowByteEncode};
+use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
+use jppe::{BorrowByteDecode, BorrowByteEncode};
 
 
 #[derive(Debug, PartialEq, Eq, BorrowByteDecode, BorrowByteEncode)]

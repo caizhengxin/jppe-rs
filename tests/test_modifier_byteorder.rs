@@ -1,7 +1,7 @@
 #![feature(let_chains)]
-use jppe_rs::{ByteEncode, ByteDecode};
-use jppe_rs::prelude::*;
-use jppe_rs_derive::{ByteDecode, ByteEncode};
+use jppe::{ByteEncode, ByteDecode};
+use jppe::prelude::*;
+use jppe_derive::{ByteDecode, ByteEncode};
 
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
@@ -22,7 +22,7 @@ pub struct ByteorderExample1 {
 
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
-#[jppe_rs(byteorder="LE")]
+#[jppe(byteorder="LE")]
 pub struct ByteorderExample2 {
     pub ua: u8,
     pub ub: u16,
@@ -42,14 +42,14 @@ pub struct ByteorderExample2 {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 pub struct ByteorderExample3 {
     pub ua: u8,
-    #[jppe_rs(byteorder="LE")]
+    #[jppe(byteorder="LE")]
     pub ub: u16,
     pub uc: u32,
     pub ud: u64,
     pub ue: usize,
     pub uf: u128,
     pub ia: i8,
-    #[jppe_rs(byteorder="LE")]
+    #[jppe(byteorder="LE")]
     pub ib: i16,
     pub ic: i32,
     pub id: i64,
@@ -62,7 +62,7 @@ pub struct ByteorderExample3 {
 pub struct ByteorderExample4 {
     // 0: BE, 1: LE
     pub a: u8,
-    #[jppe_rs(byteorder="a")]
+    #[jppe(byteorder="a")]
     pub b: u16,
 }
 
@@ -190,9 +190,9 @@ fn test_byteorder4() {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 #[repr(u8)]
 pub enum EnumByteorderExample1 {
-    #[jppe_rs(byteorder="LE")]
+    #[jppe(byteorder="LE")]
     Jkc1(u16, u16) = 0x01,
-    #[jppe_rs(branch_default)]
+    #[jppe(branch_default)]
     Unknown
 }
 

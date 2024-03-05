@@ -1,14 +1,14 @@
 #![feature(let_chains)]
-use jppe_rs::{ByteEncode, ByteDecode};
-use jppe_rs_derive::{ByteDecode, ByteEncode};
+use jppe::{ByteEncode, ByteDecode};
+use jppe_derive::{ByteDecode, ByteEncode};
 
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 pub struct UntakeExample1 {
-    #[jppe_rs(untake)]
+    #[jppe(untake)]
     pub a: u8,
     pub b: u16,
-    #[jppe_rs(branch="a")]
+    #[jppe(branch="a")]
     pub c: UntakeEnumExample1,
 }
 
@@ -16,11 +16,11 @@ pub struct UntakeExample1 {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 pub enum UntakeEnumExample1 {
     Read {
-        #[jppe_rs(untake)]
+        #[jppe(untake)]
         a: u8,
         b: u16,    
     },
-    #[jppe_rs(enum_default)]
+    #[jppe(enum_default)]
     Unknown, 
 }
 

@@ -1,4 +1,4 @@
-# jppe_rs
+# jppe-rs
 
 ## Feature
 

@@ -1,16 +1,16 @@
 #![feature(let_chains)]
-use jppe_rs::{BorrowByteEncode, BorrowByteDecode, FieldAttrModifiers};
-// use jppe_rs::prelude::*;
-use jppe_rs_derive::{BorrowByteDecode, BorrowByteEncode};
+use jppe::{BorrowByteEncode, BorrowByteDecode, FieldAttrModifiers};
+// use jppe::prelude::*;
+use jppe_derive::{BorrowByteDecode, BorrowByteEncode};
 
 
 #[derive(Debug, PartialEq, Eq, BorrowByteDecode, BorrowByteEncode)]
 pub struct StructLengthExample1<'a> {
-    #[jppe_rs(length=3)]
+    #[jppe(length=3)]
     pub a: u32,
-    #[jppe_rs(length=1)]
+    #[jppe(length=1)]
     pub b: &'a [u8],
-    #[jppe_rs(length=1)]
+    #[jppe(length=1)]
     pub c: Vec<u8,>
 }
 
@@ -31,10 +31,10 @@ fn test_struct_length_example1() {
 #[derive(Debug, PartialEq, Eq, BorrowByteDecode, BorrowByteEncode)]
 pub struct StructLengthExample2<'a> {
     pub a: u8,
-    #[jppe_rs(length="a")]
+    #[jppe(length="a")]
     pub b: &'a [u8],
     pub c: u8,
-    #[jppe_rs(length="c - 1")]
+    #[jppe(length="c - 1")]
     pub d: &'a [u8],
 }
 
@@ -57,13 +57,13 @@ fn test_struct_length_example2() {
 pub enum EnumLengthExample1<'a> {
     Jkc {
         a: u8,
-        #[jppe_rs(length="a")]
+        #[jppe(length="a")]
         b: &'a [u8],
         c: u8,
-        // #[jppe_rs(length="c - 1")]
+        // #[jppe(length="c - 1")]
         d: &'a [u8],    
     },
-    #[jppe_rs(branch_default)]
+    #[jppe(branch_default)]
     #[default]
     Unknown
 }

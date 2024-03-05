@@ -30,8 +30,8 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 fn get_byteorder(byteorder: &Option<String>, self_arg: &str) -> String {
     if let Some(v) = byteorder {
         match v.as_str() {
-            "BE" | "LE" | "0" | "1" | ">" | "<" => return format!("Some(jppe_rs::ByteOrder::parse({v:?}).unwrap())"),
-            _ => return format!("Some(jppe_rs::ByteOrder::from_int({self_arg}{v} as isize).unwrap())"),
+            "BE" | "LE" | "0" | "1" | ">" | "<" => return format!("Some(jppe::ByteOrder::parse({v:?}).unwrap())"),
+            _ => return format!("Some(jppe::ByteOrder::from_int({self_arg}{v} as isize).unwrap())"),
         }
     }
 
@@ -110,7 +110,7 @@ impl ContainerAttributes {
     pub fn to_code(&self, is_self: bool) -> String {
         let self_arg = if is_self { "self." } else { "" };
 
-        format!("let mut cattr = jppe_rs::ContainerAttrModifiers {{
+        format!("let mut cattr = jppe::ContainerAttrModifiers {{
             byteorder: {},
             ..Default::default()
         }};",
@@ -122,7 +122,7 @@ impl ContainerAttributes {
 
 impl FromAttribute for ContainerAttributes {
     fn parse(group: &Group) -> Result<Option<Self>> {
-        let attributes = match parse_tagged_attribute(group, "jppe_rs")? {
+        let attributes = match parse_tagged_attribute(group, "jppe")? {
             Some(body) => body,
             None => return Ok(None),
         };
@@ -183,7 +183,7 @@ impl FieldAttributes {
         let self_arg = if is_self { "self." } else { "" };
         let deref_arg = if is_deref { "*" } else { "" };
 
-        format!("let mut fattr = jppe_rs::FieldAttrModifiers {{
+        format!("let mut fattr = jppe::FieldAttrModifiers {{
             byteorder: {},
             branch: {},
             length: {},
@@ -199,7 +199,7 @@ impl FieldAttributes {
 
 impl FromAttribute for FieldAttributes {
     fn parse(group: &Group) -> Result<Option<Self>> {
-        let attributes = match parse_tagged_attribute(group, "jppe_rs")? {
+        let attributes = match parse_tagged_attribute(group, "jppe")? {
             Some(body) => body,
             None => return Ok(None),
         };

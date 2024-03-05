@@ -1,12 +1,12 @@
 #![feature(let_chains)]
-use jppe_rs_derive::{ByteEncode, ByteDecode};
-use jppe_rs::{ByteDecode, ByteEncode};
+use jppe_derive::{ByteEncode, ByteDecode};
+use jppe::{ByteDecode, ByteEncode};
 
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 struct TestTypeStructEnumExample1 {
     pub cmd: u16,
-    #[jppe_rs(branch="cmd")]
+    #[jppe(branch="cmd")]
     pub body: TestTypeEnumExample,
 }
 
@@ -22,7 +22,7 @@ enum TestTypeEnumExample {
        a: u8,
        b: u16,
    },
-   #[jppe_rs(enum_default)]
+   #[jppe(enum_default)]
    Unknown,
 }
 

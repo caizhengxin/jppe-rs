@@ -7,7 +7,7 @@ use super::attribute::{FieldAttributes, ContainerAttributes};
 pub fn generate_decode_body2(fn_body: &mut StreamBuilder, attributes: &FieldAttributes) -> Result<()> {
     // offset
     if let Some(offset) = &attributes.offset {
-        fn_body.push_parsed(format!("let (input, _) = jppe_rs::input_take(input, ({}) as usize)?;", offset.to_string()))?;
+        fn_body.push_parsed(format!("let (input, _) = jppe::input_take(input, ({}) as usize)?;", offset.to_string()))?;
     }
 
     Ok(())

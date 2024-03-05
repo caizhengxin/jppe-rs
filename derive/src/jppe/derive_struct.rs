@@ -124,7 +124,7 @@ pub fn generate_decode_struct_body(fn_body: &mut StreamBuilder, crate_name: &str
 
 impl DeriveStruct {
     pub fn generate_decode(&self, generator: &mut Generator) -> Result<()> {
-        let crate_name = "jppe_rs::ByteDecode";
+        let crate_name = "jppe::ByteDecode";
 
         generator
             .impl_for(crate_name)
@@ -132,9 +132,9 @@ impl DeriveStruct {
             .with_lifetime("da")
             .with_lifetime("db")
             .with_arg("input", "&'da [u8]")
-            .with_arg("cattr", "Option<&'db jppe_rs::ContainerAttrModifiers>")
-            .with_arg("fattr", "Option<&'db jppe_rs::FieldAttrModifiers>")
-            .with_return_type("jppe_rs::JResult<&'da [u8], Self>")
+            .with_arg("cattr", "Option<&'db jppe::ContainerAttrModifiers>")
+            .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
+            .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
                 fn_body.push_parsed(self.attributes.to_code(false))?;
                 self.generate_byte_decode_body(crate_name, fn_body)?;
@@ -145,7 +145,7 @@ impl DeriveStruct {
     }
 
     pub fn generate_borrow_decode(&self, generator: &mut Generator) -> Result<()> {
-        let crate_name = "jppe_rs::BorrowByteDecode";
+        let crate_name = "jppe::BorrowByteDecode";
 
         generator
             .impl_for(format!("{crate_name}<'a>"))
@@ -154,9 +154,9 @@ impl DeriveStruct {
             .with_lifetime_deps("da", ["a"])
             .with_lifetime("db")
             .with_arg("input", "&'da [u8]")
-            .with_arg("cattr", "Option<&'db jppe_rs::ContainerAttrModifiers>")
-            .with_arg("fattr", "Option<&'db jppe_rs::FieldAttrModifiers>")
-            .with_return_type("jppe_rs::JResult<&'da [u8], Self>")
+            .with_arg("cattr", "Option<&'db jppe::ContainerAttrModifiers>")
+            .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
+            .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
                 fn_body.push_parsed(self.attributes.to_code(false))?;
                 self.generate_byte_decode_body(crate_name, fn_body)?;
@@ -173,12 +173,12 @@ impl DeriveStruct {
     }
 
     pub fn generate_encode(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_byte_encode("jppe_rs::ByteEncode", generator)?;
+        self.generate_byte_encode("jppe::ByteEncode", generator)?;
         Ok(())
     }
 
     pub fn generate_borrow_encode(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_byte_encode("jppe_rs::BorrowByteEncode", generator)?;
+        self.generate_byte_encode("jppe::BorrowByteEncode", generator)?;
         Ok(())
     }
 
@@ -188,8 +188,8 @@ impl DeriveStruct {
             .generate_fn("encode")
             .with_self_arg(FnSelfArg::RefSelf)
             .with_arg("input", "&mut Vec<u8>")
-            .with_arg("cattr", "Option<&jppe_rs::ContainerAttrModifiers>")
-            .with_arg("fattr", "Option<&jppe_rs::FieldAttrModifiers>")
+            .with_arg("cattr", "Option<&jppe::ContainerAttrModifiers>")
+            .with_arg("fattr", "Option<&jppe::FieldAttrModifiers>")
             .body(|fn_body| {
                 fn_body.push_parsed(self.attributes.to_code(true))?;
 
@@ -199,7 +199,7 @@ impl DeriveStruct {
 
                         fn_body.push_parsed(attributes.to_code(true, false))?;
                         // self.xxx.encode(input, Some(&cattr), Some(&fattr))
-                        // jppe_rs::ByteEncode::encode(&value, &mut buf, None, None);
+                        // jppe::ByteEncode::encode(&value, &mut buf, None, None);
                         // fn_body.push_parsed(format!("self.{field}.encode(input, Some(&cattr), Some(&fattr));"))?;
                         if !attributes.untake {
                             generate_encode_body(fn_body, &attributes, true)?;

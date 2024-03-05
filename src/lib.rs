@@ -3,14 +3,15 @@
 #![feature(byte_slice_trim_ascii)]
 #![feature(extract_if)]
 #![feature(slice_internals)]
+#![feature(const_trait_impl)]
 
-#[cfg(feature = "jppe_rs_derive")]
+#[cfg(feature = "jppe_derive")]
 #[allow(unused_imports)]
 #[macro_use]
-extern crate jppe_rs_derive;
+extern crate jppe_derive;
 
-#[cfg(feature = "jppe_rs_derive")]
-pub use jppe_rs_derive::jppe_rs;
+#[cfg(feature = "jppe_derive")]
+pub use jppe_derive::jppe;
 
 
 mod decode;

@@ -1,12 +1,12 @@
 #![feature(let_chains)]
-use jppe_rs::{ByteEncode, ByteDecode, FieldAttrModifiers};
-// use jppe_rs::prelude::*;
-use jppe_rs_derive::{ByteDecode, ByteEncode};
+use jppe::{ByteEncode, ByteDecode, FieldAttrModifiers};
+// use jppe::prelude::*;
+use jppe_derive::{ByteDecode, ByteEncode};
 
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 pub struct OffsetExample1 {
-    #[jppe_rs(offset=2)]
+    #[jppe(offset=2)]
     pub a: u8,
     pub b: u16,
 }
@@ -27,7 +27,7 @@ fn test_struct_offset_example1() {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 pub struct OffsetExample2 {
     pub a: u8,
-    #[jppe_rs(offset="a")]
+    #[jppe(offset="a")]
     pub b: u16,
 }
 
@@ -48,7 +48,7 @@ fn test_struct_offset_example2() {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 pub struct OffsetExample3 {
     pub a: u8,
-    #[jppe_rs(offset="a - 1")]
+    #[jppe(offset="a - 1")]
     pub b: u16,
 }
 
@@ -70,11 +70,11 @@ fn test_struct_offset_example3() {
 #[repr(u8)]
 pub enum EnumOffsetExample1 {
     Jkc {
-        #[jppe_rs(offset=2)]
+        #[jppe(offset=2)]
         a: u8,
         b: u16,    
     } = 0x02,
-    #[jppe_rs(branch_default)]
+    #[jppe(branch_default)]
     Unknown
 }
 
@@ -98,10 +98,10 @@ fn test_enum_offset_example1() {
 pub enum EnumOffsetExample2 {
     Jkc {
         a: u8,
-        #[jppe_rs(offset="a")]
+        #[jppe(offset="a")]
         b: u16,    
     } = 0x02,
-    #[jppe_rs(branch_default)]
+    #[jppe(branch_default)]
     Unknown
 }
 
@@ -123,13 +123,13 @@ fn test_enum_offset_example2() {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 #[repr(u8)]
 pub enum EnumOffsetExample3 {
-    #[jppe_rs(offset=1)]
+    #[jppe(offset=1)]
     Jkc(u8) = 0x02,
-    #[jppe_rs(offset=1)]
+    #[jppe(offset=1)]
     Jkc2(u8, u16) = 0x03,
-    #[jppe_rs(offset=1)]
+    #[jppe(offset=1)]
     Jkc3((u8, u16)) = 0x04,
-    #[jppe_rs(branch_default)]
+    #[jppe(branch_default)]
     Unknown
 }
 

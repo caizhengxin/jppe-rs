@@ -25,7 +25,7 @@ impl DeriveEnum {
     }
 
     pub fn generate_decode(&self, generator: &mut Generator) -> Result<()> {
-        let crate_name = "jppe_rs::ByteDecode";
+        let crate_name = "jppe::ByteDecode";
 
         generator
             .impl_for(crate_name)
@@ -33,9 +33,9 @@ impl DeriveEnum {
             .with_lifetime("da")
             .with_lifetime("db")
             .with_arg("input", "&'da [u8]")
-            .with_arg("cattr", "Option<&'db jppe_rs::ContainerAttrModifiers>")
-            .with_arg("fattr", "Option<&'db jppe_rs::FieldAttrModifiers>")
-            .with_return_type("jppe_rs::JResult<&'da [u8], Self>")
+            .with_arg("cattr", "Option<&'db jppe::ContainerAttrModifiers>")
+            .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
+            .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
                 fn_body.push_parsed(self.attributes.to_code(false))?;
                 self.generate_byte_decode_body(crate_name, fn_body)?;
@@ -47,7 +47,7 @@ impl DeriveEnum {
 
 
     pub fn generate_borrow_decode(&self, generator: &mut Generator) -> Result<()> {
-        let crate_name = "jppe_rs::BorrowByteDecode";
+        let crate_name = "jppe::BorrowByteDecode";
 
         generator
         .impl_for(format!("{crate_name}<'a>"))
@@ -56,9 +56,9 @@ impl DeriveEnum {
             .with_lifetime_deps("da", ["a"])
             .with_lifetime("db")
             .with_arg("input", "&'da [u8]")
-            .with_arg("cattr", "Option<&'db jppe_rs::ContainerAttrModifiers>")
-            .with_arg("fattr", "Option<&'db jppe_rs::FieldAttrModifiers>")
-            .with_return_type("jppe_rs::JResult<&'da [u8], Self>")
+            .with_arg("cattr", "Option<&'db jppe::ContainerAttrModifiers>")
+            .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
+            .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
                 fn_body.push_parsed(self.attributes.to_code(false))?;
                 self.generate_byte_decode_body(crate_name, fn_body)?;
@@ -73,11 +73,11 @@ impl DeriveEnum {
         //    V0,
         //    V1(u8),
         //    V2(u8, 16),
-        //    #[jppe_rs(byteorder="LE")]
+        //    #[jppe(byteorder="LE")]
         //    V3((u8, u16)),
         //    V4 {
         //        a: u8,
-        //        #[jppe_rs(length=2)]
+        //        #[jppe(length=2)]
         //        b: u16,
         //    }
         // }
@@ -120,7 +120,7 @@ impl DeriveEnum {
                     value = branch as usize;
                 }
                 else {
-                    return Err(jppe_rs::make_error(input, jppe_rs::ErrorKind::Fail { offset: input.len() }));
+                    return Err(jppe::make_error(input, jppe::ErrorKind::Fail { offset: input.len() }));
                 }
             ";
             fn_body.push_parsed(code)?;
@@ -148,12 +148,12 @@ impl DeriveEnum {
     }
 
     pub fn generate_encode(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_byte_encode("jppe_rs::ByteEncode", generator)?;
+        self.generate_byte_encode("jppe::ByteEncode", generator)?;
         Ok(())
     }
 
     pub fn generate_borrow_encode(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_byte_encode("jppe_rs::BorrowByteEncode", generator)?;
+        self.generate_byte_encode("jppe::BorrowByteEncode", generator)?;
         Ok(())
     }
 
@@ -163,18 +163,18 @@ impl DeriveEnum {
             .generate_fn("encode")
             .with_self_arg(FnSelfArg::RefSelf)
             .with_arg("input", "&mut Vec<u8>")
-            .with_arg("cattr", "Option<&jppe_rs::ContainerAttrModifiers>")
-            .with_arg("fattr", "Option<&jppe_rs::FieldAttrModifiers>")
+            .with_arg("cattr", "Option<&jppe::ContainerAttrModifiers>")
+            .with_arg("fattr", "Option<&jppe::FieldAttrModifiers>")
             .body(|fn_body| {
                 // enum Example {
                 //    V0,
                 //    V1(u8),
                 //    V2(u8, 16),
-                //    #[jppe_rs(byteorder="LE")]
+                //    #[jppe(byteorder="LE")]
                 //    V3((u8, u16)),
                 //    V4 {
                 //        a: u8,
-                //        #[jppe_rs(length=2)]
+                //        #[jppe(length=2)]
                 //        b: u16,
                 //    }
                 // }
@@ -241,7 +241,7 @@ impl DeriveEnum {
                                     
                                             if !attributes.untake {
                                                 generate_encode_body(variant_body, &attributes, false)?;
-                                                // jppe_rs::ByteEncode::encode(&value, input, None, None);
+                                                // jppe::ByteEncode::encode(&value, input, None, None);
                                                 // variant_body.push_parsed(format!("{ident}.encode(input, Some(&cattr), Some(&fattr));"))?;    
                                                 variant_body.push_parsed(format!("{crate_name}::encode({ident}, input, Some(&cattr), Some(&fattr));"))?;
                                             }
