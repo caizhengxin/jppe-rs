@@ -43,11 +43,12 @@ fn get_byteorder(byteorder: &Option<String>, self_arg: &str) -> String {
 pub enum JAttrValue {
     String(String),
     Usize(usize),
-    // Bytes(Vec<u8>),
+    List(Vec<JAttrValue>),
 }
 
 
 impl JAttrValue {
+    #[inline]
     pub fn parse(s: &Literal) -> Result<Self> {
         let mut value = parse_value_string(s)?;
         let mut value_type = 10;
@@ -62,6 +63,24 @@ impl JAttrValue {
         }
 
         Ok(Self::String(value))
+    }
+
+    #[inline]
+    pub fn parse_list(s: &Literal) -> Result<Self> {
+        let value = parse_value_string(s)?;
+        let mut vlist = vec![];
+
+        for v in value.split(',') {
+            let value_type = if v.starts_with("0x") {16} else {10};
+
+            if let Ok(v) = usize::from_str_radix(v.trim_start_matches("0x"), value_type) {
+                vlist.push(Self::Usize(v));
+            }
+
+            vlist.push(Self::String(v.to_string()))
+        }
+
+        Ok(Self::List(vlist))
 
         // Err(Error::custom_at("Unknown field attribute", s.span()))
     }
@@ -70,6 +89,11 @@ impl JAttrValue {
         match self {
             Self::String(v) => format!("{deref_arg}{self_arg}{v}"),
             Self::Usize(v) => format!("{deref_arg}{v}"),
+            Self::List(v) =>  {
+                let value = v.iter().map(|v| format!("\"{}\".into()", v.to_string())).collect::<Vec<String>>().join(", ");
+
+                format!("vec![{value}]")
+            },
         }
     }
 
@@ -79,6 +103,11 @@ impl JAttrValue {
         match self {
             Self::String(v) => format!("{self_arg}{v}"),
             Self::Usize(v) => v.to_string(),
+            Self::List(v) =>  {
+                let value = v.iter().map(|v| format!("\"{}\".into()", v.to_string())).collect::<Vec<String>>().join(", ");
+
+                format!("vec![{value}]")
+            },
         }
     }
 }
@@ -89,6 +118,7 @@ impl ToString for JAttrValue {
         match self {
             Self::String(v) => v.to_string(),
             Self::Usize(v) => v.to_string(),
+            Self::List(v) => v.iter().map(|v| v.to_string()).collect::<Vec<String>>().join(", "),
         }
     }
 }
@@ -167,6 +197,11 @@ pub struct FieldAttributes {
     pub offset: Option<JAttrValue>,
     pub untake: bool,
     pub full: Option<JAttrValue>,
+    pub count: Option<JAttrValue>,
+
+    pub key: Option<JAttrValue>,
+    pub split: Option<JAttrValue>,
+    pub linend: Option<JAttrValue>,
 
     // branch
     pub branch: Option<String>,
@@ -187,11 +222,15 @@ impl FieldAttributes {
             byteorder: {},
             branch: {},
             length: {},
+            count: {},
+            split: {},
             ..Default::default()
         }};",
             get_byteorder(&self.byteorder, self_arg),
             to_code_int!(self.branch, self_arg),
             to_code_int2!(self.length, self_arg, deref_arg),
+            to_code_int2!(self.count, self_arg, deref_arg),
+            if let Some(split) = &self.split { format!("Some({})", split.to_code(false)) } else { "None".to_string() }
         )
     }
 }
@@ -226,7 +265,10 @@ impl FromAttribute for FieldAttributes {
                         "byteorder" => result.byteorder = Some(parse_value_string(&val)?),
                         "length" => result.length = Some(JAttrValue::parse(&val)?),
                         "offset" => result.offset = Some(JAttrValue::parse(&val)?),
+                        "count" => result.count = Some(JAttrValue::parse(&val)?),
                         "full" => result.full = Some(JAttrValue::parse(&val)?),
+                        "split" => result.split = Some(JAttrValue::parse_list(&val)?),
+                        "linend" => result.linend = Some(JAttrValue::parse_list(&val)?),
                         "branch" => result.branch = Some(parse_value_string(&val)?),
                         "branch_expr" => result.branch_expr = Some(parse_value_string(&val)?),
                         "branch_range" => result.branch_range = Some(parse_value_string(&val)?),

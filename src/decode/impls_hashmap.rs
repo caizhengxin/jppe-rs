@@ -1,37 +1,29 @@
 use std::collections::HashMap;
-
 use crate::parse_subsequence;
 use crate::find_substring::FindSubstring;
 
 
 #[derive(Debug)]
-struct KeyValueIterator<'da> {
+struct KeyValueIterator<'da, 'db> {
     input: &'da [u8],
-    linend: Vec<Vec<u8>>,
-    split_str: Vec<Vec<u8>>,
+    linend: Option<&'db Vec<Vec<u8>>>,
+    split_str: Option<&'db Vec<Vec<u8>>>,
     count: usize,
     curruent_count: usize,
 }
 
 
-impl<'da, 'db> KeyValueIterator<'da> {
+impl<'da, 'db> KeyValueIterator<'da, 'db> {
     pub fn new(input: &'da [u8], _cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> Self {
         let mut count = 50;
-        let mut linend = vec![b"\r\n".to_vec()];
-        let mut split_str = vec![b": ".to_vec()];
+        let mut linend = None;
+        // let mut split_str = vec![b": ".to_vec()];
+        let mut split_str = None;
     
         if let Some(fattr) = fattr {
-            if let Some(linend_tmp) = &fattr.linend_value {
-                linend = linend_tmp.to_vec();
-            }
-    
-            if let Some(split_tmp) = &fattr.split {
-                split_str = split_tmp.clone();
-            }
-    
-            if let Some(count_tmp) = &fattr.count {
-                count = *count_tmp;
-            }
+            linend = fattr.linend_value.as_ref();
+            split_str = fattr.split.as_ref();
+            count = fattr.count.unwrap_or(50);
         }
 
         Self {
@@ -45,9 +37,37 @@ impl<'da, 'db> KeyValueIterator<'da> {
 }
 
 
-impl<'a> Iterator for KeyValueIterator<'a> {
+impl<'da, 'db> KeyValueIterator<'da, 'db> {
+    #[inline]
+    pub fn parse_subsequence(&mut self, linend: &'db [u8]) -> Option<(&'da [u8], &'da [u8], &'da [u8])> {
+        match parse_subsequence(self.input, linend) {
+            Ok((input_tmp, value)) => {
+                let split_default = &vec![b": ".to_vec()];
+                let split_str = self.split_str.unwrap_or(split_default);
+                for split_str in split_str {
+                    if let Some(index) = value.find_substring(&split_str[..]) {
+                        let key = &value[..index];
+                        let value = &value[split_str.len() + index..value.len() - linend.len()];
+                        self.input = input_tmp;
+                        self.curruent_count += 1;
+
+                        return Some((input_tmp, key, value));
+                    }    
+                }
+            },
+            Err(_e) => {
+                // return None;
+            },
+        }
+
+        None
+    }
+}
+
+
+impl<'da, 'db> Iterator for KeyValueIterator<'da, 'db> {
     // (input, key, value)
-    type Item = (&'a [u8], &'a [u8], &'a [u8]);
+    type Item = (&'da [u8], &'da [u8], &'da [u8]);
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.input.is_empty() {
@@ -55,24 +75,16 @@ impl<'a> Iterator for KeyValueIterator<'a> {
         }
 
         if self.curruent_count < self.count {
-            for linend in &self.linend {
-                match parse_subsequence(self.input, linend) {
-                    Ok((input_tmp, value)) => {
-                        for split_str in &self.split_str {
-                            if let Some(index) = value.find_substring(&split_str[..]) {
-                                let key = &value[..index];
-                                let value = &value[split_str.len() + index..value.len() - split_str.len()];
-                                self.input = input_tmp;
-                                self.curruent_count += 1;
-        
-                                return Some((input_tmp, key, value));
-                            }    
-                        }
-                    },
-                    Err(_e) => {
-                        return None;
-                    },
+            if let Some(linend) = self.linend {
+                for linend in linend {
+                    self.parse_subsequence(linend)?;
                 }    
+            }
+            else if let Some(value) = self.parse_subsequence("\r\n".as_bytes()) {
+                return Some(value);
+            }
+            else {
+                return self.parse_subsequence("\r\n".as_bytes());
             }
         }
 

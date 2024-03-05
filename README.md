@@ -21,13 +21,12 @@
 - [x] `byteorder`
 - [x] `length`
 - [x] `offset`
-- [ ] `count`
+- [x] `count`
 - [x] `full=<int>`: encode full value.
 - [x] `untake`
-- [ ] `linend`
-- [ ] `linend=<string|bytes>`
-- [ ] `key`
-- [ ] `split`
+- [x] `linend=<string|bytes>`
+- [x] `key`
+- [x] `split`
 - [ ] `if_expr`
 - [ ] `with_encode`: encode function.
 - [ ] `with_decode`: decode function.
