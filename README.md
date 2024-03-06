@@ -7,7 +7,7 @@ This is a byte stream structured serialization and deserialization library that 
 ### Cargo.toml
 
 ```toml
-jppe = { git = "https://github.com/caizhengxin/jppe.git", features = ["derive"] }
+jppe = { git = "https://github.com/caizhengxin/jppe-rs.git", features = ["derive"] }
 ```
 
 ### Simple Example
@@ -114,7 +114,7 @@ fn main() {
 - [x] `Enum`
 - [x] `HashMap`
 - [ ] `HashSet`
-- [ ] `Macaddress`
+- [x] `Macaddress`
 - [ ] `IPv4` or `IPv6`
 - [ ] `Hex`
 - [ ] `DateTime`
