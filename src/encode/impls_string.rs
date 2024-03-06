@@ -6,8 +6,10 @@ macro_rules! encode_string {
         $input.extend($value.as_bytes());
 
         if let Some(fattr) = $fattr {
-            if let Some(linend_value_list) = &fattr.linend_value && let Some(linend_value) = linend_value_list.first() && !$value.as_bytes().ends_with(linend_value) {
-                $input.extend(linend_value)
+            if let Some(linend_value_list) = &fattr.linend_value && let Some(linend_value) = linend_value_list.first() {
+                if !$value.as_bytes().ends_with(linend_value) {
+                    $input.extend(linend_value)
+                }
             }
             else if fattr.length.is_none() {
                 $input.push(b'\n');
