@@ -16,9 +16,10 @@ pub fn input_take<T>(input: &[T], length: usize) -> JResult<&[T], &[T]> {
 }
 
 
-pub fn parse_subsequence<'a, 'b,  T>(input: &'a [T], needle: &'b [T]) -> JResult<&'a [T], &'a [T]>
+pub fn parse_subsequence<'a, 'b,  T>(input: &'a [T], needle: &'b [T], is_save_needle: bool) -> JResult<&'a [T], &'a [T]>
 where
     for<'c> &'c [T]: PartialEq,
+    // T: std::fmt::Debug,
 {
     let needle_len = needle.len();
     let input_len = input.len();
@@ -33,21 +34,22 @@ where
         .position(|window| window == needle) &&
        let Some(value) = input.take(..index + needle_len)
     {
-        return Ok((input, value));
+        return Ok((input, if is_save_needle {value} else {&value[..index]}));
     }
 
     Err(make_error(input, ErrorKind::SubSequence { offset: input_len }))
 }
 
 
-pub fn parse_subsequences<'a, T>(input: &'a [T], needles: &'a [&'a [T]]) -> JResult<&'a [T], &'a [T]>
+pub fn parse_subsequences<'a, T>(input: &'a [T], needles: &'a [&'a [T]], is_save_needle: bool) -> JResult<&'a [T], &'a [T]>
 where
     for<'b> &'b [T]: PartialEq,
+    // T: std::fmt::Debug,
 {
     let input_len = input.len();
 
     for needle in needles {
-        if let Ok((input, value)) = parse_subsequence(input, needle) {
+        if let Ok((input, value)) = parse_subsequence(input, needle, is_save_needle) {
             return Ok((input, value));
         }
     }

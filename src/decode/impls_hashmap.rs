@@ -40,7 +40,7 @@ impl<'da, 'db> KeyValueIterator<'da, 'db> {
 impl<'da, 'db> KeyValueIterator<'da, 'db> {
     #[inline]
     pub fn parse_subsequence(&mut self, linend: &'db [u8]) -> Option<(&'da [u8], &'da [u8], &'da [u8])> {
-        match parse_subsequence(self.input, linend) {
+        match parse_subsequence(self.input, linend, true) {
             Ok((input_tmp, value)) => {
                 let split_default = &vec![b": ".to_vec()];
                 let split_str = self.split_str.unwrap_or(split_default);

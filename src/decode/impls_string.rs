@@ -5,34 +5,6 @@ use crate::parser::errors::{ErrorKind, JResult, make_error};
 use crate::parse_subsequence;
 
 
-// macro_rules! decode_string {
-//     ($input:expr, $cattr:expr, $fattr:expr) => {
-//         let mut value_tmp = None;
-//         let mut input_tmp = $input;
-    
-//         if let Ok((input, value)) = parse_bytes($input, $cattr, $fattr) {
-//             input_tmp = input;
-//             value_tmp = Some(value);
-//         }
-//         else if let Ok((input, value)) = parse_subsequence($input, b"\n") {
-//             input_tmp = input;
-//             value_tmp = Some(value);
-//         }
-    
-//         if let Some(value) = value_tmp {
-//             let value = value.trim_ascii_end().to_vec().drain_filter(|v| *v != 0).collect::<Vec<_>>();
-    
-//             match String::from_utf8(value) {
-//                 Ok(v) => return Ok((input_tmp, v)),
-//                 Err(_e) => return Err(make_error(input_tmp, ErrorKind::Fail { offset: input_tmp.len() })),
-//             }
-//         }
-    
-//         Err(make_error(input_tmp, ErrorKind::InvalidByteLength { offset: input_tmp.len() }))    
-//     }
-// }
-
-
 #[inline]
 fn parse_string<'a>(input: &'a [u8], cattr: Option<&ContainerAttrModifiers>, fattr: Option<&FieldAttrModifiers>) -> JResult<&'a [u8], String> {
     let mut value_tmp = None;
@@ -42,16 +14,21 @@ fn parse_string<'a>(input: &'a [u8], cattr: Option<&ContainerAttrModifiers>, fat
         input_tmp = input;
         value_tmp = Some(value);
     }
-    else if let Ok((input, value)) = parse_subsequence(input, b"\n") {
+    else if let Ok((input, value)) = parse_subsequence(input, b"\n", false) {
         input_tmp = input;
         value_tmp = Some(value);
     }
 
     if let Some(value) = value_tmp {
-        let value = value.trim_ascii_end().to_vec().extract_if(|v| *v != 0).collect::<Vec<_>>();
+        // let value = value.trim_ascii_end().to_vec().extract_if(|v| *v != 0).collect::<Vec<_>>();
+        // std::str::from_utf8(value).unwrap().to_string()
+        // match String::from_utf8(value) {
+        //     Ok(v) => return Ok((input_tmp, v)),
+        //     Err(_e) => return Err(make_error(input_tmp, ErrorKind::Fail { offset: input_tmp.len() })),
+        // }
 
-        match String::from_utf8(value) {
-            Ok(v) => return Ok((input_tmp, v)),
+        match std::str::from_utf8(value) {
+            Ok(v) => return Ok((input_tmp, v.to_string())),
             Err(_e) => return Err(make_error(input_tmp, ErrorKind::Fail { offset: input_tmp.len() })),
         }
     }
@@ -124,15 +101,10 @@ mod tests {
         assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 
-        let (input, value) = String::decode(b"12\r", None, Some(&fattr)).unwrap();
-        println!("{:?} {:?}", value, input);
-        assert_eq!(value, "12".to_string());
-        assert_eq!(input.is_empty(), true);
-
         let fattr = FieldAttrModifiers { linend_value: Some(vec![vec![b'3', b'4']]), ..Default::default() };
         let (input, value) = String::decode(b"1234", None, Some(&fattr)).unwrap();
         println!("{:?} {:?}", value, input);
-        assert_eq!(value, "1234".to_string());
+        assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 
         // length
