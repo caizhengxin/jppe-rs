@@ -4,6 +4,12 @@ This is a byte stream structured serialization and deserialization library that 
 
 ## Usage
 
+### Cargo.toml
+
+```toml
+jppe = { git = "https://github.com/caizhengxin/jppe.git", features = ["derive"] }
+```
+
 ### Simple Example
 
 ```rust
