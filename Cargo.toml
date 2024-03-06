@@ -5,6 +5,34 @@ authors = [
     "jankincai <jankincai12@gmail.com>"
 ]
 edition = "2021"
+description = "This is a byte stream structured serialization and deserialization library."
+repository = "https://github.com/caizhengxin/jppe-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs"
+readme = "README.md"
+# https://crates.io/category_slugs
+categories = [
+    "encoding",
+    "parser-implementations",
+    "no-std"
+]
+keywords = [
+    "jppe-rs",
+    "ppe",
+    "byte",
+    "serialization",
+]
+license = "MIT OR Apache-2.0"
+include = [
+    "src/*",
+    "benches/*",
+    "examples/*",
+    "Cargo.toml",
+    "LICENSE*",
+    "README.md",
+]
+rust-version = "1.56"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
 members = [
@@ -14,13 +42,11 @@ members = [
 [features]
 derive = ["jppe_derive"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 jppe_derive = { path = "derive", version = "0.1.0", optional = true }
 jkcenum = { git = "https://github.com/caizhengxin/jkcenum.git", features = ["derive"] }
-serde = { version = "*", features = ["derive"] }
-thiserror = "*"
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
 
 [dev-dependencies]
 jppe_derive = { path = "derive", version = "0.1.0" }
