@@ -40,18 +40,6 @@ impl AttrValue {
         Ok(Self::List(vlist))
     }
 
-    // pub fn to_code2(&self, self_arg: &str, deref_arg: &str) -> String {
-    //     match self {
-    //         Self::String(v) => format!("{deref_arg}{self_arg}{v}"),
-    //         Self::Usize(v) => format!("{deref_arg}{v}"),
-    //         Self::List(v) =>  {
-    //             let value = v.iter().map(|v| format!("\"{}\".into()", v.to_string())).collect::<Vec<String>>().join(", ");
-
-    //             format!("vec![{value}]")
-    //         },
-    //     }
-    // }
-
     pub fn to_code(&self, is_self: bool, is_deref: bool, is_string: bool) -> String {
         let self_arg = if is_self { "self." } else { "" };
         let deref_arg = if is_deref { "*" } else { "" };
@@ -92,19 +80,6 @@ impl AttrValueTrait for Option<AttrValue> {
     type Value = AttrValue;
 
     fn to_code(&self, is_self: bool, is_deref: bool) -> String {
-        // macro_rules! to_code_int {
-        //     ($branch:expr, $self_arg:expr) => {
-        //         if let Some(v) = $branch.as_ref() { format!("Some(({}{}) as usize)", $self_arg, v.to_string()) } else { "None".to_string() }
-        //     };
-        // }
-        
-        
-        // macro_rules! to_code_int2 {
-        //     ($branch:expr, $self_arg:expr, $deref_arg:expr) => {
-        //         if let Some(v) = $branch.as_ref() { format!("Some(({}) as usize)", v.to_code2($self_arg, $deref_arg)) } else { "None".to_string() }
-        //     };
-        // }
-
         if let Some(value) = self {
             match value {
                 Self::Value::String(_v) => return format!("Some({})", value.to_code(is_self, is_deref, false)),
@@ -130,5 +105,9 @@ mod tests {
         ]));
 
         println!("{:?}", value.to_code(false, false));
+        assert_eq!(value.to_code(false, false), r#"Some(vec!["jkc".into(), "jkc".into()])"#);
+
+        let value = Some(AttrValue::String("jkc".to_string()));
+        assert_eq!(value.to_code(false, false), r#"Some(jkc.into())"#);
     }
 }

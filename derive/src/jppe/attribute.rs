@@ -1,5 +1,6 @@
 use virtue::prelude::*;
 use virtue::utils::*;
+use super::parse::{AttrValue, AttrValueTrait};
 
 
 macro_rules! to_code_int {
@@ -200,8 +201,8 @@ pub struct FieldAttributes {
     pub count: Option<JAttrValue>,
 
     pub key: Option<JAttrValue>,
-    pub split: Option<JAttrValue>,
-    pub linend: Option<JAttrValue>,
+    pub split: Option<AttrValue>,
+    pub linend: Option<AttrValue>,
 
     // branch
     pub branch: Option<String>,
@@ -224,13 +225,15 @@ impl FieldAttributes {
             length: {},
             count: {},
             split: {},
+            linend_value: {},
             ..Default::default()
         }};",
             get_byteorder(&self.byteorder, self_arg),
             to_code_int!(self.branch, self_arg),
             to_code_int2!(self.length, self_arg, deref_arg),
             to_code_int2!(self.count, self_arg, deref_arg),
-            if let Some(split) = &self.split { format!("Some({})", split.to_code(false)) } else { "None".to_string() }
+            self.split.to_code(false, false),
+            self.linend.to_code(false, false),
         )
     }
 }
@@ -267,8 +270,8 @@ impl FromAttribute for FieldAttributes {
                         "offset" => result.offset = Some(JAttrValue::parse(&val)?),
                         "count" => result.count = Some(JAttrValue::parse(&val)?),
                         "full" => result.full = Some(JAttrValue::parse(&val)?),
-                        "split" => result.split = Some(JAttrValue::parse_list(&val)?),
-                        "linend" => result.linend = Some(JAttrValue::parse_list(&val)?),
+                        "split" => result.split = Some(AttrValue::parse_list(&val)?),
+                        "linend" => result.linend = Some(AttrValue::parse_list(&val)?),
                         "branch" => result.branch = Some(parse_value_string(&val)?),
                         "branch_expr" => result.branch_expr = Some(parse_value_string(&val)?),
                         "branch_range" => result.branch_range = Some(parse_value_string(&val)?),
