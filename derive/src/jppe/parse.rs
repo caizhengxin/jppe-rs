@@ -4,14 +4,22 @@ use virtue::prelude::*;
 #[derive(Debug)]
 pub enum AttrValue {
     String(String),
+    Var(String),
     Usize(usize),
     List(Vec<AttrValue>),
 }
 
 
 impl AttrValue {
+    // #[inline]
+    // pub fn parse_string(s: &Literal) -> Result<Self> {
+    //     let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+
+    //     Ok(Self::String(value))
+    // }
+
     #[inline]
-    pub fn parse(s: &Literal) -> Result<Self> {
+    pub fn parse_usize(s: &Literal) -> Result<Self> {
         let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
         let value_type = if value.starts_with("0x") {16} else {10};
 
@@ -19,7 +27,7 @@ impl AttrValue {
             return Ok(Self::Usize(v));
         }
 
-        Ok(Self::String(value))
+        Ok(Self::Var(value))
     }
 
     #[inline]
@@ -40,20 +48,63 @@ impl AttrValue {
         Ok(Self::List(vlist))
     }
 
+    #[inline]
+    pub fn parse_byteorder(s: &Literal) -> Result<Self> {
+        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+
+        match value.as_str() {
+            "BE" | "LE" | "0" | "1" | ">" | "<" => Ok(Self::String(value)),
+            _ => Ok(Self::Var(value)),
+        }
+    }
+
     pub fn to_code(&self, is_self: bool, is_deref: bool, is_string: bool) -> String {
         let self_arg = if is_self { "self." } else { "" };
         let deref_arg = if is_deref { "*" } else { "" };
         let is_string = if is_string { "\"" } else { "" };
 
-        match self {
+        let code = match self {
             Self::String(v) => format!("{deref_arg}{self_arg}{is_string}{v}{is_string}.into()"),
-            Self::Usize(v) => format!("{deref_arg}{v}.into()"),
+            Self::Var(v) => format!("({deref_arg}{self_arg}{is_string}{v}{is_string}) as usize"),
+            Self::Usize(v) => format!("({deref_arg}{v}) as usize"),
             Self::List(v) =>  {
                 let value = v.iter().map(|v| format!("{}", v.to_code(is_self, is_deref, true))).collect::<Vec<String>>().join(", ");
 
                 format!("vec![{value}]")
             },
-        }
+        };
+
+        code
+    }
+
+    pub fn to_code2(&self, is_self: bool, is_string: bool) -> String {
+        let self_arg = if is_self { "self." } else { "*" };
+        let is_string = if is_string { "\"" } else { "" };
+
+        let code = match self {
+            Self::String(v) => format!("{self_arg}{is_string}{v}{is_string}.into()"),
+            Self::Var(v) => format!("({self_arg}{is_string}{v}{is_string}) as usize"),
+            Self::Usize(v) => format!("({v}) as usize"),
+            Self::List(v) =>  {
+                let value = v.iter().map(|v| format!("{}", v.to_code2(is_self, true))).collect::<Vec<String>>().join(", ");
+
+                format!("vec![{value}]")
+            },
+        };
+
+        code
+    }
+
+    pub fn to_byteorder(&self, is_self: bool) -> String {
+        let self_arg = if is_self { "self." } else { "" };
+
+        let code = match self {
+            Self::String(v) => format!("jppe::ByteOrder::parse({v:?}).unwrap()"),
+            Self::Var(v) => format!("jppe::ByteOrder::from_int({self_arg}{v} as isize).unwrap()"),
+            _ => "".to_string(),
+        };
+
+        code
     }
 }
 
@@ -62,6 +113,7 @@ impl ToString for AttrValue {
     fn to_string(&self) -> String {
         match self {
             Self::String(v) => v.to_string(),
+            Self::Var(v) => v.to_string(),
             Self::Usize(v) => v.to_string(),
             Self::List(v) => v.iter().map(|v| v.to_string()).collect::<Vec<String>>().join(", "),
         }
@@ -73,19 +125,27 @@ pub trait AttrValueTrait {
     type Value;
 
     fn to_code(&self, is_self: bool, is_deref: bool) -> String;
+
+    fn to_byteorder(&self, is_self: bool) -> String;
 }
 
 
 impl AttrValueTrait for Option<AttrValue> {
     type Value = AttrValue;
 
+    #[inline]
     fn to_code(&self, is_self: bool, is_deref: bool) -> String {
         if let Some(value) = self {
-            match value {
-                Self::Value::String(_v) => return format!("Some({})", value.to_code(is_self, is_deref, false)),
-                Self::Value::Usize(_v) => return format!("Some({})", value.to_code(is_self, is_deref, false)),
-                Self::Value::List(_) => return format!("Some({})", value.to_code(is_self, is_deref, false)),
-            }    
+            return format!("Some({})", value.to_code(is_self, is_deref, false));
+        }
+
+        "None".to_string()
+    }
+
+    #[inline]
+    fn to_byteorder(&self, is_self: bool) -> String {
+        if let Some(value) = self {
+            return format!("Some({})", value.to_byteorder(is_self));
         }
 
         "None".to_string()

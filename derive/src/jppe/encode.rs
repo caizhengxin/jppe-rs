@@ -15,7 +15,7 @@ pub fn generate_encode_body2(fn_body: &mut StreamBuilder, attributes: &FieldAttr
 
         fn_body.push_parsed(format!("
             for i in 0..{} {{ input.push({full}); }}
-        ", offset.to_code(is_self)))?;
+        ", offset.to_code2(is_self, false)))?;
     }
 
     Ok(())
