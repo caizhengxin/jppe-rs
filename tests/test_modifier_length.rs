@@ -24,7 +24,7 @@ fn test_struct_length_example1() {
 
     let (input, value2) = StructLengthExample1::decode(&[0x00, 0x00, 0x01, 0x01, 0x01], None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -49,7 +49,7 @@ fn test_struct_length_example2() {
 
     let (input, value2) = StructLengthExample2::decode(&input, None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -80,5 +80,5 @@ fn test_struct_length_example3() {
     let fattr = FieldAttrModifiers { branch: Some(0), ..Default::default() };
     let (input, value2) = EnumLengthExample1::decode(&input, None, Some(&fattr)).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }

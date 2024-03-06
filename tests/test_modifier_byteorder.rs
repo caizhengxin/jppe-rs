@@ -93,7 +93,7 @@ fn test_byteorder_default() {
     let input = buf;
     let (input, value1) = ByteorderExample1::decode(&input, None, None).unwrap();
     assert_eq!(value, value1);
-    assert_eq!(input, []);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -123,7 +123,7 @@ fn test_byteorder2() {
     let input = buf;
     let (input, value1) = ByteorderExample2::decode(&input, None, None).unwrap();
     assert_eq!(value, value1);
-    assert_eq!(input, []);    
+    assert_eq!(input.is_empty(), true);    
 }
 
 
@@ -153,7 +153,7 @@ fn test_byteorder3() {
     let input = buf;
     let (input, value1) = ByteorderExample3::decode(&input, None, None).unwrap();
     assert_eq!(value, value1);
-    assert_eq!(input, []);    
+    assert_eq!(input.is_empty(), true);    
 }
 
 
@@ -170,7 +170,7 @@ fn test_byteorder4() {
     let input = buf;
     let (input, value1) = ByteorderExample4::decode(&input, None, None).unwrap();
     assert_eq!(value, value1);
-    assert_eq!(input, []);
+    assert_eq!(input.is_empty(), true);
 
     let value = ByteorderExample4 {
         a: 0,
@@ -183,7 +183,7 @@ fn test_byteorder4() {
     let input = buf;
     let (input, value1) = ByteorderExample4::decode(&input, None, None).unwrap();
     assert_eq!(value, value1);
-    assert_eq!(input, []);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -207,5 +207,5 @@ fn test_enum_byteorder_example1() {
     let fattr = FieldAttrModifiers { branch: Some(1), ..Default::default() };
     let (input, value2) = EnumByteorderExample1::decode(&[0x01, 0x00, 0x02, 0x00], None, Some(&fattr)).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }

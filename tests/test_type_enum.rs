@@ -37,7 +37,7 @@ fn test_type_enum() {
 
     let (input, value2) = TestTypeStructEnumExample1::decode(&[0x00, 0x01], None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 
     // V1
     let value = TestTypeStructEnumExample1 { cmd: 2, body: TestTypeEnumExample::V1(1) };
@@ -47,7 +47,7 @@ fn test_type_enum() {
 
     let (input, value2) = TestTypeStructEnumExample1::decode(&[0x00, 0x02, 0x01], None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 
     // V2
     let input = vec![0x00, 0x03, 0x01, 0x00, 0x02];
@@ -58,7 +58,7 @@ fn test_type_enum() {
 
     let (input, value2) = TestTypeStructEnumExample1::decode(&input, None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 
     // V3
     let input = vec![0x00, 0x04, 0x01, 0x00, 0x02];
@@ -69,7 +69,7 @@ fn test_type_enum() {
 
     let (input, value2) = TestTypeStructEnumExample1::decode(&input, None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 
     // V4
     let input = vec![0x00, 0x05, 0x01, 0x00, 0x02];
@@ -80,5 +80,5 @@ fn test_type_enum() {
 
     let (input, value2) = TestTypeStructEnumExample1::decode(&input, None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }

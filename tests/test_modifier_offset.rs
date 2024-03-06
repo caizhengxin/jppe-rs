@@ -20,7 +20,7 @@ fn test_struct_offset_example1() {
 
     let (input, value2) = OffsetExample1::decode(&[0x00, 0x00, 0x01, 0x00, 0x02], None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -41,7 +41,7 @@ fn test_struct_offset_example2() {
 
     let (input, value2) = OffsetExample2::decode(&[0x01, 0x00, 0x00, 0x02], None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -62,7 +62,7 @@ fn test_struct_offset_example3() {
 
     let (input, value2) = OffsetExample3::decode(&[0x02, 0x00, 0x00, 0x02], None, None).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -89,7 +89,7 @@ fn test_enum_offset_example1() {
     let fattr = FieldAttrModifiers { branch: Some(2), ..Default::default() };
     let (input, value2) = EnumOffsetExample1::decode(&[0x00, 0x00, 0x01, 0x00, 0x02], None, Some(&fattr)).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -116,7 +116,7 @@ fn test_enum_offset_example2() {
     let fattr = FieldAttrModifiers { branch: Some(2), ..Default::default() };
     let (input, value2) = EnumOffsetExample2::decode(&[0x01, 0x00, 0x00, 0x02], None, Some(&fattr)).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
 
 
@@ -144,5 +144,5 @@ fn test_enum_offset_example3() {
     let fattr = FieldAttrModifiers { branch: Some(2), ..Default::default() };
     let (input, value2) = EnumOffsetExample3::decode(&[0x00, 0x01], None, Some(&fattr)).unwrap();
     assert_eq!(value2, value);
-    assert_eq!(input, &[]);
+    assert_eq!(input.is_empty(), true);
 }
