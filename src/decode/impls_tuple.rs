@@ -56,18 +56,18 @@ mod tests {
     #[test]
     fn test_tuple_decode() {
         let (input, (v1, v2)): (&[u8], (u16, u16)) = ByteDecode::decode(&[0x00, 0x01, 0x00, 0x02], None, None).unwrap();
-        assert_eq!(input, &[]);
+        assert_eq!(input.is_empty(), true);
         assert_eq!(v1, 1);
         assert_eq!(v2, 2);
 
         let fattr = FieldAttrModifiers { byteorder: Some(ByteOrder::Le), ..Default::default() };
         let (input, (v1, v2)): (&[u8], (u16, u16)) = ByteDecode::decode(&[0x01, 0x00, 0x02, 0x00], None, Some(&fattr)).unwrap();
-        assert_eq!(input, &[]);
+        assert_eq!(input.is_empty(), true);
         assert_eq!(v1, 1);
         assert_eq!(v2, 2);
 
         let (input, (v1, v2)): (&[u8], (u8, u16)) = ByteDecode::decode(&[0x01, 0x00, 0x02], None, None).unwrap();
-        assert_eq!(input, &[]);
+        assert_eq!(input.is_empty(), true);
         assert_eq!(v1, 1);
         assert_eq!(v2, 2);
     }

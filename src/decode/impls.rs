@@ -142,7 +142,7 @@ mod tests {
 
         let (input, value) = <Option<bool>>::decode(&[], None, None).unwrap();
         assert_eq!(value, None);
-        assert_eq!(input, []);
+        assert_eq!(input.is_empty(), true);
 
         let fattr = FieldAttrModifiers { length: Some(0), ..Default::default() };
         let (input, value) = <Option<bool>>::decode(&[0x00, 0x01], None, Some(&fattr)).unwrap();

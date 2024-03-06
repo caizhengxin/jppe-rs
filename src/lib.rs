@@ -11,13 +11,12 @@
 extern crate jppe_derive;
 
 #[cfg(feature = "jppe_derive")]
-pub use jppe_derive::jppe;
-
+pub use jppe_derive::{ByteDecode, ByteEncode, BorrowByteDecode, BorrowByteEncode};
 
 mod decode;
 mod encode;
 mod parser;
-mod fields;
+pub mod fields;
 mod byteorder;
 mod modifiers;
 mod find_substring;

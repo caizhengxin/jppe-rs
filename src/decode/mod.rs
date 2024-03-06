@@ -6,6 +6,7 @@ mod impls_tuple;
 mod impls_float;
 mod impls_hashmap;
 mod impls_other;
+mod impls_address;
 mod impls;
 
 use crate::{ContainerAttrModifiers, FieldAttrModifiers};

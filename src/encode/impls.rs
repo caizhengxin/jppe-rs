@@ -97,6 +97,6 @@ mod tests {
         let mut buf = vec![];
         let value: Option<u8> = None;
         value.encode(&mut buf, None, None);
-        assert_eq!(buf, []);
+        assert_eq!(buf.is_empty(), true);
     }
 }

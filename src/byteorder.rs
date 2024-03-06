@@ -2,6 +2,8 @@ use std::string::ToString;
 use std::str::FromStr;
 use jkcenum::JkcEnum;
 use jkcenum::errors::FromStrParseError;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 
 #[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Hash, JkcEnum)]
