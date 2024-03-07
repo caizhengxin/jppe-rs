@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use crate::parse_subsequence;
-use crate::find_substring::FindSubstring;
 
 
 #[derive(Debug)]
@@ -40,19 +39,25 @@ impl<'da, 'db> KeyValueIterator<'da, 'db> {
 impl<'da, 'db> KeyValueIterator<'da, 'db> {
     #[inline]
     pub fn parse_subsequence(&mut self, linend: &'db [u8]) -> Option<(&'da [u8], &'da [u8], &'da [u8])> {
-        match parse_subsequence(self.input, linend, true) {
+        match parse_subsequence(self.input, linend, false) {
             Ok((input_tmp, value)) => {
                 let split_default = &vec![b": ".to_vec()];
                 let split_str = self.split_str.unwrap_or(split_default);
-                for split_str in split_str {
-                    if let Some(index) = value.find_substring(&split_str[..]) {
-                        let key = &value[..index];
-                        let value = &value[split_str.len() + index..value.len() - linend.len()];
+                for split in split_str {
+                    if let Ok((value, key)) = parse_subsequence(value, split, false) {
                         self.input = input_tmp;
                         self.curruent_count += 1;
 
                         return Some((input_tmp, key, value));
-                    }    
+                    }
+                    // if let Some(index) = value.find_substring(&split[..]) {
+                    //     let key = &value[..index];
+                    //     let value = &value[split.len() + index..value.len() - linend.len()];
+                    //     self.input = input_tmp;
+                    //     self.curruent_count += 1;
+
+                    //     return Some((input_tmp, key, value));
+                    // }    
                 }
             },
             Err(_e) => {
