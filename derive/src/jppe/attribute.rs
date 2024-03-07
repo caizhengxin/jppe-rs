@@ -86,7 +86,6 @@ pub struct FieldAttributes {
 
     pub value_encode: Option<String>,
     pub value_decode: Option<String>,
-    pub value: Option<String>,
 
     pub key: Option<AttrValue>,
     pub split: Option<AttrValue>,
@@ -168,7 +167,6 @@ impl FromAttribute for FieldAttributes {
                         },
                         "value_encode" => result.value_encode = Some(parse_value_string(&val)?),
                         "value_decode" => result.value_decode = Some(parse_value_string(&val)?),
-                        "value" => result.value = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }

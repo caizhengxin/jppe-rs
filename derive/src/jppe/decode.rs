@@ -28,10 +28,7 @@ pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attri
     }
 
     // value expr
-    if let Some(value_expr) = &attributes.value {
-        fn_body.push_parsed(format!("let {name} = {value_expr};"))?;
-    }
-    else if let Some(value_expr) = &attributes.value_decode {
+    if let Some(value_expr) = &attributes.value_decode {
         fn_body.push_parsed(format!("let {name} = {value_expr};"))?;
     }
 

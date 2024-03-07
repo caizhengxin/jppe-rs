@@ -96,6 +96,123 @@ fn main() {
 }
 ```
 
+## Ipv4 Example
+
+```rust
+#![feature(let_chains)]
+use std::net::Ipv4Addr;
+use std::str::FromStr;
+use jppe::{BorrowByteDecode, BorrowByteEncode};
+use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
+
+
+#[derive(Debug, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
+pub struct Ipv4<'a> {
+    #[jppe(bits_start=0xf0, untake)]
+    pub version: u8,
+    #[jppe(bits=0x0f, value_decode="header_length << 2", value_encode="header_length >> 2")]
+    pub header_length: u8,
+    pub tos: u8,
+    pub total_length: u16,
+    pub identification: u16,
+    #[jppe(bits_start=0xe000, untake)]
+    pub flags: u16,
+    #[jppe(bits=0x1fff)]
+    pub fragment_offset: u16,
+    pub ttl: u8,
+    pub protocol: u8,
+    pub checksum: u16,
+    pub src: Ipv4Addr,
+    pub dst: Ipv4Addr,
+    #[jppe(length="header_length - 20")]
+    pub options: &'a [u8],
+}
+
+
+fn main() {
+    let input = b"\x45\x00\x00\x40\xb5\xf2\x00\x00\x40\x06\xa9\x7c\x0a\x01\x01\xea\x0a\x0a\x05\x55";    
+
+    // decode
+    let (input_remain, value) = Ipv4::decode(input, None, None).unwrap();
+    println!("{value:?} {input_remain:?}");
+    assert_eq!(value, Ipv4 {
+        version: 4,
+        header_length: 20,
+        tos: 0,
+        total_length: 64,
+        identification: 46578,
+        flags: 0,
+        fragment_offset: 0,
+        ttl: 64,
+        protocol: 6,
+        checksum: 43388,
+        src: Ipv4Addr::from_str("10.1.1.234").unwrap(),
+        dst: Ipv4Addr::from_str("10.10.5.85").unwrap(),
+        options: &[],
+    });
+
+    // encode
+    let mut buf = vec![];
+    value.encode(&mut buf, None, None);
+    assert_eq!(buf, input);
+    assert_eq!(input_remain.is_empty(), true);
+}
+```
+
+### Tcp Example
+
+```rust
+#![feature(let_chains)]
+use jppe::{BorrowByteDecode, BorrowByteEncode};
+use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
+
+
+#[derive(Debug, Default, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
+pub struct Tcp<'a> {
+    pub sport: u16,
+    pub dport: u16,
+    pub seq: u32,
+    pub ack: u32,
+    #[jppe(bits_start=0xf000, value_decode="header_length * 4", value_encode="header_length / 4", untake)]
+    pub header_length: u16,
+    #[jppe(bits=0x0fff)]
+    pub flags: u16,
+    pub window: u16,
+    pub checksum: u16,
+    pub urgent_pointer: u16,
+    #[jppe(length="header_length - 20")]
+    pub options: &'a [u8],
+}
+
+
+fn main() {
+    let input = b"\xc8\xd3\x01\xf6\xe0\x76\x90\x16\xc4\x44\x9b\x5a\x80\x18\xff\xff\
+    \x6c\x1c\x00\x00\x01\x01\x08\x0a\x37\xc4\x50\xe2\x00\xba\x7c\x1c";    
+
+    // decode
+    let (input_remain, value) = Tcp::decode(input, None, None).unwrap();
+    println!("{value:?} {input_remain:?}");
+    assert_eq!(value, Tcp {
+        sport: 51411,
+        dport: 502,
+        seq: 3765866518,
+        ack: 3292830554,
+        header_length: 32,
+        flags: 24,
+        window: 65535,
+        checksum: 27676,
+        urgent_pointer: 0,
+        options: b"\x01\x01\x08\x0a\x37\xc4\x50\xe2\x00\xba\x7c\x1c",
+    } );
+
+    // encode
+    let mut buf = vec![];
+    value.encode(&mut buf, None, None);
+    assert_eq!(buf, input);
+    assert_eq!(input_remain.is_empty(), true);
+}
+```
+
 ## Feature
 
 ### ContainerAttrModifiers
@@ -127,6 +244,8 @@ fn main() {
 - [ ] `with_encode`: encode function.
 - [ ] `with_decode`: decode function.
 - [ ] `with`: encode/decode function.
+- [ ] `value_encode`: value processing expression, eg: `#[jppe(value_encode="length * 2")]`.
+- [ ] `value_decode`: value processing expression, eg: `#[jppe(value_encode="length / 2")]`.
 
 > enum branch
 
@@ -157,3 +276,4 @@ fn main() {
 - [x] `IPv4` or `IPv6`
 - [ ] `Hex`
 - [ ] `DateTime`
+- [ ] `Bit`
