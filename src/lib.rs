@@ -20,7 +20,7 @@ mod parser;
 pub mod fields;
 mod byteorder;
 mod modifiers;
-mod find_substring;
+mod input;
 
 pub use byteorder::ByteOrder;
 pub use decode::*;
