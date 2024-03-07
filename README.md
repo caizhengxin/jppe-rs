@@ -1,5 +1,9 @@
 # jppe-rs
 
+[![Crates.io](https://img.shields.io/crates/v/jppe)](https://crates.io/crates/jppe)
+[![Crates.io](https://img.shields.io/crates/d/jppe)](https://crates.io/crates/jppe)
+[![License](https://img.shields.io/crates/l/jppe)](LICENSE)
+
 This is a byte stream structured serialization and deserialization library that is still under development.
 
 ## Usage
@@ -7,7 +11,8 @@ This is a byte stream structured serialization and deserialization library that 
 ### Cargo.toml
 
 ```toml
-jppe = { git = "https://github.com/caizhengxin/jppe-rs.git", features = ["derive"] }
+[dependencies]
+jppe = { version="0.2.0", features = ["derive"] }
 ```
 
 ### Simple Example
