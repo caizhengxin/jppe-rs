@@ -254,10 +254,10 @@ fn main() {
 
 ### ContainerAttrModifiers
 
-- [x] `byteorder`
-- [ ] `with_encode`: encode function.
-- [ ] `with_decode`: decode function.
-- [ ] `with`: encode/decode function.
+- [x] `byteorder=<"BE"|"LE">`: The global byte order of struct and enum, eg: `#[jppe(byteorder="LE")]`.
+- [ ] `with_encode`: custom encode function.
+- [ ] `with_decode`: custom decode function.
+- [ ] `with`: custom encode/decode function.
 
 > enum branch
 
@@ -268,19 +268,19 @@ fn main() {
 
 ### FieldAttrModifiers
 
-- [x] `byteorder`
-- [x] `length`
-- [x] `offset`
-- [x] `count`
+- [x] `byteorder=<"BE"|"LE">`: The byte order of locality field, eg：`#[jppe(byteorder="LE")]`
+- [x] `length=<num|variable>`: Data length, eg: `int/&str/String`.
+- [x] `offset=<num|variable>`: Byte stream offset.
+- [x] `count==<num|variable>`: Data count, eg: `Vec`;
 - [x] `full=<int>`: encode full value.
-- [x] `untake`
-- [x] `linend=<string|bytes>`
-- [x] `key`
-- [x] `split`
+- [x] `untake`: Bytes are not taken.
+- [x] `linend=<string|bytes>`: eg: `string`.
+- [ ] `key`
+- [x] `split`: eg: `hashmap`
 - [ ] `if_expr`
-- [ ] `with_encode`: encode function.
-- [ ] `with_decode`: decode function.
-- [ ] `with`: encode/decode function.
+- [ ] `with_encode`: custom encode function.
+- [ ] `with_decode`: custom decode function.
+- [ ] `with`: custom encode/decode function.
 - [ ] `value_encode`: value processing expression, eg: `#[jppe(value_encode="length * 2")]`.
 - [ ] `value_decode`: value processing expression, eg: `#[jppe(value_encode="length / 2")]`.
 
