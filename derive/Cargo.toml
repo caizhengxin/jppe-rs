@@ -1,12 +1,38 @@
 [package]
 name = "jppe_derive"
-version = "0.1.0"
+version = "0.2.0"
+authors = [
+    "jankincai <jankincai12@gmail.com>"
+]
 edition = "2021"
+description = "This is a byte stream structured serialization and deserialization library."
+repository = "https://github.com/caizhengxin/jppe-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs"
+readme = "../README.md"
+# https://crates.io/category_slugs
+categories = [
+    "encoding",
+    "parser-implementations",
+    "no-std"
+]
+keywords = [
+    "jppe-rs",
+    "ppe",
+    "byte",
+    "serialization",
+]
+license = "MIT OR Apache-2.0"
+include = [
+    "src/*",
+    "Cargo.toml",
+    "LICENSE*",
+]
+rust-version = "1.56"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
 proc-macro = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-virtue = "*"
+virtue = "0"
