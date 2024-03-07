@@ -62,7 +62,7 @@ impl crate::ByteEncode for HashMap<&[u8], &[u8]> {
 }
 
 
-impl<'de> crate::BorrowByteEncode for HashMap<&[u8], &[u8]> {
+impl crate::BorrowByteEncode for HashMap<&[u8], &[u8]> {
     fn encode(&self, input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 
             Self: Sized
@@ -82,7 +82,7 @@ impl crate::ByteEncode for HashMap<&str, &str> {
 }
 
 
-impl<'de> crate::BorrowByteEncode for HashMap<&str, &str> {
+impl crate::BorrowByteEncode for HashMap<&str, &str> {
     fn encode(&self, input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 
             Self: Sized
@@ -102,7 +102,7 @@ impl crate::ByteEncode for HashMap<String, String> {
 }
 
 
-impl<'de> crate::BorrowByteEncode for HashMap<String, String> {
+impl crate::BorrowByteEncode for HashMap<String, String> {
     fn encode(&self, input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 
             Self: Sized

@@ -29,13 +29,14 @@ pub use parser::*;
 pub use modifiers::*;
 
 pub mod prelude {
+    pub use jkcenum::FromInt;
+    pub use std::str::FromStr;
     // pub use crate::parser::*;
     pub use crate::byteorder::ByteOrder;
     // pub use crate::decode::*;
     // pub use crate::encode::*;
+    pub use crate::fields::*;
     pub use crate::modifiers::*;
-    pub use jkcenum::FromInt;
-    pub use std::str::FromStr;
 }
 
 

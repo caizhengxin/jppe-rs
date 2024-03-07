@@ -107,7 +107,7 @@ impl FromStr for MacAddress {
 
         for (i, v) in s.split(':').enumerate() {
             if i > 5 || v.len() != 2 {
-                return Err(MacAddressParseError::InvalidMacAddress(format!("{v:?}")));
+                return Err(MacAddressParseError::InvalidMacAddress(v.to_string()));
             }
 
             match u8::from_str_radix(v, 16) {
