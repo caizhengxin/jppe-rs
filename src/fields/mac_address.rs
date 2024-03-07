@@ -24,7 +24,12 @@ impl MacAddress {
     }
 
     #[inline]
-    pub fn to_u64(&self) -> u64 {
+    pub fn to_vec(&self) -> Vec<u8> {
+        self.0.to_vec()
+    }
+
+    #[inline]
+    pub fn to_bits(&self) -> u64 {
         let mut value: u64 = 0;
 
         for v in self.0 {
@@ -35,12 +40,12 @@ impl MacAddress {
     }
 
     #[inline]
-    pub fn from_u64(v: u64) -> Self {
+    pub fn from_bits(v: u64) -> Self {
         let mut mac = Self::default();
         let mut v = v;
 
         for i in 0..6 {
-            mac.0[i] = v as u8;
+            mac.0[5 - i] = v as u8;
             v >>= 8;
         }
 
@@ -190,7 +195,7 @@ mod tests {
         assert_eq!(MacAddress::from_str("ff:ff:ff:ff:ff:ef").unwrap().is_zero(), false);
         assert_eq!(MacAddress::from_str("00:00:00:00:00:00").unwrap().is_zero(), true);
 
-        assert_eq!(MacAddress::from_str("00:00:00:00:00:00").unwrap().to_u64(), 0);
+        assert_eq!(MacAddress::from_str("00:00:00:00:00:00").unwrap().to_bits(), 0);
     }
 
     #[cfg(feature = "serde")]

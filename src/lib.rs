@@ -4,6 +4,7 @@
 #![feature(extract_if)]
 #![feature(slice_internals)]
 #![feature(const_trait_impl)]
+#![feature(ip_bits)]
 
 #[cfg(feature = "jppe_derive")]
 #[allow(unused_imports)]
@@ -31,7 +32,7 @@ pub use modifiers::*;
 pub mod prelude {
     pub use jkcenum::FromInt;
     pub use std::str::FromStr;
-    // pub use crate::parser::*;
+    pub use crate::parser::*;
     pub use crate::byteorder::ByteOrder;
     // pub use crate::decode::*;
     // pub use crate::encode::*;
