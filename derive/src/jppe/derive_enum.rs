@@ -238,13 +238,8 @@ impl DeriveEnum {
                                         for (ident, field) in value {
                                             let attributes = field.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
                                             variant_body.push_parsed(attributes.to_code(false, true))?;
-                                    
-                                            if !attributes.untake {
-                                                generate_encode_body(variant_body, &attributes, false)?;
-                                                // jppe::ByteEncode::encode(&value, input, None, None);
-                                                // variant_body.push_parsed(format!("{ident}.encode(input, Some(&cattr), Some(&fattr));"))?;    
-                                                variant_body.push_parsed(format!("{crate_name}::encode({ident}, input, Some(&cattr), Some(&fattr));"))?;
-                                            }
+
+                                            generate_encode_body(variant_body, &attributes, crate_name, &ident.to_string(), false)?;
                                         }
                                     },
                                     Fields::Tuple(value) => {
@@ -254,11 +249,7 @@ impl DeriveEnum {
                                                 variant_body.push_parsed(attributes.to_code(false, false))?;
                                             }
 
-                                            if !attributes.untake {
-                                                generate_encode_body(variant_body, &attributes, false)?;
-                                                // variant_body.push_parsed(format!("v{index}.encode(input, Some(&cattr), Some(&fattr));"))?;    
-                                                variant_body.push_parsed(format!("{crate_name}::encode(v{index}, input, Some(&cattr), Some(&fattr));"))?;
-                                            }
+                                            generate_encode_body(variant_body, &attributes, crate_name, &format!("v{index}"), false)?;
                                         }
                                     },
                                 }

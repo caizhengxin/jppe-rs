@@ -31,6 +31,8 @@ pub struct FieldAttrModifiers {
     pub untake: bool,
     pub linend: bool,
     pub linend_value: Option<Vec<Vec<u8>>>,
+    pub bits: Option<usize>,
+    pub bits_start: bool,
 
     // key value
     pub key: Option<Vec<u8>>,

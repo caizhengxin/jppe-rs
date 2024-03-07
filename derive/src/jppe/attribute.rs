@@ -81,6 +81,12 @@ pub struct FieldAttributes {
     pub untake: bool,
     pub full: Option<AttrValue>,
     pub count: Option<AttrValue>,
+    pub bits: Option<AttrValue>,
+    pub bits_start: bool,
+
+    pub value_encode: Option<String>,
+    pub value_decode: Option<String>,
+    pub value: Option<String>,
 
     pub key: Option<AttrValue>,
     pub split: Option<AttrValue>,
@@ -104,10 +110,12 @@ impl FieldAttributes {
         let branch = self.branch.to_code(is_self, is_deref);
         let split = self.split.to_code(false, false);
         let linend = self.linend.to_code(false, false);
+        let bits = self.bits.to_code(is_self, is_deref);
+        let bits_start = self.bits_start;
 
         format!("let mut fattr = jppe::FieldAttrModifiers {{
             byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
-            split: {split}, linend_value: {linend},
+            split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
             ..Default::default()
         }};")
     }
@@ -134,6 +142,7 @@ impl FromAttribute for FieldAttributes {
                     match i.to_string().as_str() {
                         "enum_default" | "branch_default" => result.branch_default = true,
                         "untake" => result.untake = true,
+                        "bits_start" => result.bits_start = true,
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }
@@ -152,6 +161,14 @@ impl FromAttribute for FieldAttributes {
                         "branch_range" => result.branch_range = Some(parse_value_string(&val)?),
                         "branch_value" => result.branch_value = Some(parse_value_string(&val)?),
                         "branch_bits" => result.branch_bits = Some(AttrValue::parse_usize(&val)?),
+                        "bits" => result.bits = Some(AttrValue::parse_usize(&val)?),
+                        "bits_start" => {
+                            result.bits = Some(AttrValue::parse_usize(&val)?);
+                            result.bits_start = true;
+                        },
+                        "value_encode" => result.value_encode = Some(parse_value_string(&val)?),
+                        "value_decode" => result.value_decode = Some(parse_value_string(&val)?),
+                        "value" => result.value = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }

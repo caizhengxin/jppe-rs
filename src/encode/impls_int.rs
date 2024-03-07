@@ -13,35 +13,51 @@ macro_rules! impls_int {
                 let mut byte_tmp = None;
                 let mut byteorder = ByteOrder::Be;
 
-                if let Some(value) = cattr && let Some(byteorder_tmp) = value.byteorder {
-                    byteorder = byteorder_tmp;
-                }
+                let mut value = *self;
 
-                if let Some(value) = fattr {
-                    if let Some(length) = value.length && length < $byte {
-                        byte_tmp = Some(length);
-                    }
+                if let Some(cr) = cattr && let Some(byteorder_tmp) = cr.byteorder { byteorder = byteorder_tmp; }
 
-                    if let Some(byteorder_tmp) = value.byteorder {
-                        byteorder = byteorder_tmp;
+                if let Some(fr) = fattr {
+                    if let Some(length) = fr.length && length < $byte { byte_tmp = Some(length); }
+                    if let Some(byteorder_tmp) = fr.byteorder { byteorder = byteorder_tmp; }
+
+                    if let Some(bits) = fr.bits {
+                        let mut bits = bits as u128;
+                                                
+                        for _i in 0..$type::BITS {
+                            if bits & 0x01 == 0 {
+                                value <<= 1;
+                                bits >>= 1;
+                            }
+                        }
+
+                        if !fr.bits_start {
+                            let byte = ($type::BITS / 8) as usize;
+    
+                            if input.len() >= byte && let Ok(v) = <[u8; $byte]>::try_from(&input[input.len() - byte..]) {
+                                let prev_bits = $type::from_be_bytes(v);
+                                value = value | prev_bits;
+                                for _ in 0..byte { input.pop(); }
+                            }    
+                        }
                     }
                 }
                         
                 match byteorder {
                     ByteOrder::Be => {
                         if let Some(byte) = byte_tmp {
-                            input.extend(&self.to_be_bytes()[$byte - byte..]);
+                            input.extend(&value.to_be_bytes()[$byte - byte..]);
                         }
                         else {
-                            input.extend(self.to_be_bytes());
+                            input.extend(value.to_be_bytes());
                         }
                     },
                     ByteOrder::Le => {
                         if let Some(byte) = byte_tmp {
-                            input.extend(&self.to_le_bytes()[..byte]);
+                            input.extend(&value.to_le_bytes()[..byte]);
                         }
                         else {
-                            input.extend(self.to_le_bytes());
+                            input.extend(value.to_le_bytes());
                         }
                     },
                 }            
@@ -54,44 +70,7 @@ macro_rules! impls_int {
                 where 
                     Self: Sized
             {
-                let mut byte_tmp = None;
-                let mut byteorder = None;
-
-                if let Some(value) = fattr {
-                    if let Some(length) = value.length && length < $byte {
-                        byte_tmp = Some(length);
-                    }
-
-                    byteorder = value.byteorder;
-                }
-                else if byteorder.is_none() && let Some(value) = cattr {
-                    byteorder = value.byteorder;
-                }
-            
-                let mut byteorder_tmp = ByteOrder::Be;
-            
-                if let Some(byteorder) = byteorder {
-                    byteorder_tmp = byteorder;
-                }
-            
-                match byteorder_tmp {
-                    ByteOrder::Be => {
-                        if let Some(byte) = byte_tmp {
-                            input.extend(&self.to_be_bytes()[$byte - byte..]);
-                        }
-                        else {
-                            input.extend(self.to_be_bytes());
-                        }
-                    },
-                    ByteOrder::Le => {
-                        if let Some(byte) = byte_tmp {
-                            input.extend(&self.to_le_bytes()[..byte]);
-                        }
-                        else {
-                            input.extend(self.to_le_bytes());
-                        }
-                    },
-                }            
+                ByteEncode::encode(self, input, cattr, fattr);
             }
         }
     };

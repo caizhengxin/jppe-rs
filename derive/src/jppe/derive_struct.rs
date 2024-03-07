@@ -198,13 +198,7 @@ impl DeriveStruct {
                         let attributes = field.attributes().get_attribute::<FieldAttributes>()?.unwrap_or_default();
 
                         fn_body.push_parsed(attributes.to_code(true, false))?;
-                        // self.xxx.encode(input, Some(&cattr), Some(&fattr))
-                        // jppe::ByteEncode::encode(&value, &mut buf, None, None);
-                        // fn_body.push_parsed(format!("self.{field}.encode(input, Some(&cattr), Some(&fattr));"))?;
-                        if !attributes.untake {
-                            generate_encode_body(fn_body, &attributes, true)?;
-                            fn_body.push_parsed(format!("{crate_name}::encode(&self.{field}, input, Some(&cattr), Some(&fattr));"))?;
-                        }
+                        generate_encode_body(fn_body, &attributes, crate_name, &field.to_string(), true)?;
                     }
                 }
                 Ok(())
