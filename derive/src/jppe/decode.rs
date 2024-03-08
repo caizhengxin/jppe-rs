@@ -17,6 +17,15 @@ pub fn generate_decode_body2(fn_body: &mut StreamBuilder, attributes: &FieldAttr
 pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attributes: &FieldAttributes, name: String, rtype: &str, is_enum: bool) -> Result<()> {
     let name = if is_enum { format!("v{name}") } else { name };
 
+    if let Some(func) = &attributes.with_decode {
+        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {func}(input, Some(&cattr), Some(&fattr))?;"))?;
+        return Ok(());
+    }
+    else if let Some(func) = &attributes.with {
+        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {func}::decode(input, Some(&cattr), Some(&fattr))?;"))?;
+        return Ok(());
+    }
+
     generate_decode_body2(fn_body, attributes)?;
 
     // untake

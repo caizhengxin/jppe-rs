@@ -115,7 +115,7 @@ use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 pub struct Ipv4<'a> {
     #[jppe(bits_start=0xf0, untake)]
     pub version: u8,
-    #[jppe(bits=0x0f, value_decode="header_length << 2", value_encode="header_length >> 2")]
+    #[jppe(bits=0x0f, decode_value="header_length << 2", encode_value="header_length >> 2")]
     pub header_length: u8,
     pub tos: u8,
     pub total_length: u16,
@@ -178,7 +178,7 @@ pub struct Tcp<'a> {
     pub dport: u16,
     pub seq: u32,
     pub ack: u32,
-    #[jppe(bits_start=0xf000, value_decode="header_length * 4", value_encode="header_length / 4", untake)]
+    #[jppe(bits_start=0xf000, decode_value="header_length * 4", encode_value="header_length / 4", untake)]
     pub header_length: u16,
     #[jppe(bits=0x0fff)]
     pub flags: u16,
@@ -260,9 +260,9 @@ fn main() {
 ### ContainerAttrModifiers
 
 - [x] `byteorder=<"BE"|"LE">`: The global byte order of struct and enum, eg: `#[jppe(byteorder="LE")]`.
-- [ ] `with_encode`: custom encode function.
-- [ ] `with_decode`: custom decode function.
-- [ ] `with`: custom encode/decode function.
+- [x] `encode_with`: custom encode function.
+- [x] `decode_with`: custom decode function.
+- [x] `with`: custom encode/decode function.
 - [ ] `get_variable_name`
 
 > enum branch
@@ -284,11 +284,11 @@ fn main() {
 - [ ] `key`
 - [x] `split`: eg: `hashmap`
 - [ ] `if_expr`
-- [ ] `with_encode`: custom encode function.
-- [ ] `with_decode`: custom decode function.
-- [ ] `with`: custom encode/decode function.
-- [ ] `value_encode`: value processing expression, eg: `#[jppe(value_encode="length * 2")]`.
-- [ ] `value_decode`: value processing expression, eg: `#[jppe(value_encode="length / 2")]`.
+- [x] `encode_with`: custom encode function.
+- [x] `decode_with`: custom decode function.
+- [x] `with`: custom encode/decode function.
+- [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
+- [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [ ] `variable_name`
 
 > enum branch

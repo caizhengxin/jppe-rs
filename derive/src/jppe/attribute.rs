@@ -18,6 +18,11 @@ pub struct ContainerAttributes {
     pub branch_byteorder: Option<String>,
     pub branch_func: Option<String>,
     pub branch_enum: Option<String>,
+
+    // custom encode/decode function.
+    pub with_encode: Option<String>,
+    pub with_decode: Option<String>,
+    pub with: Option<String>,
 }
 
 
@@ -60,6 +65,10 @@ impl FromAttribute for ContainerAttributes {
                         "branch_byteorder" => result.branch_byteorder = Some(parse_value_string(&val)?),
                         "branch_func" => result.branch_func = Some(parse_value_string(&val)?),
                         "branch_enum" => result.branch_enum = Some(parse_value_string(&val)?),
+                        // custom encode/decode
+                        "with_encode" | "encode_with" => result.with_encode = Some(parse_value_string(&val)?),
+                        "with_decode" | "decode_with" => result.with_decode = Some(parse_value_string(&val)?),
+                        "with" => result.with = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }
@@ -98,6 +107,11 @@ pub struct FieldAttributes {
     pub branch_range: Option<String>,
     pub branch_value: Option<String>,
     pub branch_default: bool,
+
+    // custom encode/decode function.
+    pub with_encode: Option<String>,
+    pub with_decode: Option<String>,
+    pub with: Option<String>,
 }
 
 
@@ -165,8 +179,12 @@ impl FromAttribute for FieldAttributes {
                             result.bits = Some(AttrValue::parse_usize(&val)?);
                             result.bits_start = true;
                         },
-                        "value_encode" => result.value_encode = Some(parse_value_string(&val)?),
-                        "value_decode" => result.value_decode = Some(parse_value_string(&val)?),
+                        "value_encode" | "encode_value" => result.value_encode = Some(parse_value_string(&val)?),
+                        "value_decode" | "decode_value" => result.value_decode = Some(parse_value_string(&val)?),
+                        // custom encode/decode
+                        "with_encode" | "encode_with" => result.with_encode = Some(parse_value_string(&val)?),
+                        "with_decode" | "decode_with" => result.with_decode = Some(parse_value_string(&val)?),
+                        "with" => result.with = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }

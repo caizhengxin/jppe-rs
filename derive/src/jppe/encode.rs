@@ -27,6 +27,15 @@ pub fn generate_encode_body(fn_body: &mut StreamBuilder, attributes: &FieldAttri
     let der_arg = if is_self {"&"} else {""};
     let self_arg = if is_self {"self."} else {""};
 
+    if let Some(func) = &attributes.with_encode {
+        fn_body.push_parsed(format!("{func}(input, Some(&cattr), Some(&fattr), {der_arg}{self_arg}{field});"))?;
+        return Ok(());
+    }
+    else if let Some(func) = &attributes.with {
+        fn_body.push_parsed(format!("{func}::encode(input, Some(&cattr), Some(&fattr), {der_arg}{self_arg}{field});"))?;
+        return Ok(());
+    }
+
     if attributes.bits.is_some() || !attributes.untake {
         generate_encode_body2(fn_body, attributes, is_self)?;
 

@@ -28,6 +28,7 @@ pub use encode::*;
 pub use errors::*;
 pub use parser::*;
 pub use modifiers::*;
+pub use input::*;
 
 pub mod prelude {
     pub use jkcenum::FromInt;
@@ -38,6 +39,7 @@ pub mod prelude {
     // pub use crate::encode::*;
     pub use crate::fields::*;
     pub use crate::modifiers::*;
+    pub use crate::input::*;
 }
 
 

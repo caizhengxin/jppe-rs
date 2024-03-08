@@ -37,8 +37,8 @@ impl DeriveEnum {
             .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
             .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
-                fn_body.push_parsed(self.attributes.to_code(false))?;
-                self.generate_byte_decode_body(crate_name, fn_body)?;
+                self.generate_decode_body(crate_name, fn_body)?;
+
                 Ok(())
             })?;
 
@@ -60,10 +60,25 @@ impl DeriveEnum {
             .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
             .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
-                fn_body.push_parsed(self.attributes.to_code(false))?;
-                self.generate_byte_decode_body(crate_name, fn_body)?;
+                self.generate_decode_body(crate_name, fn_body)?;
                 Ok(())
             })?;
+
+        Ok(())
+    }
+
+    #[inline]
+    fn generate_decode_body(&self, crate_name: &str, fn_body: &mut StreamBuilder) -> Result<()> {
+        if let Some(func) = &self.attributes.with_decode {
+            fn_body.push_parsed(format!("{func}(input, cattr, fattr)"))?;
+        }
+        else if let Some(func) = &self.attributes.with {
+            fn_body.push_parsed(format!("{func}::decode(input, cattr, fattr)"))?;
+        }
+        else {
+            fn_body.push_parsed(self.attributes.to_code(false))?;
+            self.generate_byte_decode_body(crate_name, fn_body)?;    
+        }
 
         Ok(())
     }
@@ -148,16 +163,16 @@ impl DeriveEnum {
     }
 
     pub fn generate_encode(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_byte_encode("jppe::ByteEncode", generator)?;
+        self.generate_byte_encode_body("jppe::ByteEncode", generator)?;
         Ok(())
     }
 
     pub fn generate_borrow_encode(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_byte_encode("jppe::BorrowByteEncode", generator)?;
+        self.generate_byte_encode_body("jppe::BorrowByteEncode", generator)?;
         Ok(())
     }
 
-    fn generate_byte_encode(&self, crate_name: &str, generator: &mut Generator) -> Result<()> {
+    fn generate_byte_encode_body(&self, crate_name: &str, generator: &mut Generator) -> Result<()> {
         generator
             .impl_for(crate_name)
             .generate_fn("encode")
@@ -166,6 +181,16 @@ impl DeriveEnum {
             .with_arg("cattr", "Option<&jppe::ContainerAttrModifiers>")
             .with_arg("fattr", "Option<&jppe::FieldAttrModifiers>")
             .body(|fn_body| {
+
+                if let Some(func) = &self.attributes.with_encode {
+                    fn_body.push_parsed(format!("{func}(input, cattr, fattr, self)"))?;
+                    return Ok(());
+                }
+                else if let Some(func) = &self.attributes.with {
+                    fn_body.push_parsed(format!("{func}::encode(input, cattr, fattr, self)"))?;
+                    return Ok(());
+                }
+
                 // enum Example {
                 //    V0,
                 //    V1(u8),

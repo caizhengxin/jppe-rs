@@ -136,8 +136,9 @@ impl DeriveStruct {
             .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
             .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
-                fn_body.push_parsed(self.attributes.to_code(false))?;
+                // fn_body.push_parsed(self.attributes.to_code(false))?;
                 self.generate_byte_decode_body(crate_name, fn_body)?;
+
                 Ok(())
             })?;
 
@@ -158,8 +159,9 @@ impl DeriveStruct {
             .with_arg("fattr", "Option<&'db jppe::FieldAttrModifiers>")
             .with_return_type("jppe::JResult<&'da [u8], Self>")
             .body(|fn_body| {
-                fn_body.push_parsed(self.attributes.to_code(false))?;
+                // fn_body.push_parsed(self.attributes.to_code(false))?;
                 self.generate_byte_decode_body(crate_name, fn_body)?;
+
                 Ok(())
             })?;
 
@@ -167,8 +169,18 @@ impl DeriveStruct {
     }
 
     fn generate_byte_decode_body(&self, crate_name: &str, fn_body: &mut StreamBuilder) -> Result<()> {
-        generate_decode_struct_body(fn_body, crate_name, &self.fields, false)?;
-        generate_decode_return(fn_body, &self.fields, None)?;
+        if let Some(func) = &self.attributes.with_decode {
+            fn_body.push_parsed(format!("{func}(input, cattr, fattr)"))?;
+        }
+        else if let Some(func) = &self.attributes.with {
+            fn_body.push_parsed(format!("{func}::decode(input, cattr, fattr)"))?;
+        }
+        else {
+            fn_body.push_parsed(self.attributes.to_code(false))?;
+            generate_decode_struct_body(fn_body, crate_name, &self.fields, false)?;
+            generate_decode_return(fn_body, &self.fields, None)?;
+        }
+
         Ok(())
     }
 
@@ -191,16 +203,25 @@ impl DeriveStruct {
             .with_arg("cattr", "Option<&jppe::ContainerAttrModifiers>")
             .with_arg("fattr", "Option<&jppe::FieldAttrModifiers>")
             .body(|fn_body| {
-                fn_body.push_parsed(self.attributes.to_code(true))?;
+                if let Some(func) = &self.attributes.with_encode {
+                    fn_body.push_parsed(format!("{func}(input, cattr, fattr, self)"))?;
+                }
+                else if let Some(func) = &self.attributes.with {
+                    fn_body.push_parsed(format!("{func}::encode(input, cattr, fattr, self)"))?;
+                }
+                else {
+                    fn_body.push_parsed(self.attributes.to_code(true))?;
 
-                if let Some(fields) = self.fields.as_ref() {
-                    for field in fields.names() {
-                        let attributes = field.attributes().get_attribute::<FieldAttributes>()?.unwrap_or_default();
-
-                        fn_body.push_parsed(attributes.to_code(true, false))?;
-                        generate_encode_body(fn_body, &attributes, crate_name, &field.to_string(), true)?;
+                    if let Some(fields) = self.fields.as_ref() {
+                        for field in fields.names() {
+                            let attributes = field.attributes().get_attribute::<FieldAttributes>()?.unwrap_or_default();
+    
+                            fn_body.push_parsed(attributes.to_code(true, false))?;
+                            generate_encode_body(fn_body, &attributes, crate_name, &field.to_string(), true)?;
+                        }
                     }
                 }
+        
                 Ok(())
             })?;
         Ok(())
