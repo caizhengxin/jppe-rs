@@ -287,6 +287,7 @@ fn main() {
 - [x] `encode_with`: custom encode function.
 - [x] `decode_with`: custom decode function.
 - [x] `with`: custom encode/decode function.
+- [x] `with_args`: custom encode/decode function args.
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [ ] `variable_name`

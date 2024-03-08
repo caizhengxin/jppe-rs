@@ -112,6 +112,7 @@ pub struct FieldAttributes {
     pub with_encode: Option<String>,
     pub with_decode: Option<String>,
     pub with: Option<String>,
+    pub with_args: Option<String>,
 }
 
 
@@ -184,6 +185,7 @@ impl FromAttribute for FieldAttributes {
                         // custom encode/decode
                         "with_encode" | "encode_with" => result.with_encode = Some(parse_value_string(&val)?),
                         "with_decode" | "decode_with" => result.with_decode = Some(parse_value_string(&val)?),
+                        "with_args" => result.with_args = Some(parse_value_string(&val)?),
                         "with" => result.with = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
