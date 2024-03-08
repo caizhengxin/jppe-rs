@@ -263,6 +263,7 @@ fn main() {
 - [ ] `with_encode`: custom encode function.
 - [ ] `with_decode`: custom decode function.
 - [ ] `with`: custom encode/decode function.
+- [ ] `get_variable_name`
 
 > enum branch
 
@@ -288,6 +289,7 @@ fn main() {
 - [ ] `with`: custom encode/decode function.
 - [ ] `value_encode`: value processing expression, eg: `#[jppe(value_encode="length * 2")]`.
 - [ ] `value_decode`: value processing expression, eg: `#[jppe(value_encode="length / 2")]`.
+- [ ] `variable_name`
 
 > enum branch
 
@@ -312,6 +314,7 @@ fn main() {
 - [x] `Option<T>`
 - [x] `Struct`
 - [x] `Enum`
+- [x] `PhantomData`
 - [x] `HashMap`
 - [ ] `HashSet`
 - [x] `Macaddress`

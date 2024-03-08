@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use crate::{BorrowByteDecode, ByteDecode};
 use crate::{FieldAttrModifiers, ContainerAttrModifiers};
 #[allow(unused_imports)]
@@ -111,6 +113,22 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
         }
 
         Ok((input, value_list))
+    }
+}
+
+
+impl<T> ByteDecode for PhantomData<T> {
+    fn decode<'da, 'db>(input: &'da [u8], _cattr: Option<&'db ContainerAttrModifiers>, _fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
+    {
+        Ok((input, PhantomData))
+    }
+}
+
+
+impl<'de, T> BorrowByteDecode<'de> for PhantomData<T> {
+    fn decode<'da: 'de, 'db>(input: &'da [u8], _cattr: Option<&'db ContainerAttrModifiers>, _fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
+    {
+        Ok((input, PhantomData))
     }
 }
 
