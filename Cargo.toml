@@ -1,6 +1,6 @@
 [package]
 name = "jppe"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
     "jankincai <jankincai12@gmail.com>"
 ]
@@ -44,7 +44,7 @@ derive = ["jppe_derive"]
 jppe_serde = ["serde"]
 
 [dependencies]
-jppe_derive = { path = "derive", version = "0.2.0", optional = true }
+jppe_derive = { path = "derive", version = "0.3.0", optional = true }
 serde = { version = "1.0", optional = true }
 jkcenum = { version = "0", features = ["derive"] }
 thiserror = "1.0"
@@ -52,4 +52,4 @@ thiserror = "1.0"
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-jppe_derive = { path = "derive", version = "0.2.0" }
+jppe_derive = { path = "derive", version = "0.3.0" }

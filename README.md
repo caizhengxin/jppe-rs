@@ -12,7 +12,7 @@ This is a byte stream structured serialization and deserialization library that 
 
 ```toml
 [dependencies]
-jppe = { version="0.2.0", features = ["derive"] }
+jppe = { version="0.3.0", features = ["derive"] }
 ```
 
 ### Simple Example
