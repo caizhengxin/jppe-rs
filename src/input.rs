@@ -5,7 +5,7 @@ use crate::errors::{make_error, ErrorKind};
 pub trait InputTrait<'a> {
     fn find_subsequence<'b>(&self, needle: &'b [u8]) -> JResult<&'a [u8], &'a [u8]>;
 
-    fn find_subsequences<'b>(&self, needles: &'a [&'a [u8]]) -> JResult<&'a [u8], &'a [u8]>;
+    fn find_subsequences<'b>(&self, needles: &'b [&'b [u8]]) -> JResult<&'a [u8], &'a [u8]>;
 
     fn input_take(&self, length: usize) -> JResult<&'a [u8], &'a [u8]>;
 
@@ -39,7 +39,7 @@ impl<'a> InputTrait<'a> for &'a [u8] {
         Err(make_error(input, ErrorKind::InvalidByteLength { offset: 0 }))
     }
 
-    fn find_subsequences<'b>(&self, needles: &'a [&'a [u8]]) -> JResult<&'a [u8], &'a [u8]> {
+    fn find_subsequences<'b>(&self, needles: &'b [&'b [u8]]) -> JResult<&'a [u8], &'a [u8]> {
         let input = *self;
         let input_len = input.len();
 
