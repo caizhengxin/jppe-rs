@@ -6,6 +6,7 @@ use virtue::prelude::*;
 use super::attribute::{ContainerAttributes, FieldAttributes};
 use super::decode::generate_decode_body;
 use super::encode::generate_encode_body;
+use super::parse::AttrValue;
 
 
 pub(crate) struct DeriveStruct {
@@ -177,6 +178,15 @@ impl DeriveStruct {
         }
         else {
             fn_body.push_parsed(self.attributes.to_code(false))?;
+
+            if let Some(value) = &self.attributes.get_variable_name && let AttrValue::List(variable_names) = value {
+                for variable_name in variable_names {
+                    let variable_name_str = variable_name.to_string();
+
+                    fn_body.push_parsed(format!("let {variable_name_str} = if let Some(cr) = cattr && let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{*value}} else {{0}};"))?;
+                }
+            }
+
             generate_decode_struct_body(fn_body, crate_name, &self.fields, false)?;
             generate_decode_return(fn_body, &self.fields, None)?;
         }

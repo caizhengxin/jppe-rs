@@ -3,6 +3,7 @@ use virtue::{generate::Generator, parse::IdentOrIndex};
 use virtue::prelude::*;
 #[allow(unused_imports)]
 use super::attribute::{ContainerAttributes, FieldAttributes};
+use super::parse::AttrValue;
 use super::derive_struct::{generate_decode_struct_body, generate_decode_return};
 use super::encode::{generate_encode_body, generate_encode_body2};
 use super::decode::generate_decode_body2;
@@ -77,6 +78,15 @@ impl DeriveEnum {
         }
         else {
             fn_body.push_parsed(self.attributes.to_code(false))?;
+
+            if let Some(value) = &self.attributes.get_variable_name && let AttrValue::List(variable_names) = value {
+                for variable_name in variable_names {
+                    let variable_name_str = variable_name.to_string();
+
+                    fn_body.push_parsed(format!("let {variable_name_str} = if let Some(cr) = cattr && let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{*value}} else {{0}};"))?;
+                }
+            }
+
             self.generate_byte_decode_body(crate_name, fn_body)?;    
         }
 

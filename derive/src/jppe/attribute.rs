@@ -12,6 +12,7 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 #[derive(Debug, Default)]
 pub struct ContainerAttributes {
     pub byteorder: Option<AttrValue>,
+    pub get_variable_name: Option<AttrValue>,
 
     // branch
     pub branch_byte: Option<u8>,
@@ -30,7 +31,7 @@ impl ContainerAttributes {
     pub fn to_code(&self, is_self: bool) -> String {
         let byteorder = self.byteorder.to_byteorder(is_self);
 
-        format!("let mut cattr = jppe::ContainerAttrModifiers {{
+        format!("let mut cattr_new = jppe::ContainerAttrModifiers {{
             byteorder: {byteorder},
             ..Default::default()
         }};")
@@ -61,6 +62,8 @@ impl FromAttribute for ContainerAttributes {
                     match key.to_string().as_str() {
                         // "alias" => {},
                         "byteorder" => result.byteorder = Some(AttrValue::parse_byteorder(&val)?),
+                        "get_variable_name" => result.get_variable_name = Some(AttrValue::parse_list(&val)?),
+
                         "branch_byte" => result.branch_byte = Some(parse_value_string(&val)?.parse().unwrap()),
                         "branch_byteorder" => result.branch_byteorder = Some(parse_value_string(&val)?),
                         "branch_func" => result.branch_func = Some(parse_value_string(&val)?),
@@ -95,6 +98,8 @@ pub struct FieldAttributes {
 
     pub value_encode: Option<String>,
     pub value_decode: Option<String>,
+
+    pub variable_name: Option<AttrValue>,
 
     pub key: Option<AttrValue>,
     pub split: Option<AttrValue>,
@@ -187,6 +192,7 @@ impl FromAttribute for FieldAttributes {
                         "with_decode" | "decode_with" => result.with_decode = Some(parse_value_string(&val)?),
                         "with_args" => result.with_args = Some(parse_value_string(&val)?),
                         "with" => result.with = Some(parse_value_string(&val)?),
+                        "variable_name" => result.variable_name = Some(AttrValue::parse_list(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }

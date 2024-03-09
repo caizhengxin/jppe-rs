@@ -263,7 +263,7 @@ fn main() {
 - [x] `encode_with`: custom encode function.
 - [x] `decode_with`: custom decode function.
 - [x] `with`: custom encode/decode function.
-- [ ] `get_variable_name`
+- [x] `get_variable_name`: Get cache variable, must be used with `variable_name`, only for decode, eg: `test_modifier_variable_name.rs`.
 
 > enum branch
 
@@ -290,7 +290,7 @@ fn main() {
 - [x] `with_args`: custom encode/decode function args.
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
-- [ ] `variable_name`
+- [x] `variable_name`: Set integer cache variable, only for decode, eg: `test_modifier_variable_name.rs`.
 
 > enum branch
 

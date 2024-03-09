@@ -1,3 +1,4 @@
+use std::{cell::RefCell, collections::HashMap};
 use crate::ByteOrder;
 
 
@@ -14,6 +15,9 @@ pub enum ModifierValue {
 pub struct ContainerAttrModifiers {
     pub byteorder: Option<ByteOrder>,
     pub expr: Option<String>,
+
+    // cache variable
+    pub variable_name: RefCell<HashMap<String, usize>>,
 }
 
 
