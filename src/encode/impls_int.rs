@@ -36,7 +36,7 @@ macro_rules! impls_int {
     
                             if input.len() >= byte && let Ok(v) = <[u8; $byte]>::try_from(&input[input.len() - byte..]) {
                                 let prev_bits = $type::from_be_bytes(v);
-                                value = value | prev_bits;
+                                value |= prev_bits;
                                 for _ in 0..byte { input.pop(); }
                             }    
                         }
