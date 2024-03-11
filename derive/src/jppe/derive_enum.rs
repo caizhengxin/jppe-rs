@@ -154,7 +154,34 @@ impl DeriveEnum {
                 for (variant_index, variant) in self.iter_fields() {
                     let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
 
-                    variant_case.push_parsed(if attributes.branch_default { "_".to_string() } else { variant_index.to_string() })?;
+                    if attributes.branch_default {
+                        variant_case.push_parsed("_")?;
+                    }
+                    else if let Some(branch_bits) = &attributes.branch_bits {
+                        // match value {
+                        //     value if (value & 0x80) == 0x80 => {},
+                        //     value if (value & 0x01) == 0x80 => {},
+                        //     0x02 => {},
+                        //     _ => {},
+                        // }
+
+                        if let Some(branch_bits_value) = &attributes.branch_bits_value {
+                            variant_case.push_parsed(format!("value if (value & {branch_bits}) == {branch_bits_value}"))?;
+                        }
+                        else {
+                            variant_case.push_parsed(format!("value if (value & {branch_bits}) == {branch_bits}"))?;
+                        }
+                    }
+                    else if let Some(branch_value) = &attributes.branch_value {
+                        variant_case.push_parsed(branch_value.to_string())?;
+                    }
+                    else if let Some(branch_range) = &attributes.branch_range {
+                        variant_case.push_parsed(branch_range.to_string())?;
+                    }
+                    else {
+                        variant_case.push_parsed( variant_index.to_string())?;
+                    }
+
                     variant_case.puncts("=>");
                     variant_case.group(Delimiter::Brace, |variant_body| {
                         variant_body.push_parsed(attributes.to_code(true, true))?;

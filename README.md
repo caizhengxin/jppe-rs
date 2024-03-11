@@ -4,7 +4,7 @@
 [![Crates.io](https://img.shields.io/crates/d/jppe)](https://crates.io/crates/jppe)
 [![License](https://img.shields.io/crates/l/jppe)](LICENSE)
 
-This is a byte stream structured serialization and deserialization library that is still under development.
+This is a byte stream structured serialization and deserialization library.
 
 ## Usage
 
@@ -297,10 +297,9 @@ fn main() {
 
 - [x] `branch`
 - [x] `branch_default`
-- [ ] `branch_bits`
-- [ ] `branch_range`
-- [ ] `branch_value`
-- [ ] `branch_expr`
+- [x] `branch_bits`
+- [x] `branch_range`
+- [x] `branch_value`
 
 ### DataType
 

@@ -107,8 +107,8 @@ pub struct FieldAttributes {
 
     // branch
     pub branch: Option<AttrValue>,
-    pub branch_bits: Option<AttrValue>,
-    pub branch_expr: Option<String>,
+    pub branch_bits: Option<String>,
+    pub branch_bits_value: Option<String>,
     pub branch_range: Option<String>,
     pub branch_value: Option<String>,
     pub branch_default: bool,
@@ -179,10 +179,11 @@ impl FromAttribute for FieldAttributes {
                         "split" => result.split = Some(AttrValue::parse_list(&val)?),
                         "linend" | "end_with" => result.linend = Some(AttrValue::parse_list(&val)?),
                         "branch" => result.branch = Some(AttrValue::parse_usize(&val)?),
-                        "branch_expr" => result.branch_expr = Some(parse_value_string(&val)?),
                         "branch_range" => result.branch_range = Some(parse_value_string(&val)?),
                         "branch_value" => result.branch_value = Some(parse_value_string(&val)?),
-                        "branch_bits" => result.branch_bits = Some(AttrValue::parse_usize(&val)?),
+                        "branch_bits" => result.branch_bits = Some(parse_value_string(&val)?),
+                        "branch_bits_value" => result.branch_bits_value = Some(parse_value_string(&val)?),
+
                         "bits" => result.bits = Some(AttrValue::parse_usize(&val)?),
                         "bits_start" => {
                             result.bits = Some(AttrValue::parse_usize(&val)?);
