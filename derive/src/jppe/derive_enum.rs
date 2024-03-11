@@ -151,11 +151,14 @@ impl DeriveEnum {
             fn_body.push_parsed(code)?;
             fn_body.push_parsed("match value")?;
             fn_body.group(Delimiter::Brace, |variant_case| {
+                let mut branch_default = false;
+
                 for (variant_index, variant) in self.iter_fields() {
                     let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
 
                     if attributes.branch_default {
                         variant_case.push_parsed("_")?;
+                        branch_default = true;
                     }
                     else if let Some(branch_bits) = &attributes.branch_bits {
                         // match value {
@@ -190,6 +193,10 @@ impl DeriveEnum {
                         generate_decode_return(variant_body, &variant.fields, Some(variant))?;
                         Ok(())
                     })?;
+                }
+
+                if !branch_default {
+                    variant_case.push_parsed("_ => Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }))")?;
                 }
 
                 Ok(())
