@@ -3,9 +3,11 @@ use crate::errors::{make_error, ErrorKind};
 
 
 pub trait InputTrait<'a> {
-    fn find_subsequence<'b>(&self, needle: &'b [u8]) -> JResult<&'a [u8], &'a [u8]>;
+    fn find_subsequence<'b>(&self, needle: &'b [u8], is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]>;
 
-    fn find_subsequences<'b>(&self, needles: &'b [&'b [u8]]) -> JResult<&'a [u8], &'a [u8]>;
+    fn find_subsequences<'b>(&self, needles: &'b [&'b [u8]], is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]>;
+
+    fn find_subsequences2<'b>(&self, needles: &'b Vec<Vec<u8>>, is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]>;
 
     fn input_take(&self, length: usize) -> JResult<&'a [u8], &'a [u8]>;
 
@@ -18,7 +20,7 @@ pub trait InputTrait<'a> {
 
 
 impl<'a> InputTrait<'a> for &'a [u8] {
-    fn find_subsequence<'b>(&self, needle: &'b [u8]) -> JResult<&'a [u8], &'a [u8]> {
+    fn find_subsequence<'b>(&self, needle: &'b [u8], is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]> {
         let input = *self;
         let needle_len = needle.len();
         let input_len = input.len();
@@ -33,18 +35,31 @@ impl<'a> InputTrait<'a> for &'a [u8] {
             .position(|window| window == needle) &&
            let Some(value) = input.take(..index + needle_len)
         {
-            return Ok((input, &value[..index]));
+            return Ok((input, if is_save_needle {value} else {&value[..index]}));
         }
 
         Err(make_error(input, ErrorKind::InvalidByteLength { offset: 0 }))
     }
 
-    fn find_subsequences<'b>(&self, needles: &'b [&'b [u8]]) -> JResult<&'a [u8], &'a [u8]> {
+    fn find_subsequences<'b>(&self, needles: &'b [&'b [u8]], is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]> {
         let input = *self;
         let input_len = input.len();
 
         for needle in needles {
-            if let Ok((input, value)) = self.find_subsequence(needle) {
+            if let Ok((input, value)) = self.find_subsequence(needle, is_save_needle) {
+                return Ok((input, value));
+            }
+        }
+    
+        Err(make_error(input, ErrorKind::SubSequence { offset: input_len }))      
+    }
+
+    fn find_subsequences2<'b>(&self, needles: &'b Vec<Vec<u8>>, is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]> {
+        let input = *self;
+        let input_len = input.len();
+
+        for needle in needles {
+            if let Ok((input, value)) = self.find_subsequence(needle, is_save_needle) {
                 return Ok((input, value));
             }
         }
@@ -120,8 +135,13 @@ mod test {
         assert_eq!(input, b"\x00\x02");
 
         let input = &b"\x00\x01\x00\x02"[..];
-        let (input, value) = input.find_subsequence(b"\x01\x00").unwrap();
+        let (input, value) = input.find_subsequence(b"\x01\x00", false).unwrap();
         assert_eq!(value, b"\x00");
+        assert_eq!(input, b"\x02");
+
+        let input = &b"\x00\x01\x00\x02"[..];
+        let (input, value) = input.find_subsequence(b"\x01\x00", true).unwrap();
+        assert_eq!(value, b"\x00\x01\x00");
         assert_eq!(input, b"\x02");
     }
 }

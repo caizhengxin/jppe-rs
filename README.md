@@ -280,8 +280,8 @@ fn main() {
 - [x] `count==<num|variable>`: Data count, eg: `Vec`;
 - [x] `full=<int>`: encode full value.
 - [x] `untake`: Bytes are not taken.
-- [x] `linend=<string|bytes>`: eg: `string`.
-- [ ] `key`
+- [x] `linend|end_with=<string|bytes>`: eg: `string`.
+- [x] `key|starts_with`: It is suitable for accurate analysis of key/value structure data, supporting `string//&str/&[u8]` types.
 - [x] `split`: eg: `hashmap`
 - [ ] `if_expr`
 - [x] `encode_with`: custom encode function.
@@ -291,6 +291,7 @@ fn main() {
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [x] `variable_name`: Set integer cache variable, only for decode, eg: `test_modifier_variable_name.rs`.
+- [ ] regex
 
 > enum branch
 

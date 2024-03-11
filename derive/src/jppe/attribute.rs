@@ -127,6 +127,7 @@ impl FieldAttributes {
         let length = self.length.to_code(is_self, is_deref);
         let count = self.count.to_code(is_self, is_deref);
         let branch = self.branch.to_code(is_self, is_deref);
+        let key = self.key.to_code_string(false, false, true);
         let split = self.split.to_code(false, false);
         let linend = self.linend.to_code(false, false);
         let bits = self.bits.to_code(is_self, is_deref);
@@ -135,6 +136,7 @@ impl FieldAttributes {
         format!("let mut fattr = jppe::FieldAttrModifiers {{
             byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
             split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
+            key: {key},
             ..Default::default()
         }};")
     }
@@ -173,8 +175,9 @@ impl FromAttribute for FieldAttributes {
                         "offset" => result.offset = Some(AttrValue::parse_usize(&val)?),
                         "count" => result.count = Some(AttrValue::parse_usize(&val)?),
                         "full" => result.full = Some(AttrValue::parse_usize(&val)?),
+                        "key" | "starts_with" => result.key = Some(AttrValue::parse_string(&val)?),
                         "split" => result.split = Some(AttrValue::parse_list(&val)?),
-                        "linend" => result.linend = Some(AttrValue::parse_list(&val)?),
+                        "linend" | "end_with" => result.linend = Some(AttrValue::parse_list(&val)?),
                         "branch" => result.branch = Some(AttrValue::parse_usize(&val)?),
                         "branch_expr" => result.branch_expr = Some(parse_value_string(&val)?),
                         "branch_range" => result.branch_range = Some(parse_value_string(&val)?),

@@ -84,7 +84,6 @@ mod tests {
     #[test]
     fn test_decode_string() {
         let (input, value) = String::decode(b"12\n", None, None).unwrap();
-        println!("{:?} {:?}", value, input);
         assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 
@@ -92,18 +91,15 @@ mod tests {
 
         let fattr = FieldAttrModifiers { linend: true, ..Default::default() };
         let (input, value) = String::decode(b"12\x00", None, Some(&fattr)).unwrap();
-        println!("{:?} {:?}", value, input);
         assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 
         let (input, value) = String::decode(b"12\r\n", None, Some(&fattr)).unwrap();
-        println!("{:?} {:?}", value, input);
         assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 
         let fattr = FieldAttrModifiers { linend_value: Some(vec![vec![b'3', b'4']]), ..Default::default() };
         let (input, value) = String::decode(b"1234", None, Some(&fattr)).unwrap();
-        println!("{:?} {:?}", value, input);
         assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 
@@ -120,5 +116,16 @@ mod tests {
 
         let fattr = FieldAttrModifiers { length: Some(5), ..Default::default() };
         assert_eq!(String::decode(b"1234", None, Some(&fattr)).is_err(), true);
+
+        // key
+        let fattr = FieldAttrModifiers { key: Some(b"Header: ".to_vec()), linend: true, ..Default::default() };
+        let (input, value) = String::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
+        assert_eq!(value, "123");
+        assert_eq!(input.is_empty(), true);
+
+        let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend: true, ..Default::default() };
+        let (input, value) = String::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
+        assert_eq!(value, "123");
+        assert_eq!(input.is_empty(), true);
     }
 }

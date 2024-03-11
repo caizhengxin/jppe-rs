@@ -3,6 +3,15 @@ use crate::{ByteEncode, BorrowByteEncode};
 
 macro_rules! encode_string {
     ($value:expr, $input:expr, $fattr:expr) => {
+        // key and split
+        if let Some(fattr) = $fattr {
+            if let Some(key) = &fattr.key { $input.extend(key); }
+            if let Some(splits) = &fattr.split && let Some(split) = splits.first() {
+                $input.extend(split);
+            }
+        }
+
+        // value
         $input.extend($value.as_bytes());
 
         if let Some(fattr) = $fattr {
@@ -91,6 +100,12 @@ mod tests {
         let value = String::from("abc");
         value.encode(&mut buf, None, Some(&fattr));
         assert_eq!(buf, b"abc123");
+
+        let fattr = FieldAttrModifiers { key: Some(b"Host: ".to_vec()), linend_value: Some(vec![b"\r\n".to_vec()]), ..Default::default() };
+        let mut buf = vec![];
+        let value = "abc".to_string();
+        value.encode(&mut buf, None, Some(&fattr));
+        assert_eq!(buf, b"Host: abc\r\n");
     }
 
     #[test]
@@ -117,5 +132,11 @@ mod tests {
         let value = "abc";
         value.encode(&mut buf, None, Some(&fattr));
         assert_eq!(buf, b"abc123");
+
+        let fattr = FieldAttrModifiers { key: Some(b"Host: ".to_vec()), linend_value: Some(vec![b"\r\n".to_vec()]), ..Default::default() };
+        let mut buf = vec![];
+        let value = "abc";
+        value.encode(&mut buf, None, Some(&fattr));
+        assert_eq!(buf, b"Host: abc\r\n");
     }
 }

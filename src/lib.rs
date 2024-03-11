@@ -14,6 +14,8 @@ extern crate jppe_derive;
 #[cfg(feature = "jppe_derive")]
 pub use jppe_derive::{ByteDecode, ByteEncode, BorrowByteDecode, BorrowByteEncode};
 
+/// jankincai
+
 mod decode;
 mod encode;
 mod parser;

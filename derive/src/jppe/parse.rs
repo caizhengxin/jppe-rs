@@ -11,12 +11,12 @@ pub enum AttrValue {
 
 
 impl AttrValue {
-    // #[inline]
-    // pub fn parse_string(s: &Literal) -> Result<Self> {
-    //     let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+    #[inline]
+    pub fn parse_string(s: &Literal) -> Result<Self> {
+        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
 
-    //     Ok(Self::String(value))
-    // }
+        Ok(Self::String(value))
+    }
 
     #[inline]
     pub fn parse_usize(s: &Literal) -> Result<Self> {
@@ -126,6 +126,8 @@ pub trait AttrValueTrait {
 
     fn to_code(&self, is_self: bool, is_deref: bool) -> String;
 
+    fn to_code_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String;
+
     fn to_byteorder(&self, is_self: bool) -> String;
 }
 
@@ -137,6 +139,15 @@ impl AttrValueTrait for Option<AttrValue> {
     fn to_code(&self, is_self: bool, is_deref: bool) -> String {
         if let Some(value) = self {
             return format!("Some({})", value.to_code(is_self, is_deref, false));
+        }
+
+        "None".to_string()
+    }
+
+    #[inline]
+    fn to_code_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String {
+        if let Some(value) = self {
+            return format!("Some({})", value.to_code(is_self, is_deref, is_string));
         }
 
         "None".to_string()

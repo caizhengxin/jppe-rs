@@ -1,29 +1,33 @@
 #[allow(unused_imports)]
 use crate::{FieldAttrModifiers, ContainerAttrModifiers, ByteDecode, BorrowByteDecode};
-use crate::parser::*;
+use crate::{parser::*, InputTrait};
 
 
 pub fn parse_bytes<'a, 'b>(input: &'a [u8], _cattr: Option<&'b ContainerAttrModifiers>, fattr: Option<&'b FieldAttrModifiers>) -> JResult<&'a [u8], &'a [u8]> {
     let mut value_tmp = None;
+    let mut input = input;
     let mut input_tmp = input;
 
     if let Some(fattr) = fattr {
+        if let Some(key) = &fattr.key {
+            (input, _) = input.find_subsequence(key, false)?;
+        }
+
+        if let Some(splits) = &fattr.split {
+            (input, _) = input.find_subsequences2(splits, false)?;
+        }
+
         if fattr.linend {
-            if let Ok((input, value)) = parse_subsequences(input, &[b"\r\n", b"\n", b"\x00"], false)
-            {
-                value_tmp = Some(value);
-                input_tmp = input;
-            }
+            let (input, value) = input.find_subsequences(&[b"\r\n", b"\n", b"\x00"], false)?;
+
+            value_tmp = Some(value);
+            input_tmp = input;
         }
         else if let Some(linend_value_list) = &fattr.linend_value {
-            for linend_value in linend_value_list {
-                if let Ok((input, value)) = parse_subsequence(input, linend_value, false)
-                {
-                    value_tmp = Some(value);
-                    input_tmp = input;
-                    break;
-                }    
-            }
+            let (input, value) = input.find_subsequences2(linend_value_list, false)?;
+
+            value_tmp = Some(value);
+            input_tmp = input;
         }
         else if let Some(length) = fattr.length {
             let (input, value) = input_take(input, length)?;
@@ -119,5 +123,20 @@ mod tests {
 
         let fattr = FieldAttrModifiers { length: Some(5), ..Default::default() };
         assert_eq!(<&[u8]>::decode(b"1234", None, Some(&fattr)).is_err(), true);
+
+        let (input, value) = <&[u8]>::decode(b"1234", None, None).unwrap();
+        assert_eq!(value, b"1234");
+        assert_eq!(input.is_empty(), true);
+
+        // key
+        let fattr = FieldAttrModifiers { key: Some(b"Header: ".to_vec()), linend: true, ..Default::default() };
+        let (input, value) = <&[u8]>::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
+        assert_eq!(value, b"123");
+        assert_eq!(input.is_empty(), true);
+
+        let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend: true, ..Default::default() };
+        let (input, value) = <&[u8]>::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
+        assert_eq!(value, b"123");
+        assert_eq!(input.is_empty(), true);
     }
 }

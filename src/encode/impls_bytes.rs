@@ -3,6 +3,14 @@ use crate::{ByteEncode, BorrowByteEncode};
 
 macro_rules! encode_bytes {
     ($value:expr, $input:expr, $fattr:expr) => {
+        // key and split
+        if let Some(fattr) = $fattr {
+            if let Some(key) = &fattr.key { $input.extend(key); }
+            if let Some(splits) = &fattr.split && let Some(split) = splits.first() {
+                $input.extend(split);
+            }
+        }
+
         $input.extend($value.to_vec());
 
         if let Some(fattr) = $fattr && let Some(linend_value_list) = &fattr.linend_value && let Some(linend_value) = linend_value_list.first() {
@@ -63,5 +71,11 @@ mod tests {
         let value = &[b'a', b'b', b'c'][..];
         value.encode(&mut buf, None, Some(&fattr));
         assert_eq!(buf, b"abc123");
+
+        let fattr = FieldAttrModifiers { key: Some(b"Host: ".to_vec()), linend_value: Some(vec![b"\r\n".to_vec()]), ..Default::default() };
+        let mut buf = vec![];
+        let value = &b"abc"[..];
+        value.encode(&mut buf, None, Some(&fattr));
+        assert_eq!(buf, b"Host: abc\r\n");
     }
 }
