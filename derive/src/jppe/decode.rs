@@ -32,11 +32,16 @@ pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attri
     generate_decode_body2(fn_body, attributes)?;
 
     // untake
-    if attributes.untake {
-        fn_body.push_parsed(format!("let (_, {name}): (&[u8], {rtype}) = {crate_name}::decode(input, Some(&cattr_new), Some(&fattr))?;"))?;
+    let untake = if attributes.untake { "_" } else { "input" };
+
+    if let Some(if_expr) = &attributes.if_expr {
+        fn_body.push_parsed(format!("let ({untake}, {name}): (&[u8], {rtype}) = if {if_expr} {{ 
+            let (input, value) = {crate_name}::decode(input, Some(&cattr_new), Some(&fattr))?;
+            (input, Some(value))
+        }} else {{ (input, None) }};"))?;
     }
     else {
-        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {crate_name}::decode(input, Some(&cattr_new), Some(&fattr))?;"))?;
+        fn_body.push_parsed(format!("let ({untake}, {name}): (&[u8], {rtype}) = {crate_name}::decode(input, Some(&cattr_new), Some(&fattr))?;"))?;
     }
 
     // value expr

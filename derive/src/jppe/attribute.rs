@@ -118,6 +118,8 @@ pub struct FieldAttributes {
     pub with_decode: Option<String>,
     pub with: Option<String>,
     pub with_args: Option<String>,
+
+    pub if_expr: Option<String>,
 }
 
 
@@ -197,6 +199,7 @@ impl FromAttribute for FieldAttributes {
                         "with_args" => result.with_args = Some(parse_value_string(&val)?),
                         "with" => result.with = Some(parse_value_string(&val)?),
                         "variable_name" => result.variable_name = Some(AttrValue::parse_list(&val)?),
+                        "if_expr" => result.if_expr = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }

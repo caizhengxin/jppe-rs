@@ -268,22 +268,23 @@ fn main() {
 ### FieldAttrModifiers
 
 - [x] `byteorder=<"BE"|"LE">`: The byte order of locality field, eg：`#[jppe(byteorder="LE")]`
-- [x] `length=<num|variable>`: Data length, eg: `int/&str/String`.
+- [x] `length=<num|variable>`: Data length, support `int/&str/String/&[u8]` type, eg: [test_modifier_length](./tests/test_modifier_length.rs).
 - [x] `offset=<num|variable>`: Byte stream offset.
-- [x] `count==<num|variable>`: Data count, eg: `Vec`;
+- [x] `count==<num|variable>`: Data count, support `Vec` type.
 - [x] `full=<int>`: encode full value.
 - [x] `untake`: Bytes are not taken.
 - [x] `linend|end_with=<string|bytes>`: eg: `string`.
-- [x] `key|starts_with`: It is suitable for accurate analysis of key/value structure data, supporting `string//&str/&[u8]` types.
-- [x] `split`: eg: `hashmap`
-- [ ] `if_expr`
+- [x] `key|starts_with`: It is suitable for accurate analysis of key/value structure data, supporting `string/&str/&[u8]` types.
+- [x] `split`: Supporting `HashMap` type, eg: [split_example](./tests/test_type_hashmap.rs)
+- [x] `if_expr`: Supporting `Option<T>` type, eg: [if_expr_example](./tests/test_modifier_if_expr.rs).
 - [x] `encode_with`: custom encode function.
 - [x] `decode_with`: custom decode function.
 - [x] `with`: custom encode/decode function.
 - [x] `with_args`: custom encode/decode function args.
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
-- [x] `variable_name`: Set integer cache variable, only for decode, eg: `test_modifier_variable_name.rs`.
+- [x] `variable_name`: Set integer cache variable, only for decode, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
+- [ ] `byte_count`: Supporting `String/&str/&[u8]` type.
 - [ ] `regex`
 
 > enum branch
