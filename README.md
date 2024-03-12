@@ -20,7 +20,6 @@ jppe = { version="0.3.0", features = ["derive"] }
 ```rust
 #![feature(let_chains)]
 use jppe::{ByteDecode, ByteEncode};
-use jppe_derive::{ByteEncode, ByteDecode};
 
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
@@ -67,9 +66,7 @@ fn main() {
 ```rust
 #![feature(let_chains)]
 use std::str::FromStr;
-
 use jppe::{ByteDecode, ByteEncode};
-use jppe_derive::{ByteEncode, ByteDecode};
 use jppe::prelude::MacAddress;
 
 
@@ -108,7 +105,6 @@ fn main() {
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 use jppe::{BorrowByteDecode, BorrowByteEncode};
-use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 
 
 #[derive(Debug, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
@@ -169,7 +165,6 @@ fn main() {
 ```rust
 #![feature(let_chains)]
 use jppe::{BorrowByteDecode, BorrowByteEncode};
-use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 
 
 #[derive(Debug, Default, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
@@ -223,9 +218,7 @@ fn main() {
 ```rust
 #![feature(let_chains)]
 use std::collections::HashMap;
-
 use jppe::{BorrowByteDecode, BorrowByteEncode};
-use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 
 
 #[derive(Debug, Default, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
@@ -291,15 +284,15 @@ fn main() {
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [x] `variable_name`: Set integer cache variable, only for decode, eg: `test_modifier_variable_name.rs`.
-- [ ] regex
+- [ ] `regex`
 
 > enum branch
 
-- [x] `branch`
-- [x] `branch_default`
-- [x] `branch_bits`
-- [x] `branch_range`
-- [x] `branch_value`
+- [x] `branch`: eg: [test_type_enum.rs](./tests/test_type_enum.rs)
+- [x] `branch_default`: eg: [test_type_enum.rs](./tests/test_type_enum.rs)
+- [x] `branch_bits`: eg: [test_type_enum_bits.rs](./tests/test_type_enum_bits.rs)
+- [x] `branch_range`: eg: [test_type_enum_range.rs](./tests/test_type_enum_range.rs)
+- [x] `branch_value`: eg: [test_type_enum_value.rs](./tests/test_type_enum_value.rs)
 
 ### DataType
 
