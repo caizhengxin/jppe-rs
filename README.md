@@ -313,7 +313,7 @@ fn main() {
 - [x] `HashMap`: Support `String/&str/&[u8]`.
 - [x] `HashSet<T>`: The `HashSet` type must specify `#[jppe(count=xxx)]` modifier, only supporting decode function, default `count=0`.
 - [x] `Macaddress`
-- [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr requres specifying the `length=6` modifier, default parse Ipv6Addr type.
+- [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr type requres specifying the `length=<16|4>` modifier, Otherwise return an error.
 - [ ] `Hex`
 - [ ] `DateTime`
 - [ ] `Bit`
