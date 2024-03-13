@@ -66,7 +66,7 @@ impl crate::ByteDecode for Ipv6Addr {
         Self: Sized
     {
         let byteorder = crate::get_byteorder(cattr, fattr);
-        let (input, value) = crate::parse_u128(input, &byteorder, 4)?;
+        let (input, value) = crate::parse_u128(input, &byteorder, 16)?;
         
         Ok((input, Ipv6Addr::from_bits(value)))
     }
@@ -92,15 +92,20 @@ impl crate::ByteDecode for IpAddr {
     where 
         Self: Sized
     {
-        if let Some(fattr_var) = fattr && let Some(length) = fattr_var.length && length == 6 {
-            let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+        if let Some(fattr_var) = fattr && let Some(length) = fattr_var.length {
+            if length == 16 {
+                let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
 
-            return Ok((input, IpAddr::V6(addr)));    
+                return Ok((input, IpAddr::V6(addr)));
+            }
+            else if length == 4 {
+                let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+
+                return Ok((input, IpAddr::V4(addr)))
+            }
         }
         
-        let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-
-        Ok((input, IpAddr::V4(addr)))
+        Err(crate::make_error(input, crate::ErrorKind::InvalidByteLength { offset: input.len() }))
     }
 }
 
@@ -146,9 +151,23 @@ mod test {
         assert_eq!(input.is_empty(), true);
 
         let input = b"\x12\x34\x56\x78";
-        let fattr = FieldAttrModifiers { byteorder: Some(crate::ByteOrder::Le), ..Default::default() };
+        let fattr = FieldAttrModifiers { byteorder: Some(crate::ByteOrder::Le), length: Some(4), ..Default::default() };
         let (input, value) = IpAddr::decode(input, None, Some(&fattr)).unwrap();
         assert_eq!(value, Ipv4Addr::from_bits(0x78563412));
         assert_eq!(input.is_empty(), true);
+
+        let input = b"\xfe\x80\x00\x00\x00\x00\x00\x00\x41\x59\xf7\xb2\xb9\xed\x96\x89";
+        let (input, value) = Ipv6Addr::decode(input, None, None).unwrap();
+        assert_eq!(value.to_string(), "fe80::4159:f7b2:b9ed:9689");
+        assert_eq!(input.is_empty(), true);
+
+        let input = b"\xfe\x80\x00\x00\x00\x00\x00\x00\x41\x59\xf7\xb2\xb9\xed\x96\x89";
+        let fattr = FieldAttrModifiers { length: Some(16), ..Default::default() };
+        let (input, value) = IpAddr::decode(input, None, Some(&fattr)).unwrap();
+        assert_eq!(value.to_string(), "fe80::4159:f7b2:b9ed:9689");
+        assert_eq!(input.is_empty(), true);
+
+        let input = b"\xfe\x80\x00\x00\x00\x00\x00\x00\x41\x59\xf7\xb2\xb9\xed\x96\x89";
+        assert_eq!(IpAddr::decode(input, None, None).is_err(), true);
     }
 }
