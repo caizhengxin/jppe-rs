@@ -87,9 +87,9 @@ impl<'da, 'db> Iterator for KeyValueIterator<'da, 'db> {
                     }
                 }    
             }
-            else if let Some(value) = self.parse_subsequence("\r\n".as_bytes()) {
-                return Some(value);
-            }
+            // else if let Some(value) = self.parse_subsequence("\r\n".as_bytes()) {
+            //     return Some(value);
+            // }
             else {
                 return self.parse_subsequence("\r\n".as_bytes());
             }

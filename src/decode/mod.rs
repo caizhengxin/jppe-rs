@@ -5,6 +5,7 @@ mod impls_array;
 mod impls_tuple;
 mod impls_float;
 mod impls_hashmap;
+mod impls_hashset;
 mod impls_other;
 mod impls_address;
 mod impls;

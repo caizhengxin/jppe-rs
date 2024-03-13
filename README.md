@@ -268,19 +268,19 @@ fn main() {
 ### FieldAttrModifiers
 
 - [x] `byteorder=<"BE"|"LE">`: The byte order of locality field, eg：`#[jppe(byteorder="LE")]`
-- [x] `length=<num|variable>`: Data length, support `int/&str/String/&[u8]` type, eg: [test_modifier_length](./tests/test_modifier_length.rs).
+- [x] `length=<num|variable>`: Data length, support `int/&str/String/&[u8]` type, eg: [length_example](./tests/test_modifier_length.rs).
 - [x] `offset=<num|variable>`: Byte stream offset.
-- [x] `count==<num|variable>`: Data count, support `Vec` type.
+- [x] `count==<num|variable>`: Data count, support `Vec/HashMap` type.
 - [x] `full=<int>`: encode full value.
 - [x] `untake`: Bytes are not taken.
-- [x] `linend|end_with=<string|bytes>`: eg: `string`.
+- [x] `linend|end_with=<string|bytes>`: Supporting `String/&str/&[u8]` type.
 - [x] `key|starts_with`: It is suitable for accurate analysis of key/value structure data, supporting `string/&str/&[u8]` types.
 - [x] `split`: Supporting `HashMap` type, eg: [split_example](./tests/test_type_hashmap.rs)
 - [x] `if_expr`: Supporting `Option<T>` type, eg: [if_expr_example](./tests/test_modifier_if_expr.rs).
-- [x] `encode_with`: custom encode function.
-- [x] `decode_with`: custom decode function.
-- [x] `with`: custom encode/decode function.
-- [x] `with_args`: custom encode/decode function args.
+- [x] `encode_with`: custom encode function, eg: [with_example](./tests/test_modifier_with.rs).
+- [x] `decode_with`: custom decode function, eg: [with_example](./tests/test_modifier_with.rs).
+- [x] `with`: custom encode/decode function, eg: [with_example](./tests/test_modifier_with.rs).
+- [x] `with_args`: custom encode/decode function args, eg: [with_args_example](./tests/test_modifier_with_args.rs).
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [x] `variable_name`: Set integer cache variable, only for decode, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
@@ -310,10 +310,10 @@ fn main() {
 - [x] `Struct`
 - [x] `Enum`
 - [x] `PhantomData`
-- [x] `HashMap`
-- [ ] `HashSet`
+- [x] `HashMap`: Support `String/&str/&[u8]`.
+- [x] `HashSet<T>`: The `HashSet` type must specify `#[jppe(count=xxx)]` modifier, only supporting decode function, default `count=0`.
 - [x] `Macaddress`
-- [x] `IPv4` or `IPv6`
+- [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr requres specifying the `length=6` modifier, default parse Ipv6Addr type.
 - [ ] `Hex`
 - [ ] `DateTime`
 - [ ] `Bit`

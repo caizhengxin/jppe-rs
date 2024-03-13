@@ -6,6 +6,7 @@ mod impls_other;
 mod impls_string;
 mod impls_float;
 mod impls_hashmap;
+mod impls_hashset;
 mod impls_address;
 mod impls;
 
