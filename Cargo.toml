@@ -41,11 +41,10 @@ members = [
 
 [features]
 derive = ["jppe_derive"]
-jppe_serde = ["serde"]
 
 [dependencies]
 jppe_derive = { path = "derive", version = "0.4.0", optional = true }
-serde = { version = "1.0", optional = true }
+serde = { version = "1.0", default-features = false, optional = true }
 jkcenum = { version = "0", features = ["derive"] }
 thiserror = "1.0"
 
