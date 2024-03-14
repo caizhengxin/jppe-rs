@@ -59,6 +59,18 @@ impl<T: BorrowByteEncode> BorrowByteEncode for Vec<T> {
 }
 
 
+impl<T> ByteEncode for std::marker::PhantomData<T> {
+    fn encode(&self, _input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, _fattr: Option<&crate::FieldAttrModifiers>) {
+    }
+}
+
+
+impl<T> BorrowByteEncode for std::marker::PhantomData<T> {
+    fn encode(&self, _input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, _fattr: Option<&crate::FieldAttrModifiers>) {
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use crate::{ByteEncode, FieldAttrModifiers, ByteOrder};

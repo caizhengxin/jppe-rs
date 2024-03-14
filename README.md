@@ -324,5 +324,6 @@ fn main() {
 - [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr type requres specifying the `length=<16|4>` modifier, Otherwise return an error.
 - [x] `PpeAddress`: Requres specifying the `length=<16|4|6|usize>` modifier, Otherwise return an error.
 - [x] `HexString`: eg: [hex_example](./tests/test_type_hex.rs)
+- [x] `HexBytes`: eg: [hex_bytes_example](./tests/test_type_hex_bytes.rs)
 - [ ] `DateTime`
 - [ ] `Bit`
