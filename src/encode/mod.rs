@@ -9,6 +9,7 @@ mod impls_hashmap;
 mod impls_hashset;
 mod impls_address;
 mod impls_ppe_address;
+mod impls_hex;
 mod impls;
 
 use crate::{ContainerAttrModifiers, FieldAttrModifiers};

@@ -9,7 +9,7 @@ use serde::{Serialize, Serializer, Deserialize, Deserializer, de::Error as DeErr
 
 #[derive(Debug, thiserror::Error)]
 pub enum PpeAddressParseError {
-    #[error("invalid mac address: `{0}`")]
+    #[error("invalid ppe address: `{0}`")]
     InvalidPpeAddress(String),
 }
 

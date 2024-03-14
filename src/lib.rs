@@ -5,6 +5,7 @@
 #![feature(slice_internals)]
 #![feature(const_trait_impl)]
 #![feature(ip_bits)]
+#![feature(array_chunks)]
 
 #[cfg(feature = "jppe_derive")]
 #[allow(unused_imports)]

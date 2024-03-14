@@ -15,6 +15,14 @@ This is a byte stream structured serialization and deserialization library.
 jppe = { version="0.4.0", features = ["derive"] }
 ```
 
+Or
+
+
+```toml
+[dependencies]
+jppe = { version="0.4.0", features = ["derive"， "serde"] }
+```
+
 ### Simple Example
 
 ```rust
@@ -315,6 +323,6 @@ fn main() {
 - [x] `MacAddress`
 - [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr type requres specifying the `length=<16|4>` modifier, Otherwise return an error.
 - [x] `PpeAddress`: Requres specifying the `length=<16|4|6|usize>` modifier, Otherwise return an error.
-- [ ] `Hex`
+- [x] `HexString`: eg: [hex_example](./tests/test_type_hex.rs)
 - [ ] `DateTime`
 - [ ] `Bit`
