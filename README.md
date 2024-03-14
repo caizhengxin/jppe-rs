@@ -20,7 +20,7 @@ Or
 
 ```toml
 [dependencies]
-jppe = { version="0.5.0", features = ["derive"， "serde"] }
+jppe = { version="0.5.0", features = ["derive", "serde"] }
 ```
 
 ### Simple Example
@@ -106,7 +106,7 @@ fn main() {
 }
 ```
 
-## Ipv4 Example
+### Ipv4 Example
 
 ```rust
 #![feature(let_chains)]
@@ -292,7 +292,7 @@ fn main() {
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [x] `variable_name`: Set integer cache variable, only for decode, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
-- [ ] `byte_count`: Supporting `String/&str/&[u8]` type.
+- [ ] `byte_count`: Specifies the byte size, automatic decode/encode length, supporting `String/&str/&[u8]/Hex` type.
 - [ ] `regex`
 
 > enum branch
@@ -318,11 +318,11 @@ fn main() {
 - [x] `Struct`
 - [x] `Enum`
 - [x] `PhantomData`
-- [x] `HashMap`: Support `String/&str/&[u8]`.
-- [x] `HashSet<T>`: The `HashSet` type must specify `#[jppe(count=xxx)]` modifier, only supporting decode function, default `count=0`.
-- [x] `MacAddress`
-- [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr type requres specifying the `length=<16|4>` modifier, Otherwise return an error.
-- [x] `PpeAddress`: Requres specifying the `length=<16|4|6|usize>` modifier, Otherwise return an error.
+- [x] `HashMap`: Support `String/&str/&[u8]`, eg: [hashmap_example](./tests/test_type_hashmap.rs).
+- [x] `HashSet<T>`: The `HashSet` type must specify `#[jppe(count=xxx)]` modifier, only supporting decode function, default `count=0`, eg: [hashset_example](./tests/test_type_hashset.rs).
+- [x] `MacAddress`: eg: [mac_example](./tests/test_type_mac_address.rs).
+- [x] `std::net::Ipv4Addr/Ipv6Addr/IpAddr`: IpAddr type requres specifying the `length=<16|4>` modifier, Otherwise return an error, eg: [ip_address_example](./tests//test_type_ip_address.rs).
+- [x] `PpeAddress`: Requres specifying the `length=<16|4|6|usize>` modifier, Otherwise return an error, eg: [ppe_address_example](./tests//test_type_ppe_address.rs).
 - [x] `HexString`: eg: [hex_example](./tests/test_type_hex.rs)
 - [x] `HexBytes`: eg: [hex_bytes_example](./tests/test_type_hex_bytes.rs)
 - [ ] `DateTime`
