@@ -1,5 +1,4 @@
 #![feature(let_chains)]
-use jppe::{ByteDecode, ByteEncode};
 use jppe_derive::{ByteEncode, ByteDecode};
 
 
@@ -31,12 +30,8 @@ pub enum SimpleExampleBody {
 
 fn main() {
     let input = b"\x00\x03\x31\x32\x33\x01\x05";
-
-    let (input_remain, value) = SimpleExample::decode(input, None, None).unwrap();
-    println!("{value:?} {input_remain:?}");
-
-    let mut buf = vec![];
-    value.encode(&mut buf, None, None);
-
-    assert_eq!(buf, input);
+    let (input_remain, value) = jppe::decode::<SimpleExample>(input).unwrap();
+    assert_eq!(value, SimpleExample { length: 3, value: "123".to_string(), cmd: 1, body: SimpleExampleBody::Read { address: 5 } });
+    assert_eq!(input_remain.is_empty(), true);
+    assert_eq!(jppe::encode(value), input);
 }
