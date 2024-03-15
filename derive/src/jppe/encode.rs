@@ -30,11 +30,11 @@ pub fn generate_encode_body(fn_body: &mut StreamBuilder, attributes: &FieldAttri
     let with_args = if let Some(value) = &attributes.with_args {format!("{self_arg}{value}")} else { "".to_string() };
 
     if let Some(func) = &attributes.with_encode {
-        fn_body.push_parsed(format!("{func}(input, Some(&cattr_new), Some(&fattr_new), {der_arg}{self_arg}{field}, {with_args});"))?;
+        fn_body.push_parsed(format!("{func}(input, cattr_new, fattr_new, {der_arg}{self_arg}{field}, {with_args});"))?;
         return Ok(());
     }
     else if let Some(func) = &attributes.with {
-        fn_body.push_parsed(format!("{func}::encode(input, Some(&cattr_new), Some(&fattr_new), {der_arg}{self_arg}{field}, {with_args});"))?;
+        fn_body.push_parsed(format!("{func}::encode(input, cattr_new, fattr_new, {der_arg}{self_arg}{field}, {with_args});"))?;
         return Ok(());
     }
 
@@ -44,10 +44,10 @@ pub fn generate_encode_body(fn_body: &mut StreamBuilder, attributes: &FieldAttri
         if let Some(value_expr) = &attributes.value_encode {
             fn_body.push_parsed(format!("let {field} = {der_arg}{self_arg}{field};"))?;
             fn_body.push_parsed(format!("let {field} = {value_expr};"))?;
-            fn_body.push_parsed(format!("{crate_name}::encode(&{field}, input, Some(&cattr_new), Some(&fattr_new));"))?;        
+            fn_body.push_parsed(format!("{crate_name}::encode(&{field}, input, cattr_new, fattr_new);"))?;        
         }
         else {
-            fn_body.push_parsed(format!("{crate_name}::encode({der_arg}{self_arg}{field}, input, Some(&cattr_new), Some(&fattr_new));"))?;
+            fn_body.push_parsed(format!("{crate_name}::encode({der_arg}{self_arg}{field}, input, cattr_new, fattr_new);"))?;
         }    
     }
 

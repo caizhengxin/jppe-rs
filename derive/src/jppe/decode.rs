@@ -21,11 +21,11 @@ pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attri
     let with_args = attributes.with_args.as_ref().unwrap_or(&with_args_default);
 
     if let Some(func) = &attributes.with_decode {
-        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {func}(input, Some(&cattr_new), Some(&fattr_new), {with_args})?;"))?;
+        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {func}(input, cattr_new, fattr_new, {with_args})?;"))?;
         return Ok(());
     }
     else if let Some(func) = &attributes.with {
-        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {func}::decode(input, Some(&cattr_new), Some(&fattr_new), {with_args})?;"))?;
+        fn_body.push_parsed(format!("let (input, {name}): (&[u8], {rtype}) = {func}::decode(input, cattr_new, fattr_new, {with_args})?;"))?;
         return Ok(());
     }
 
@@ -36,12 +36,12 @@ pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attri
 
     if let Some(if_expr) = &attributes.if_expr {
         fn_body.push_parsed(format!("let ({untake}, {name}): (&[u8], {rtype}) = if {if_expr} {{ 
-            let (input, value) = {crate_name}::decode(input, Some(&cattr_new), Some(&fattr_new))?;
+            let (input, value) = {crate_name}::decode(input, cattr_new, fattr_new)?;
             (input, Some(value))
         }} else {{ (input, None) }};"))?;
     }
     else {
-        fn_body.push_parsed(format!("let ({untake}, {name}): (&[u8], {rtype}) = {crate_name}::decode(input, Some(&cattr_new), Some(&fattr_new))?;"))?;
+        fn_body.push_parsed(format!("let ({untake}, {name}): (&[u8], {rtype}) = {crate_name}::decode(input, cattr_new, fattr_new)?;"))?;
     }
 
     // value expr
@@ -51,9 +51,21 @@ pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attri
 
     // variable_name
     if let Some(value) = &attributes.variable_name && let AttrValue::List(variable_names) = value {
+        fn_body.push_parsed("
+            let cattr_new2 = jppe::ContainerAttrModifiers::default();
+
+            if cattr_new.is_none() {{
+                cattr_new = Some(&cattr_new2);
+            }}
+        ")?;
+
         for variable_name in variable_names {
             let variable_name_str = variable_name.to_string();
-            fn_body.push_parsed(format!("cattr_new.variable_name.borrow_mut().insert(\"{variable_name_str}\".to_string(), {variable_name_str}.into());"))?;
+            fn_body.push_parsed(format!("
+                if let Some(cattr_new) = cattr_new {{
+                    cattr_new.variable_name.borrow_mut().insert(\"{variable_name_str}\".to_string(), {variable_name_str}.into());
+                }}
+            "))?;
         }
     }
 

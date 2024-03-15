@@ -11,6 +11,7 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 
 #[derive(Debug, Default)]
 pub struct ContainerAttributes {
+    pub is_use: bool,
     pub byteorder: Option<AttrValue>,
     pub get_variable_name: Option<AttrValue>,
 
@@ -31,10 +32,14 @@ impl ContainerAttributes {
     pub fn to_code(&self, is_self: bool) -> String {
         let byteorder = self.byteorder.to_byteorder(is_self);
 
-        format!("let mut cattr_new = jppe::ContainerAttrModifiers {{
-            byteorder: {byteorder},
-            ..Default::default()
-        }};")
+        if self.is_use {
+            format!("let mut cattr_new = jppe::ContainerAttrModifiers {{
+                byteorder: {byteorder},
+                ..Default::default()}}; let cattr_new = Some(&cattr_new);")
+        }
+        else {
+            "let mut cattr_new: Option<&jppe::ContainerAttrModifiers> = None;".to_string()
+        }
     }
 }
 
@@ -47,6 +52,10 @@ impl FromAttribute for ContainerAttributes {
         };
 
         let mut result = Self::default();
+
+        if !attributes.is_empty() {
+            result.is_use = true;
+        }
 
         for attribute in attributes {
             match attribute {
@@ -136,12 +145,16 @@ impl FieldAttributes {
         let bits_start = self.bits_start;
         let byte_count = self.byte_count.to_code(is_self, is_deref);
 
-        format!("let mut fattr_new = jppe::FieldAttrModifiers {{
-            byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
-            split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
-            key: {key}, byte_count: {byte_count},
-            ..Default::default()
-        }};")
+        if self.is_use {
+            format!("let fattr_new = jppe::FieldAttrModifiers {{
+                byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
+                split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
+                key: {key}, byte_count: {byte_count},
+                ..Default::default()}}; let fattr_new = Some(&fattr_new);")
+        }
+        else {
+            "let fattr_new: Option<&jppe::FieldAttrModifiers> = None;".to_string()
+        }
     }
 }
 

@@ -5,7 +5,7 @@ use jppe_derive::{ByteEncode, ByteDecode};
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 struct EnumByteCountExample {
     pub version: u8,
-    #[jppe(byte_count=1)]
+    #[jppe(byte_count=1)] // Fetches q byte mapping enum in advance.
     pub body: EnumByteCountBody,
 }
 
@@ -35,7 +35,7 @@ fn test_type_enum_byte_count() {
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 struct EnumByteCountExample2 {
     pub version: u8,
-    #[jppe(byte_count=2)]
+    #[jppe(byte_count=2)]  // Fetches 2 byte mapping enum in advance.
     pub body: EnumByteCountBody2,
 }
 
