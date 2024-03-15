@@ -267,9 +267,6 @@ fn main() {
 
 > enum branch
 
-- [ ] `branch_byte`
-- [ ] `branch_byteorder`
-- [ ] `branch_func`
 - [ ] `branch_enum`
 
 ### FieldAttrModifiers
@@ -291,11 +288,10 @@ fn main() {
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
 - [x] `variable_name`: Set integer cache variable, only for decode, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
-- [ ] `byte_count=<1|2|4|8>`: Specifies the byte count, automatic decode/encode length.
-  + [x] `String/&str/&[u8]`, eg: [byte_count](./tests/test_modifier_byte_count.rs).
-  + [ ] `HexString/HexBytes`
+- [x] `byte_count=<1|2|4|8>`: Specifies the byte count, automatic decode/encode length or other.
+  + [x] `String/&str/&[u8]`: Fetches n byte mapping length in advance, eg: [byte_count](./tests/test_modifier_byte_count.rs).
+  + [x] `HexString/HexBytes`: Fetches n byte mapping length in advance, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `Enum`: The `byte_count` byte mapping enumeration is taken in advance and encoded through the enumeration inidex, eg: [enum_byte_count](./tests/test_type_enum_byte_count.rs)
-- [ ] `regex`
 
 > enum branch
 

@@ -5,7 +5,7 @@ use jppe_derive::{ByteEncode, ByteDecode};
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
 struct EnumByteCountExample {
     pub version: u8,
-    #[jppe(byte_count=1)] // Fetches q byte mapping enum in advance.
+    #[jppe(byte_count=1)] // Fetches 1 byte mapping enum in advance.
     pub body: EnumByteCountBody,
 }
 
