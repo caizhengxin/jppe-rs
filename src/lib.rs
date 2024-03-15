@@ -43,11 +43,37 @@ pub mod prelude {
     pub use crate::fields::*;
     pub use crate::modifiers::*;
     pub use crate::input::*;
+    pub use crate::{encode, decode};
 }
 
 
-#[derive(Debug, Clone)]
-pub enum StringOrUsize {
-    String(String),
-    Usize(usize),
+#[inline]
+pub fn decode<'a, T: ByteDecode>(input: &'a [u8]) -> JResult<&'a [u8], T> {
+    T::decode(input, None, None)
+}
+
+
+#[inline]
+pub fn encode<'a, T: ByteEncode>(t: T) -> Vec<u8> {
+    let mut buf = Vec::new();
+
+    t.encode(&mut buf, None, None);
+
+    buf
+}
+
+
+#[inline]
+pub fn decode_borrow<'a, T: BorrowByteDecode<'a>>(input: &'a [u8]) -> JResult<&'a [u8], T> {
+    T::decode(input, None, None)
+}
+
+
+#[inline]
+pub fn encode_borrow<'a, T: BorrowByteEncode>(t: T) -> Vec<u8> {
+    let mut buf = Vec::new();
+
+    t.encode(&mut buf, None, None);
+
+    buf
 }

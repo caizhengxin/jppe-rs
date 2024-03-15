@@ -53,7 +53,6 @@ impl FromAttribute for ContainerAttributes {
                 ParsedAttribute::Tag(i) => {
                     // #xxx[xxx]
                     match i.to_string().as_str() {
-                        // "name" => {},
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }
@@ -95,6 +94,7 @@ pub struct FieldAttributes {
     pub count: Option<AttrValue>,
     pub bits: Option<AttrValue>,
     pub bits_start: bool,
+    pub byte_count: Option<AttrValue>,
 
     pub value_encode: Option<String>,
     pub value_decode: Option<String>,
@@ -134,11 +134,12 @@ impl FieldAttributes {
         let linend = self.linend.to_code(false, false);
         let bits = self.bits.to_code(is_self, is_deref);
         let bits_start = self.bits_start;
+        let byte_count = self.byte_count.to_code(is_self, is_deref);
 
-        format!("let mut fattr = jppe::FieldAttrModifiers {{
+        format!("let mut fattr_new = jppe::FieldAttrModifiers {{
             byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
             split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
-            key: {key},
+            key: {key}, byte_count: {byte_count},
             ..Default::default()
         }};")
     }
@@ -185,6 +186,7 @@ impl FromAttribute for FieldAttributes {
                         "branch_value" => result.branch_value = Some(parse_value_string(&val)?),
                         "branch_bits" => result.branch_bits = Some(parse_value_string(&val)?),
                         "branch_bits_value" => result.branch_bits_value = Some(parse_value_string(&val)?),
+                        "byte_count" | "byte_size" => result.byte_count = Some(AttrValue::parse_usize(&val)?),
 
                         "bits" => result.bits = Some(AttrValue::parse_usize(&val)?),
                         "bits_start" => {

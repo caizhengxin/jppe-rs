@@ -16,6 +16,24 @@ pub trait InputTrait<'a> {
     fn to_le_bits(&self, byte_count: u8) -> JResult<&'a [u8], u128>;
 
     fn to_be_bits(&self, byte_count: u8) -> JResult<&'a [u8], u128>;
+
+    #[inline]
+    fn to_bits_usize(&self, byteorder: ByteOrder, byte_count: u8) -> JResult<&'a [u8], usize> {
+        let (input, value) = self.to_bits(byteorder, byte_count)?;
+        Ok((input, value as usize))
+    }
+
+    #[inline]
+    fn to_le_bits_usize(&self, byte_count: u8) -> JResult<&'a [u8], usize> {
+        let (input, value) = self.to_le_bits(byte_count)?;
+        Ok((input, value as usize))
+    }
+
+    #[inline]
+    fn to_be_bits_usize(&self, byte_count: u8) -> JResult<&'a [u8], usize> {
+        let (input, value) = self.to_be_bits(byte_count)?;
+        Ok((input, value as usize))
+    }
 }
 
 

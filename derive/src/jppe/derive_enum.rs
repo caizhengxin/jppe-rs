@@ -140,12 +140,23 @@ impl DeriveEnum {
         else {
             let code = "
                 let value;
+                let mut input = input;
 
-                if let Some(fattr) = fattr && let Some(branch) = fattr.branch {
-                    value = branch as usize;
+                if let Some(fr) = fattr {
+                    if let Some(branch) = fr.branch {
+                        value = branch as usize;
+                    }
+                    else if let Some(byte_count) = fr.byte_count {
+                        (input, value) = jppe::parse_usize(input, &jppe::get_byteorder(cattr, fattr), byte_count as u8)?;
+                    }
+                    else {
+                        // (input, value) = jppe::parse_usize(input, &jppe::ByteOrder::Be, 1)?;
+                        return Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }));
+                    }
                 }
                 else {
-                    return Err(jppe::make_error(input, jppe::ErrorKind::Fail { offset: input.len() }));
+                    // (input, value) = jppe::parse_usize(input, &jppe::ByteOrder::Be, 1)?;
+                    return Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }));
                 }
             ";
             fn_body.push_parsed(code)?;
@@ -265,7 +276,7 @@ impl DeriveEnum {
                 fn_body.push_parsed(self.attributes.to_code(true))?;
                 fn_body.push_parsed("match self")?;
                 fn_body.group(Delimiter::Brace, |variant_case| {
-                    for (mut _variant_index, variant) in self.iter_fields() {
+                    for (variant_index, variant) in self.iter_fields() {
                         let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
 
                         if let Some(fields) = &variant.fields {
@@ -300,6 +311,23 @@ impl DeriveEnum {
                         variant_case.group(Delimiter::Brace, |variant_body| {
                             variant_body.push_parsed(attributes.to_code(true, false))?;
                             generate_encode_body2(variant_body, &attributes, false)?;
+
+                            let code = format!("        
+                                if let Some(fr) = fattr {{
+                                    if let Some(branch) = fr.branch {{
+                                    }}
+                                    else if let Some(byte_count) = fr.byte_count {{
+                                        input.extend(jppe::int_to_vec({variant_index}, byte_count, &jppe::get_byteorder(cattr, fattr)))
+                                    }}
+                                    // else {{
+                                    //     input.push({variant_index} as u8);
+                                    // }}
+                                }}
+                                // else {{
+                                //     input.push({variant_index} as u8);
+                                // }}
+                            ");
+                            variant_body.push_parsed(code)?;
 
                             if let Some(fields) = &variant.fields {
                                 match fields {
