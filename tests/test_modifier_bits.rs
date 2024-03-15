@@ -13,7 +13,7 @@ pub struct BitsExample {
 
 
 #[test]
-fn test_monidifer_bits() {
+fn test_modifier_bits() {
     // decode
     let (input, value) = BitsExample::decode(b"\x12", None, None).unwrap();
     assert_eq!(value, BitsExample { version: 1, length: 2 });
@@ -38,7 +38,7 @@ pub struct BitsExample2 {
 
 
 #[test]
-fn test_monidifer_bits2() {
+fn test_modifier_bits2() {
     // decode
     let (input, value) = BitsExample2::decode(b"\x12\x34", None, None).unwrap();
     assert_eq!(value, BitsExample2 { version: 1, length: 2, value: 0x34 });

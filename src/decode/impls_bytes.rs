@@ -1,36 +1,44 @@
 #[allow(unused_imports)]
 use crate::{FieldAttrModifiers, ContainerAttrModifiers, ByteDecode, BorrowByteDecode};
 use crate::{parser::*, InputTrait};
+use crate::get_byteorder;
 
 
-pub fn parse_bytes<'a, 'b>(input: &'a [u8], _cattr: Option<&'b ContainerAttrModifiers>, fattr: Option<&'b FieldAttrModifiers>) -> JResult<&'a [u8], &'a [u8]> {
+pub fn parse_bytes<'a, 'b>(input: &'a [u8], cattr: Option<&'b ContainerAttrModifiers>, fattr: Option<&'b FieldAttrModifiers>) -> JResult<&'a [u8], &'a [u8]> {
     let mut value_tmp = None;
     let mut input = input;
     let mut input_tmp = input;
 
-    if let Some(fattr) = fattr {
-        if let Some(key) = &fattr.key {
+    if let Some(fr) = fattr {
+        if let Some(key) = &fr.key {
             (input, _) = input.find_subsequence(key, false)?;
         }
 
-        if let Some(splits) = &fattr.split {
+        if let Some(splits) = &fr.split {
             (input, _) = input.find_subsequences2(splits, false)?;
         }
 
-        if fattr.linend {
+        if fr.linend {
             let (input, value) = input.find_subsequences(&[b"\r\n", b"\n", b"\x00"], false)?;
 
             value_tmp = Some(value);
             input_tmp = input;
         }
-        else if let Some(linend_value_list) = &fattr.linend_value {
+        else if let Some(linend_value_list) = &fr.linend_value {
             let (input, value) = input.find_subsequences2(linend_value_list, false)?;
 
             value_tmp = Some(value);
             input_tmp = input;
         }
-        else if let Some(length) = fattr.length {
+        else if let Some(length) = fr.length {
             let (input, value) = input_take(input, length)?;
+
+            value_tmp = Some(value);
+            input_tmp = input;
+        }
+        else if let Some(byte_count) = fr.byte_count {
+            let (input, length) = input.to_bits(get_byteorder(cattr, fattr), byte_count as u8)?;
+            let (input, value) = input.input_take(length as usize)?;
 
             value_tmp = Some(value);
             input_tmp = input;
@@ -137,6 +145,11 @@ mod tests {
         let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend: true, ..Default::default() };
         let (input, value) = <&[u8]>::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
         assert_eq!(value, b"123");
+        assert_eq!(input.is_empty(), true);
+
+        let fattr = FieldAttrModifiers { byte_count: Some(2), ..Default::default() };
+        let (input, value) = <&[u8]>::decode(b"\x00\x02\x00\x01", None, Some(&fattr)).unwrap();
+        assert_eq!(value, b"\x00\x01");
         assert_eq!(input.is_empty(), true);
     }
 }

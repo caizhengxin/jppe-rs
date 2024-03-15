@@ -127,5 +127,10 @@ mod tests {
         let (input, value) = String::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
         assert_eq!(value, "123");
         assert_eq!(input.is_empty(), true);
+
+        let fattr = FieldAttrModifiers { byte_count: Some(2), ..Default::default() };
+        let (input, value) = String::decode(b"\x00\x02\x31\x32", None, Some(&fattr)).unwrap();
+        assert_eq!(value, "12");
+        assert_eq!(input.is_empty(), true);
     }
 }

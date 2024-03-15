@@ -1,19 +1,21 @@
 use crate::{ByteEncode, BorrowByteEncode};
+use crate::{int_to_vec, get_byteorder};
 
 
 macro_rules! encode_bytes {
-    ($value:expr, $input:expr, $fattr:expr) => {
+    ($value:expr, $input:expr, $cattr:expr, $fattr:expr) => {
         // key and split
-        if let Some(fattr) = $fattr {
-            if let Some(key) = &fattr.key { $input.extend(key); }
-            if let Some(splits) = &fattr.split && let Some(split) = splits.first() {
+        if let Some(fr) = $fattr {
+            if let Some(byte_count) = fr.byte_count { $input.extend(int_to_vec($value.len(), byte_count, &get_byteorder($cattr, $fattr))); }
+            if let Some(key) = &fr.key { $input.extend(key); }
+            if let Some(splits) = &fr.split && let Some(split) = splits.first() {
                 $input.extend(split);
             }
         }
 
         $input.extend($value.to_vec());
 
-        if let Some(fattr) = $fattr && let Some(linend_value_list) = &fattr.linend_value && let Some(linend_value) = linend_value_list.first() {
+        if let Some(fr) = $fattr && let Some(linend_value_list) = &fr.linend_value && let Some(linend_value) = linend_value_list.first() {
             if !$value.to_vec().ends_with(linend_value) {
                 $input.extend(linend_value)
             }
@@ -23,21 +25,21 @@ macro_rules! encode_bytes {
 
 
 impl ByteEncode for &[u8] {
-    fn encode(&self, input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
+    fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 
             Self: Sized
     {
-        encode_bytes!(self , input, fattr);
+        encode_bytes!(self , input, cattr, fattr);
     }
 }
 
 
 impl<'de> BorrowByteEncode for &'de [u8] {
-    fn encode(&self, input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
+    fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 
             Self: Sized
     {
-        encode_bytes!(self, input, fattr);
+        encode_bytes!(self, input, cattr, fattr);
     }
 }
 
@@ -77,5 +79,11 @@ mod tests {
         let value = &b"abc"[..];
         value.encode(&mut buf, None, Some(&fattr));
         assert_eq!(buf, b"Host: abc\r\n");
+
+        let fattr = FieldAttrModifiers { byte_count: Some(2), ..Default::default() };
+        let mut buf = vec![];
+        let value = &b"abc"[..];
+        value.encode(&mut buf, None, Some(&fattr));
+        assert_eq!(buf, b"\x00\x03abc");
     }
 }
