@@ -71,6 +71,7 @@ fn main() {
 - [ipv4_example](./examples/ipv4_example.rs)
 - [tcp_example](./examples/tcp_example.rs)
 - [http_example](./examples/http_example.rs)
+- [parse_example](./examples/parse_example.rs): Including Ethernet/IPv4/TCP/UDP
 
 ## Feature
 
@@ -109,6 +110,10 @@ fn main() {
   + [x] `String/&str/&[u8]`: Fetches n byte mapping length in advance, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `HexString/HexBytes`: Fetches n byte mapping length in advance, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `Enum`: The `byte_count` byte mapping enumeration is taken in advance and encoded through the enumeration inidex, eg: [enum_byte_count](./tests/test_type_enum_byte_count.rs)
+- [x] `skip`: Require implement `Default` trait for data type.
+- [x] `skip_encode`: Skip encode function.
+- [x] `skip_decode`: Require implement `Default` trait for data type.
+- [ ] `check_value`
 
 > enum branch
 
@@ -142,3 +147,11 @@ fn main() {
 - [x] `HexBytes`: eg: [hex_bytes_example](./tests/test_type_hex_bytes.rs)
 - [ ] `DateTime`
 - [ ] `Bit`
+
+
+## TODO
+
+- [ ] jnet-rs library.
+- [ ] jget-rs library.
+- [ ] jdefault-rs library.
+- [ ] jfmt-rs library.

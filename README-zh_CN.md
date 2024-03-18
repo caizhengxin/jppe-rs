@@ -74,6 +74,7 @@ fn main() {
 - [IPv4解析例子](./examples/ipv4_example.rs)
 - [TCP解析例子](./examples/tcp_example.rs)
 - [HTTP解析例子](./examples/http_example.rs)
+- [解析例子](./examples/parse_example.rs): 包含Ethernet/IPv4/TCP/UDP
 
 ## 常见功能
 
@@ -118,6 +119,10 @@ fn main() {
   + [x] `String/&str/&[u8]`: 提前取n个字节映射长度, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `HexString/HexBytes`: 提前取n个字节映射长度, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `Enum`: 提前取n个字节映射枚举索引, eg: [enum_byte_count](./tests/test_type_enum_byte_count.rs)
+- [x] `skip`: 数据类型需要实现`Default`trait.
+- [x] `skip_encode`: 跳过encode函数.
+- [x] `skip_decode`: 数据类型需要实现`Default`trait.
+- [ ] `check_value`：主要用于检查结果是否正常, 异常会返回错误
 
 > enum branch
 
@@ -153,3 +158,10 @@ fn main() {
 - [x] `HexBytes`: 内部实现`HexBytes`类型, `HexBytes`引用类型, eg: [hex_bytes_example](./tests/test_type_hex_bytes.rs)
 - [ ] `DateTime`
 - [ ] `Bit`
+
+## TODO
+
+- [ ] `jnet-rs`: 基于`jppe`实现常见网络协议结构化定义.
+- [ ] `jget-rs`: 通过修饰符暴露`pub fn get_xxxx(&self) -> xxxx`函数，避免手动定义.
+- [ ] `jdefault-rs`：通过修饰符设置默认值, 可以集合`jppe`结构化定义实现默认值编码功能.
+- [ ] `jfmt-rs`: 主要用于格式化`jppe`定义结构化内容数据.

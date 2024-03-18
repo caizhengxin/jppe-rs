@@ -129,6 +129,11 @@ pub struct FieldAttributes {
     pub with_args: Option<String>,
 
     pub if_expr: Option<String>,
+
+    // skip
+    pub skip: bool,
+    pub skip_encode: bool,
+    pub skip_decode: bool,
 }
 
 
@@ -180,6 +185,9 @@ impl FromAttribute for FieldAttributes {
                         "enum_default" | "branch_default" => result.branch_default = true,
                         "untake" => result.untake = true,
                         "bits_start" => result.bits_start = true,
+                        "skip" => result.skip = true,
+                        "skip_encode" => result.skip_encode = true,
+                        "skip_decode" => result.skip_decode = true,
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }

@@ -37,6 +37,9 @@ pub fn generate_encode_body(fn_body: &mut StreamBuilder, attributes: &FieldAttri
         fn_body.push_parsed(format!("{func}::encode(input, cattr_new, fattr_new, {der_arg}{self_arg}{field}, {with_args});"))?;
         return Ok(());
     }
+    else if attributes.skip || attributes.skip_encode {
+        return Ok(());
+    }
 
     if attributes.bits.is_some() || !attributes.untake {
         generate_encode_body2(fn_body, attributes, is_self)?;
