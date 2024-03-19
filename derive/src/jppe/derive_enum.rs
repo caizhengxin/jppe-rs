@@ -144,7 +144,7 @@ impl DeriveEnum {
 
                 if let Some(fr) = fattr {
                     if let Some(branch) = fr.branch {
-                        value = branch as usize;
+                        value = (branch) as usize;
                     }
                     else if let Some(byte_count) = fr.byte_count {
                         (input, value) = jppe::parse_usize(input, &jppe::get_byteorder(cattr, fattr), byte_count as u8)?;

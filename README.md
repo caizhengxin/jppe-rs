@@ -117,11 +117,12 @@ fn main() {
 
 > enum branch
 
-- [x] `branch`: eg: [test_type_enum.rs](./tests/test_type_enum.rs)
-- [x] `branch_default`: eg: [test_type_enum.rs](./tests/test_type_enum.rs)
-- [x] `branch_bits`: eg: [test_type_enum_bits.rs](./tests/test_type_enum_bits.rs)
-- [x] `branch_range`: eg: [test_type_enum_range.rs](./tests/test_type_enum_range.rs)
-- [x] `branch_value`: eg: [test_type_enum_value.rs](./tests/test_type_enum_value.rs)
+- [x] `branch=<int|variable>`: eg: [branch example](./tests/test_type_enum.rs)
+- [x] `branch_option=<variable>`: eg: [branch_option example.rs](./tests/test_modifier_branch_option.rs)
+- [x] `branch_default`: eg: [branch_default example](./tests/test_type_enum.rs)
+- [x] `branch_bits`: eg: [branch_bits example](./tests/test_type_enum_bits.rs)
+- [x] `branch_range`: eg: [branch_range example](./tests/test_type_enum_range.rs)
+- [x] `branch_value`: eg: [branch_value example](./tests/test_type_enum_value.rs)
 
 ### DataType
 

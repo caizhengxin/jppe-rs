@@ -6,6 +6,7 @@ pub enum AttrValue {
     String(String),
     Var(String),
     Usize(usize),
+    Option(String),
     List(Vec<AttrValue>),
 }
 
@@ -16,6 +17,13 @@ impl AttrValue {
         let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
 
         Ok(Self::String(value))
+    }
+
+    #[inline]
+    pub fn parse_option_string(s: &Literal) -> Result<Self> {
+        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+
+        Ok(Self::Option(value))
     }
 
     #[inline]
@@ -67,6 +75,7 @@ impl AttrValue {
             Self::String(v) => format!("{deref_arg}{self_arg}{is_string}{v}{is_string}.into()"),
             Self::Var(v) => format!("({deref_arg}{self_arg}{is_string}{v}{is_string}) as usize"),
             Self::Usize(v) => format!("({deref_arg}{v}) as usize"),
+            Self::Option(v) => format!("if let Some(v) = {deref_arg}{self_arg}{is_string}{v} {{Some(v as usize)}} else {{None}}"),
             Self::List(v) =>  {
                 let value = v.iter().map(|v| format!("{}", v.to_code(is_self, is_deref, true))).collect::<Vec<String>>().join(", ");
 
@@ -85,6 +94,7 @@ impl AttrValue {
             Self::String(v) => format!("{self_arg}{is_string}{v}{is_string}.into()"),
             Self::Var(v) => format!("({self_arg}{is_string}{v}{is_string}) as usize"),
             Self::Usize(v) => format!("({v}) as usize"),
+            Self::Option(v) => format!("if let Some(v) = {self_arg}{is_string}{v} {{Some(v as usize)}} else {{None}}"),
             Self::List(v) =>  {
                 let value = v.iter().map(|v| format!("{}", v.to_code2(is_self, true))).collect::<Vec<String>>().join(", ");
 
@@ -115,6 +125,7 @@ impl ToString for AttrValue {
             Self::String(v) => v.to_string(),
             Self::Var(v) => v.to_string(),
             Self::Usize(v) => v.to_string(),
+            Self::Option(v) => v.to_string(),
             Self::List(v) => v.iter().map(|v| v.to_string()).collect::<Vec<String>>().join(", "),
         }
     }
@@ -127,6 +138,8 @@ pub trait AttrValueTrait {
     fn to_code(&self, is_self: bool, is_deref: bool) -> String;
 
     fn to_code_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String;
+
+    fn to_code_option_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String;
 
     fn to_byteorder(&self, is_self: bool) -> String;
 }
@@ -148,6 +161,15 @@ impl AttrValueTrait for Option<AttrValue> {
     fn to_code_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String {
         if let Some(value) = self {
             return format!("Some({})", value.to_code(is_self, is_deref, is_string));
+        }
+
+        "None".to_string()
+    }
+
+    #[inline]
+    fn to_code_option_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String {
+        if let Some(value) = self {
+            return value.to_code(is_self, is_deref, is_string);
         }
 
         "None".to_string()
