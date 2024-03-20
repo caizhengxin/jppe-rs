@@ -67,7 +67,64 @@ fn main() {
 }
 ```
 
-### 网络例子
+### 默认值例子
+
+```toml
+[dependencies]
+jppe = { version="0.7.0", features = ["derive", "jdefault"] }
+```
+
+```rust
+#![feature(let_chains)]
+use jppe::{ByteEncode, ByteDecode, Jdefault};
+
+
+#[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode, Jdefault)]
+pub struct SimpleExample {
+    #[jppe(byte_count=1, default="\"123\".to_string()")]
+    pub value: String,
+    #[jppe(byte_count=1)]
+    pub body: SimpleExampleBody,
+}
+
+
+#[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode, Jdefault)]
+#[repr(u8)]
+pub enum SimpleExampleBody {
+    Read {
+        address: u8,
+    } = 1,
+    Write {
+        address: u8,
+        value: [u8; 3],
+    },
+    #[jppe(branch_default)]
+    Unknown {
+        #[jppe(default=10)]
+        value: u8,
+    },
+}
+
+
+fn main() {
+    let value = SimpleExample::default();
+    assert_eq!(value, SimpleExample {
+        value: "123".to_string(),
+        body: SimpleExampleBody::Unknown { value: 10 },
+    });
+
+    assert_eq!(jppe::encode(value), b"\x03\x31\x32\x33\x03\x0a");
+
+    let (input_remain, value) = jppe::decode::<SimpleExample>(b"\x03\x31\x32\x33\x03\x0a").unwrap();
+    assert_eq!(value, SimpleExample {
+        value: "123".to_string(),
+        body: SimpleExampleBody::Unknown { value: 10 },
+    });
+    assert_eq!(input_remain.is_empty(), true);
+}
+```
+
+### 其他例子
 
 - [TCP通信例子](./examples/socket_example.rs)
 - [以太网解析例子](./examples/ethernet_example.rs)
