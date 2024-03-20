@@ -1,0 +1,31 @@
+[package]
+name = "jget_derive"
+version = "0.1.0"
+authors = [
+    "jankincai <jankincai12@gmail.com.cn>"
+]
+edition = "2021"
+description = "Rust tools."
+repository = "https://github.com/caizhengxin/jppe-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs"
+readme = "../README.md"
+# https://crates.io/category_slugs
+categories = [
+    "accessibility",
+    "development-tools",
+]
+license = "MIT OR Apache-2.0"
+include = [
+    "src/*",
+    "Cargo.toml",
+    "../LICENSE*",
+    "../README.md",
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+virtue = "0.0"

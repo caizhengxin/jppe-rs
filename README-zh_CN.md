@@ -123,6 +123,7 @@ fn main() {
 - [x] `skip_encode`: 跳过encode函数.
 - [x] `skip_decode`: 数据类型需要实现`Default`trait.
 - [ ] `check_value`：主要用于检查结果是否正常, 异常会返回错误
+- [ ] `default`
 
 > enum branch
 

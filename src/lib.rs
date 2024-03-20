@@ -49,12 +49,17 @@
 #![feature(array_chunks)]
 
 #[cfg(feature = "jppe_derive")]
-#[allow(unused_imports)]
-#[macro_use]
 extern crate jppe_derive;
 
 #[cfg(feature = "jppe_derive")]
 pub use jppe_derive::{ByteDecode, ByteEncode, BorrowByteDecode, BorrowByteEncode};
+
+#[cfg(feature = "jget")]
+extern crate jget;
+
+#[cfg(feature = "jget")]
+pub use jget::Jget;
+
 
 mod decode;
 mod encode;

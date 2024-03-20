@@ -114,6 +114,7 @@ fn main() {
 - [x] `skip_encode`: Skip encode function.
 - [x] `skip_decode`: Require implement `Default` trait for data type.
 - [ ] `check_value`
+- [ ] `default`
 
 > enum branch
 
