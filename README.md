@@ -12,14 +12,14 @@ This is a byte stream structured serialization and deserialization library.
 
 ```toml
 [dependencies]
-jppe = { version="0.6.0", features = ["derive", "jdefault"] }
+jppe = { version="0.7.0", features = ["derive", "jdefault"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="0.6.0", features = ["derive", "serde", "jdefault"] }
+jppe = { version="0.7.0", features = ["derive", "serde", "jdefault"] }
 ```
 
 ### Simple Example

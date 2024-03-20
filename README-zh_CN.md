@@ -12,14 +12,14 @@
 
 ```toml
 [dependencies]
-jppe = { version="0.6.0", features = ["derive"] }
+jppe = { version="0.7.0", features = ["derive"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="0.6.0", features = ["derive", "serde"] }
+jppe = { version="0.7.0", features = ["derive", "serde"] }
 ```
 
 ### 简单例子
