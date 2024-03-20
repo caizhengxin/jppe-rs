@@ -17,6 +17,7 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 
 #[derive(Debug)]
 pub struct ContainerAttributes {
+    pub is_jppe: bool,
     pub crate_name: String,
     pub default_value: Option<String>
 }
@@ -26,6 +27,7 @@ impl Default for ContainerAttributes {
     fn default() -> Self {
         Self {
             crate_name: "jdefault".to_string(),
+            is_jppe: false,
             default_value: None,
         }
     }
@@ -34,12 +36,14 @@ impl Default for ContainerAttributes {
 
 impl FromAttribute for ContainerAttributes {
     fn parse(group: &Group) -> Result<Option<Self>> {
-        let attributes = match parse_tagged_attribute(group, "jd")? {
-            Some(body) => body,
-            None => return Ok(None),
-        };
-
         let mut result = Self::default();
+
+        let attributes = if let Some(body) = parse_tagged_attribute(group, "jppe")? {
+            result.is_jppe = true;
+            body
+        }
+        else if let Some(body) = parse_tagged_attribute(group, "jd")? { body }
+        else { return Ok(None); };
 
         for attribute in attributes {
             match attribute {
@@ -47,14 +51,22 @@ impl FromAttribute for ContainerAttributes {
                     // #xxx[xxx]
                     match i.to_string().as_str() {
                         // "name" => {},
-                        _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
+                        _ => {
+                            if !result.is_jppe {
+                                return Err(Error::custom_at("Unknown field attribute", i.span()));
+                            }
+                        }
                     }
                 }
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
                         "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
-                        _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
+                        _ => {
+                            if !result.is_jppe {
+                                return Err(Error::custom_at("Unknown field attribute", val.span()));
+                            }
+                        }
                     }
                 }
                 _ => {}
@@ -68,6 +80,7 @@ impl FromAttribute for ContainerAttributes {
 
 #[derive(Debug, Default)]
 pub struct FieldAttributes {
+    pub is_jppe: bool,
     pub default_bool: bool,
     pub default_value: Option<String>
 }
@@ -75,12 +88,14 @@ pub struct FieldAttributes {
 
 impl FromAttribute for FieldAttributes {
     fn parse(group: &Group) -> Result<Option<Self>> {
-        let attributes = match parse_tagged_attribute(group, "jd")? {
-            Some(body) => body,
-            None => return Ok(None),
-        };
-
         let mut result = Self::default();
+
+        let attributes = if let Some(body) = parse_tagged_attribute(group, "jppe")? {
+            result.is_jppe = true;
+            body
+        }
+        else if let Some(body) = parse_tagged_attribute(group, "jd")? { body }
+        else { return Ok(None); };
 
         for attribute in attributes {
             match attribute {
@@ -88,19 +103,25 @@ impl FromAttribute for FieldAttributes {
                     // #xxx[xxx]
                     match i.to_string().as_str() {
                         "default" => result.default_bool = true,
-                        _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
+                        _ => { 
+                            if !result.is_jppe {
+                                return Err(Error::custom_at("Unknown field attribute", i.span()));
+                            }
+                        }
                     }
                 }
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
                         "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
-                        _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
+                        _ => {
+                            if !result.is_jppe {
+                                return Err(Error::custom_at("Unknown field attribute", val.span()));
+                            }
+                        }
                     }
                 }
-                _ => {
-                    println!("{:?}", attribute);
-                }
+                _ => { }
             }
         }
 
