@@ -11,6 +11,13 @@
 jget = { version = "0.2.0", features = ["derive"] }
 ```
 
+Or
+
+```toml
+[dependencies]
+jppe = { version = "0.7.0", features = ["derive", "jget"] }
+```
+
 ## Usage
 
 ### Simple example

@@ -6,8 +6,8 @@ authors = [
 ]
 edition = "2021"
 description = "Rust tools."
-repository = "https://github.com/caizhengxin/jppe-rs"
-homepage = "https://github.com/caizhengxin/jppe-rs"
+repository = "https://github.com/caizhengxin/jppe-rs/crates/jget-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs/crates/jget-rs"
 readme = "README.md"
 # https://crates.io/category_slugs
 categories = [
