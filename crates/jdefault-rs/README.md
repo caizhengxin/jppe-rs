@@ -1,8 +1,8 @@
 # jdefault
 
-[![Crates.io](https://img.shields.io/crates/v/jdefault)](https://crates.io/crates/jdefault)
-[![Crates.io](https://img.shields.io/crates/d/jdefault)](https://crates.io/crates/jdefault)
-[![License](https://img.shields.io/crates/l/jdefault)](LICENSE-MIT)
+[![Crates.io](https://img.shields.io/crates/v/jdefault_derive)](https://crates.io/crates/jdefault_derive)
+[![Crates.io](https://img.shields.io/crates/d/jdefault_derive)](https://crates.io/crates/jdefault_derive)
+[![License](https://img.shields.io/crates/l/jdefault_derive)](LICENSE-MIT)
 
 ## Install
 

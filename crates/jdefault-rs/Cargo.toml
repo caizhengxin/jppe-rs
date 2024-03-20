@@ -1,13 +1,13 @@
 [package]
 name = "jdefault_derive"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
     "jankincai <jankincai12@gmail.com>"
 ]
 edition = "2021"
 description = "Rust default derive."
-repository = "https://github.com/caizhengxin/jdefault"
-homepage = "https://github.com/caizhengxin/jdefault"
+repository = "https://github.com/caizhengxin/jppe-rs/crates/jdefault-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs/crates/jdefault-rs"
 readme = "README.md"
 # https://crates.io/category_slugs
 categories = [
@@ -15,6 +15,7 @@ categories = [
 ]
 keywords = [
     "jdefault",
+    "default",
 ]
 license = "MIT OR Apache-2.0"
 include = [
