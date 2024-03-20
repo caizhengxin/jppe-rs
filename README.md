@@ -12,24 +12,24 @@ This is a byte stream structured serialization and deserialization library.
 
 ```toml
 [dependencies]
-jppe = { version="0.6.0", features = ["derive"] }
+jppe = { version="0.6.0", features = ["derive", "jdefault"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="0.6.0", features = ["derive", "serde"] }
+jppe = { version="0.6.0", features = ["derive", "serde", "jdefault"] }
 ```
 
 ### Simple Example
 
 ```rust
 #![feature(let_chains)]
-use jppe::{ByteEncode, ByteDecode};
+use jppe::{ByteEncode, ByteDecode, Jdefault};
 
 
-#[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode)]
+#[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode, Jdefault)]
 pub struct SimpleExample {
     pub length: u16,
     #[jppe(length="length")]
@@ -114,7 +114,7 @@ fn main() {
 - [x] `skip_encode`: Skip encode function.
 - [x] `skip_decode`: Require implement `Default` trait for data type.
 - [ ] `check_value`
-- [ ] `default`
+- [x] `default`: eg: [default example](./crates/jdefault-rs/tests/test_jppe.rs)
 
 > enum branch
 

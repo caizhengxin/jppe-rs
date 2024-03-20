@@ -14,6 +14,8 @@ pub struct ContainerAttributes {
     pub is_use: bool,
     pub byteorder: Option<AttrValue>,
     pub get_variable_name: Option<AttrValue>,
+    pub default_value: Option<String>,
+    pub default_bool: bool,
 
     // branch
     pub branch_byte: Option<u8>,
@@ -62,6 +64,7 @@ impl FromAttribute for ContainerAttributes {
                 ParsedAttribute::Tag(i) => {
                     // #xxx[xxx]
                     match i.to_string().as_str() {
+                        "default" | "default_value" => result.default_bool = true,
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }
@@ -71,6 +74,7 @@ impl FromAttribute for ContainerAttributes {
                         // "alias" => {},
                         "byteorder" => result.byteorder = Some(AttrValue::parse_byteorder(&val)?),
                         "get_variable_name" => result.get_variable_name = Some(AttrValue::parse_list(&val)?),
+                        "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
 
                         "branch_byte" => result.branch_byte = Some(parse_value_string(&val)?.parse().unwrap()),
                         "branch_byteorder" => result.branch_byteorder = Some(parse_value_string(&val)?),
@@ -104,6 +108,8 @@ pub struct FieldAttributes {
     pub bits: Option<AttrValue>,
     pub bits_start: bool,
     pub byte_count: Option<AttrValue>,
+    pub default_value: Option<String>,
+    pub default_bool: bool,
 
     pub value_encode: Option<String>,
     pub value_decode: Option<String>,
@@ -192,6 +198,7 @@ impl FromAttribute for FieldAttributes {
                         "skip" => result.skip = true,
                         "skip_encode" => result.skip_encode = true,
                         "skip_decode" => result.skip_decode = true,
+                        "default" | "default_value" => result.default_bool = true,
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }
@@ -213,6 +220,7 @@ impl FromAttribute for FieldAttributes {
                         "branch_bits" => result.branch_bits = Some(parse_value_string(&val)?),
                         "branch_bits_value" => result.branch_bits_value = Some(parse_value_string(&val)?),
                         "byte_count" | "byte_size" => result.byte_count = Some(AttrValue::parse_usize(&val)?),
+                        "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
 
                         "bits" => result.bits = Some(AttrValue::parse_usize(&val)?),
                         "bits_start" => {

@@ -50,15 +50,18 @@
 
 #[cfg(feature = "jppe_derive")]
 extern crate jppe_derive;
-
 #[cfg(feature = "jppe_derive")]
 pub use jppe_derive::{ByteDecode, ByteEncode, BorrowByteDecode, BorrowByteEncode};
 
 #[cfg(feature = "jget")]
 extern crate jget;
-
 #[cfg(feature = "jget")]
 pub use jget::Jget;
+
+#[cfg(feature = "jdefault_derive")]
+extern crate jdefault_derive;
+#[cfg(feature = "jdefault_derive")]
+pub use jdefault_derive::Jdefault;
 
 
 mod decode;
