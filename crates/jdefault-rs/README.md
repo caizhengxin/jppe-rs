@@ -4,13 +4,11 @@
 [![Crates.io](https://img.shields.io/crates/d/jdefault_derive)](https://crates.io/crates/jdefault_derive)
 [![License](https://img.shields.io/crates/l/jdefault_derive)](LICENSE-MIT)
 
-## Install
-
-> Cargo.toml
+## Cargo.toml
 
 ```toml
 [dependencies]
-jdefault_derive = "0.1.0"
+jdefault_derive = "0.2.0"
 ```
 
 ## Usage
