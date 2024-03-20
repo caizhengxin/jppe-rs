@@ -123,7 +123,7 @@ fn main() {
 - [x] `skip_encode`: 跳过encode函数.
 - [x] `skip_decode`: 数据类型需要实现`Default`trait.
 - [ ] `check_value`：主要用于检查结果是否正常, 异常会返回错误
-- [ ] `default`
+- [x] `default`: eg: [default example](./crates/jdefault-rs/tests/test_jppe.rs)
 
 > enum branch
 
@@ -164,6 +164,6 @@ fn main() {
 ## TODO
 
 - [ ] `jnet-rs`: 基于`jppe`实现常见网络协议结构化定义.
-- [ ] `jget-rs`: 通过修饰符暴露`pub fn get_xxxx(&self) -> xxxx`函数，避免手动定义.
-- [ ] `jdefault-rs`：通过修饰符设置默认值, 可以集合`jppe`结构化定义实现默认值编码功能.
+- [x] `jget-rs`: 通过修饰符暴露`pub fn get_xxxx(&self) -> xxxx`函数，避免手动定义.
+- [x] `jdefault-rs`：通过修饰符设置默认值, 可以集合`jppe`结构化定义实现默认值编码功能.
 - [ ] `jfmt-rs`: 主要用于格式化`jppe`定义结构化内容数据.

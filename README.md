@@ -154,6 +154,6 @@ fn main() {
 ## TODO
 
 - [ ] jnet-rs library.
-- [ ] jget-rs library.
-- [ ] jdefault-rs library.
+- [x] jget-rs library.
+- [x] jdefault-rs library.
 - [ ] jfmt-rs library.
