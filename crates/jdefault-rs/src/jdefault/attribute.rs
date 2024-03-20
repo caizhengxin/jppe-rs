@@ -102,7 +102,7 @@ impl FromAttribute for FieldAttributes {
                 ParsedAttribute::Tag(i) => {
                     // #xxx[xxx]
                     match i.to_string().as_str() {
-                        "default" => result.default_bool = true,
+                        "default_value" | "default" | "enum_default" | "branch_default" => result.default_bool = true,
                         _ => { 
                             if !result.is_jppe {
                                 return Err(Error::custom_at("Unknown field attribute", i.span()));
