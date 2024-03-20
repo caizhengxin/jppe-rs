@@ -8,7 +8,7 @@
 
 ```toml
 [dependencies]
-jget = { version="0.1.0", features = ["derive"] }
+jget = { version = "0.1.0", features = ["derive"] }
 ```
 
 ## Usage
