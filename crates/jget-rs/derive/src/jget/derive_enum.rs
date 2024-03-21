@@ -4,7 +4,7 @@ use virtue::{generate::Generator, parse::IdentOrIndex};
 use virtue::prelude::*;
 #[allow(unused_imports)]
 use super::attribute::{ContainerAttributes, FieldAttributes};
-use super::derive_struct::{generate_create_get_default, generate_struct_body};
+use super::derive_struct::*;
 
 
 #[allow(dead_code)]
@@ -41,13 +41,49 @@ impl DeriveEnum {
         // }
 
         // HashMap<function_name, return_type>
-        let mut cache_return_type: HashMap<String, String> = HashMap::new();
+        let mut cache_return_type: HashMap<String, (String, bool)> = HashMap::new();
         // HashMap<function_name, Vec[(enum_field_name, enum_value, function_body), (enum_field_name, enum_value, function_body)]>
         let mut cache_enum_element: HashMap<String, Vec<(String, String, String)>> = HashMap::new();
 
         for (_variant_index, variant) in self.iter_fields() {
+            let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
+
+            if !attributes.get_string.is_empty() {
+                for (field_name, return_type) in &attributes.get_string {
+                    let function_name = get_function_name(field_name);
+                    let return_type = get_return_type_string(&attributes, Some(return_type), &return_type, false);
+                    let function_body = format!("v.{field_name}");
+
+                    cache_return_type.insert(function_name.clone(), (return_type, false));
+
+                    if let Some(value) = cache_enum_element.get_mut(&function_name) {
+                        value.push((variant.name.to_string(), "".to_string(), function_body));
+                    }
+                    else {
+                        cache_enum_element.insert(function_name, vec![(variant.name.to_string(), "".to_string(), function_body)]);
+                    }    
+                }
+            }
+    
+            if !attributes.get_string_option.is_empty() {
+                for (field_name, return_type) in &attributes.get_string_option {
+                    let function_name = get_function_name(field_name);
+                    let return_type = get_return_type_string(&attributes, Some(return_type), &return_type, true);
+                    let function_body = if !return_type.contains("Option<") && field_name.contains('(') { format!("v.{field_name}") } else { format!("Some(v.{field_name})") };
+
+                    cache_return_type.insert(function_name.clone(), (return_type, true));
+
+                    if let Some(value) = cache_enum_element.get_mut(&function_name) {
+                        value.push((variant.name.to_string(), "".to_string(), function_body));
+                    }
+                    else {
+                        cache_enum_element.insert(function_name, vec![(variant.name.to_string(), "".to_string(), function_body)]);
+                    }
+                }
+            }
+
             for (function_name, return_type, function_body, ident) in generate_struct_body(&variant.fields, false, false)? {
-                cache_return_type.insert(function_name.clone(), return_type);
+                cache_return_type.insert(function_name.clone(), (return_type, true));
 
                 if let Some(value) = cache_enum_element.get_mut(&function_name) {
                     value.push((variant.name.to_string(), ident, function_body));
@@ -64,7 +100,7 @@ impl DeriveEnum {
 
         let mut generator_impl = generator.r#impl();
 
-        for (function_name, return_type) in &cache_return_type {
+        for (function_name, (return_type, is_match)) in &cache_return_type {
             generator_impl
                 .generate_fn(format!("get_{function_name}"))
                 .make_pub()
@@ -76,11 +112,18 @@ impl DeriveEnum {
                     fn_body.group(Delimiter::Brace, |variant_case| {
                         if let Some(element) = cache_enum_element.get(function_name) {
                             for (variant_name, ident, function_body) in element {
-                                variant_case.push_parsed(format!("Self::{variant_name} {{{ident}, ..}} => {{ {function_body} }},", ))?;
+                                if ident.is_empty() {
+                                    variant_case.push_parsed(format!("Self::{variant_name} (v) => {{ {function_body} }},", ))?;
+                                }
+                                else {
+                                    variant_case.push_parsed(format!("Self::{variant_name} {{{ident}, ..}} => {{ {function_body} }},", ))?;
+                                }
                             }    
                         }
 
-                        variant_case.push_parsed(format!("_ => None,", ))?;
+                        if *is_match {
+                            variant_case.push_parsed(format!("_ => None,", ))?;
+                        }
     
                         Ok(())
                     })?;    

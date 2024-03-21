@@ -1,13 +1,13 @@
 [package]
 name = "jget"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
     "jankincai <jankincai12@gmail.com.cn>"
 ]
 edition = "2021"
 description = "Rust tools."
-repository = "https://github.com/caizhengxin/jppe-rs/crates/jget-rs"
-homepage = "https://github.com/caizhengxin/jppe-rs/crates/jget-rs"
+repository = "https://github.com/caizhengxin/jppe-rs/tree/master/crates/jget-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs/tree/master/crates/jget-rs"
 readme = "README.md"
 # https://crates.io/category_slugs
 categories = [
@@ -30,8 +30,8 @@ include = [
 derive = ["jget_derive"]
 
 [dependencies]
-jget_derive = { path = "derive", version = "0.2.0", optional = true }
+jget_derive = { path = "derive", version = "0.3.0", optional = true }
 thiserror = "1.0"
 
 [dev-dependencies]
-jget_derive = { path = "derive", version = "0.2.0" }
+jget_derive = { path = "derive", version = "0.3.0" }

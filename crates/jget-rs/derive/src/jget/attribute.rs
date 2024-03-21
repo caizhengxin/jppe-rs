@@ -69,7 +69,7 @@ impl FromAttribute for ContainerAttributes {
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
-                        "get_default" => result.get_default = parse_value_string_list(&val)?,
+                        "get_default" => result.get_default.extend(parse_value_string_list(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }
                 }
@@ -121,8 +121,8 @@ impl FromAttribute for FieldAttributes {
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
-                        "get" => result.get_string = parse_value_string_list(&val)?,
-                        "get_option" => result.get_string_option = parse_value_string_list(&val)?,
+                        "get" => result.get_string.extend(parse_value_string_list(&val)?),
+                        "get_option" => result.get_string_option.extend(parse_value_string_list(&val)?),
                         // "to_expr" => result.to_expr = Some(parse_value_string(&val)?),
                         _ => return Err(Error::custom_at("Unknown field attribute", key.span())),
                     }

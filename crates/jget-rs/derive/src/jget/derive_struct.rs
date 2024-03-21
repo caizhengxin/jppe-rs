@@ -17,7 +17,7 @@ fn get_field_name(field_name: &String) -> String {
 }
 
 
-fn get_function_name(field_name: &String) -> String {
+pub fn get_function_name(field_name: &String) -> String {
     let field_name = field_name.replace("r#", "");
     let field_name = field_name.replace("get_", "");
     let field_name = field_name.replace("()", "");
@@ -27,7 +27,7 @@ fn get_function_name(field_name: &String) -> String {
 }
 
 
-fn get_return_type_string(_attributes: &FieldAttributes, return_type: Option<&String>, field_type: &String, is_option: bool) -> String {
+pub fn get_return_type_string(_attributes: &FieldAttributes, return_type: Option<&String>, field_type: &String, is_option: bool) -> String {
     let mut field_type_tmp = field_type.to_string();
 
 
@@ -43,7 +43,7 @@ fn get_return_type_string(_attributes: &FieldAttributes, return_type: Option<&St
 }
 
 
-fn get_code_string(attributes: &FieldAttributes, return_type: &mut String, field_name: &String, field_type: &String, is_option: bool, is_self: bool, is_deref: bool) -> String {
+pub fn get_code_string(attributes: &FieldAttributes, return_type: &mut String, field_name: &String, field_type: &String, is_option: bool, is_self: bool, is_deref: bool) -> String {
     let self_args = if is_self {"self."} else {""};
     let deref_args = if is_deref {"&"} else {""};
     let field_type = &field_type.replace(" ", "");
@@ -134,14 +134,16 @@ pub fn generate_struct_body(fields: &Option<Fields>, is_self: bool, is_deref: bo
 
                         cache_list.push((function_name, return_type, function_body, ident.to_string()));
                     }
-                    else if attributes.get_option {
+                    
+                    if attributes.get_option {
                         let function_name = get_function_name(&ident.to_string());
                         let mut return_type = get_return_type_string(&attributes, None, &field_type, true);
                         let function_body = get_code_string(&attributes, &mut return_type, &ident.to_string(), &field_type, true, is_self, is_deref);
 
                         cache_list.push((function_name, return_type, function_body, ident.to_string()));
                     }
-                    else if !attributes.get_string.is_empty() {
+
+                    if !attributes.get_string.is_empty() {
                         for (field_name, return_type) in &attributes.get_string {
                             let function_name = get_function_name(field_name);
                             let mut return_type = get_return_type_string(&attributes, Some(return_type), &field_type, false);
@@ -151,7 +153,8 @@ pub fn generate_struct_body(fields: &Option<Fields>, is_self: bool, is_deref: bo
                             cache_list.push((function_name, return_type, function_body, ident.to_string()));
                         }
                     }
-                    else if !attributes.get_string_option.is_empty() {
+                    
+                    if !attributes.get_string_option.is_empty() {
                         for (field_name, return_type) in &attributes.get_string_option {
                             let function_name = get_function_name(field_name);
                             let mut return_type = get_return_type_string(&attributes, Some(return_type), &field_type, true);
@@ -163,9 +166,45 @@ pub fn generate_struct_body(fields: &Option<Fields>, is_self: bool, is_deref: bo
                     }
                 }
             },
-            Fields::Tuple(fields) => {
-                for _field in fields {
-                }
+            Fields::Tuple(_fields) => {
+                // enum Example {
+                //     V1(xxx),
+                //     V2(xxx),
+                // }
+
+                // pub fn get_value(&self) -> Option<xxx> {
+                //     match self {
+                //         Self::V1(v) => Some(v.value),
+                //         Self::V2(v) => Some(v.value),
+                //     }
+                // }
+
+                // for field in fields {
+                //     let field_type: Vec<String> = field.r#type.iter().map(|f|f.to_string()).collect();
+                //     let field_type = field_type.iter().map(|v| { if v == "'" { v.to_string() } else { format!("{} ", v) } }).collect::<Vec<String>>();
+                //     let field_type = field_type.join("");
+
+                //     let attributes = field.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
+
+                //     if !attributes.get_string.is_empty() {
+                //         for (field_name, return_type) in &attributes.get_string {
+                //             let function_name = get_function_name(field_name);
+                //             let mut return_type = get_return_type_string(&attributes, Some(return_type), &field_type, false);
+                //             let function_body = get_code_string(&attributes, &mut return_type, &field_name, &field_type, false, is_self, is_deref);
+
+                //             cache_list.push((function_name, return_type, function_body, field_name.to_string()));
+                //         }
+                //     }
+                //     else if !attributes.get_string_option.is_empty() {
+                //         for (field_name, return_type) in &attributes.get_string_option {
+                //             let function_name = get_function_name(field_name);
+                //             let mut return_type = get_return_type_string(&attributes, Some(return_type), &field_type, true);
+                //             let function_body = get_code_string(&attributes, &mut return_type, &field_name, &field_type, true, is_self, is_deref);
+
+                //             cache_list.push((function_name, return_type, function_body, field_name.to_string()));
+                //         }
+                //     }
+                // }
             },
         }
     }
