@@ -4,7 +4,7 @@
 [![Crates.io](https://img.shields.io/crates/d/jppe)](https://crates.io/crates/jppe)
 [![License](https://img.shields.io/crates/l/jppe)](LICENSE)
 
-This is a Rust-based implementation of byte stream structured serialization/deserialization general library, can be applied to network packet analysis, network packet group package, network communication, file content analysis, etc., feel good small partners please click like 👍~
+This is a Rust-based implementation of byte stream structured serialization/deserialization general library, can be applied to network packet parsing, network packet group package, network communication, file content parsing, etc., feel good small partners please click like 👍~
 
 ## Usage
 
@@ -153,7 +153,7 @@ fn main() {
 - [x] `full=<int>`: encode full value.
 - [x] `untake`: Bytes are not taken.
 - [x] `linend|end_with=<string|bytes>`: Supporting `String/&str/&[u8]` type.
-- [x] `key|starts_with`: It is suitable for accurate analysis of key/value structure data, supporting `string/&str/&[u8]` types.
+- [x] `key|starts_with`: It is suitable for accurate parsing of key/value structure data, supporting `string/&str/&[u8]` types.
 - [x] `split`: Supporting `HashMap` type, eg: [split_example](./tests/test_type_hashmap.rs)
 - [x] `if_expr`: Supporting `Option<T>` type, eg: [if_expr_example](./tests/test_modifier_if_expr.rs).
 - [x] `encode_with`: custom encode function, eg: [with_example](./tests/test_modifier_with.rs).

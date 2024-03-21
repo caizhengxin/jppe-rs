@@ -12,6 +12,8 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 #[derive(Debug, Default)]
 pub struct ContainerAttributes {
     pub is_use: bool,
+    pub name: Option<String>,
+    pub alias: Option<String>,
     pub byteorder: Option<AttrValue>,
     pub get_variable_name: Option<AttrValue>,
     pub default_value: Option<String>,
@@ -71,7 +73,8 @@ impl FromAttribute for ContainerAttributes {
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
-                        // "alias" => {},
+                        "name" => result.name = Some(parse_value_string(&val)?),
+                        "alias" => result.alias = Some(parse_value_string(&val)?),
                         "byteorder" => result.byteorder = Some(AttrValue::parse_byteorder(&val)?),
                         "get_variable_name" => result.get_variable_name = Some(AttrValue::parse_list(&val)?),
                         "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
