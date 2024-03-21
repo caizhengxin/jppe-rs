@@ -6,8 +6,8 @@ authors = [
 ]
 edition = "2021"
 description = "Rust default derive."
-repository = "https://github.com/caizhengxin/jppe-rs/crates/jdefault-rs"
-homepage = "https://github.com/caizhengxin/jppe-rs/crates/jdefault-rs"
+repository = "https://github.com/caizhengxin/jppe-rs/tree/master/crates/jdefault-rs"
+homepage = "https://github.com/caizhengxin/jppe-rs/tree/master/crates/jdefault-rs"
 readme = "README.md"
 # https://crates.io/category_slugs
 categories = [
