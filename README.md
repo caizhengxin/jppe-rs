@@ -138,7 +138,7 @@ fn main() {
 - [x] `encode_with`: custom encode function.
 - [x] `decode_with`: custom decode function.
 - [x] `with`: custom encode/decode function.
-- [x] `get_variable_name`: Get cache variable, must be used with `variable_name`, only for decode, eg: `test_modifier_variable_name.rs`.
+- [x] `get_variable_name`: Get cache variable, must be used with `variable_name`, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
 
 > enum branch
 
@@ -162,7 +162,7 @@ fn main() {
 - [x] `with_args`: custom encode/decode function args, eg: [with_args_example](./tests/test_modifier_with_args.rs).
 - [x] `encode_value`: value processing expression, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value processing expression, eg: `#[jppe(decode_value="length / 2")]`.
-- [x] `variable_name`: Set integer cache variable, only for decode, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
+- [x] `variable_name`: Set integer cache variable, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
 - [x] `byte_count=<1|2|4|8>`: Specifies the byte count, automatic decode/encode length or other.
   + [x] `String/&str/&[u8]`: Fetches n byte mapping length in advance, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `HexString/HexBytes`: Fetches n byte mapping length in advance, eg: [byte_count](./tests/test_modifier_byte_count.rs).

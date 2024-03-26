@@ -47,6 +47,18 @@ pub enum ErrorKind {
 }
 
 
+impl ErrorKind {
+    #[inline]
+    pub fn get_offset(&self) -> Option<usize> {
+        match self {
+            Self::InvalidByteLength { offset } => Some(*offset),
+            Self::SubSequence { offset } => Some(*offset),
+            Self::Fail { offset } => Some(*offset),
+        }
+    }
+}
+
+
 pub fn make_error<I, E: ParseError<I>>(input: I, kind: ErrorKind) -> E {
     E::from_error_kind(input, kind)
 }

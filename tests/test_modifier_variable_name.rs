@@ -1,8 +1,8 @@
 #![feature(let_chains)]
-use jppe_derive::ByteDecode;
+use jppe_derive::{ByteDecode, ByteEncode};
 
 
-#[derive(Debug, PartialEq, Eq, ByteDecode)]
+#[derive(Debug, PartialEq, Eq, ByteDecode, ByteEncode)]
 pub struct VariableExample {
     pub cmd: u8,
     #[jppe(variable_name="length")]
@@ -13,7 +13,7 @@ pub struct VariableExample {
 }
 
 
-#[derive(Debug, PartialEq, Eq, ByteDecode)]
+#[derive(Debug, PartialEq, Eq, ByteDecode, ByteEncode)]
 #[jppe(get_variable_name="length")]
 pub struct VariableExampleBody {
     #[jppe(length="length")]
@@ -21,7 +21,7 @@ pub struct VariableExampleBody {
 }
 
 
-#[derive(Debug, PartialEq, Eq, ByteDecode)]
+#[derive(Debug, PartialEq, Eq, ByteDecode, ByteEncode)]
 #[jppe(get_variable_name="length")]
 #[repr(u8)]
 pub enum VariableExampleEnumBody {
@@ -57,6 +57,6 @@ mod tests {
         });
         assert_eq!(input.is_empty(), true);
 
-        // Because the value is not stored in the new type, it cannot encode.
+        assert_eq!(jppe::encode(value), b"\x01\x02abcd");
     }
 }

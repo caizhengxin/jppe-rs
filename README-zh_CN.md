@@ -145,7 +145,7 @@ fn main() {
 - [x] `encode_with`: 自定义encode函数, eg: [with_encode_example](./tests/test_modifier_with.rs).
 - [x] `decode_with`: 自定义decode函数, eg: [with_decode_example](./tests/test_modifier_with.rs).
 - [x] `with`: 自定义encode/decode函数, eg: [with_encode_example](./tests/test_modifier_with.rs).
-- [x] `get_variable_name`: 获取缓存变量, 必须配合`variable_name`使用，可以用于不用struct或enum类型传递，目前仅仅支持`decode`, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
+- [x] `get_variable_name`: 获取缓存变量, 必须配合`variable_name`使用，可以用于不用struct或enum类型传递, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
 
 > 枚举分支修饰符
 
@@ -171,7 +171,7 @@ fn main() {
 - [x] `with_args`: 自定义encode/decode函数参数, eg: [with_args_example](./tests/test_modifier_with_args.rs).
 - [x] `encode_value`: value处理表达式, eg: `#[jppe(encode_value="length * 2")]`.
 - [x] `decode_value`: value处理表达式, eg: `#[jppe(decode_value="length / 2")]`.
-- [x] `variable_name`: 指定整型类型缓存变量, 目前仅仅支持`decode`函数, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
+- [x] `variable_name`: 指定整型类型缓存变量, eg: [variable_name_example](./tests/test_modifier_variable_name.rs).
 - [x] `byte_count=<1|2|4|8>`: 指定`byte_count`字节数量, 会取走对应字节映射数字, 常常用于下面类型:
   + [x] `String/&str/&[u8]`: 提前取n个字节映射长度, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `HexString/HexBytes`: 提前取n个字节映射长度, eg: [byte_count](./tests/test_modifier_byte_count.rs).

@@ -80,7 +80,7 @@ pub fn generate_decode_return(fn_body: &mut StreamBuilder, fields: &Option<Field
 }
 
 
-pub fn generate_decode_struct_body(fn_body: &mut StreamBuilder, crate_name: &str, fields: &Option<Fields>, _is_enum: bool) -> Result<()> {
+pub fn generate_decode_struct_body(fn_body: &mut StreamBuilder, crate_name: &str, fields: &Option<Fields>, _cattr: &ContainerAttributes, _is_enum: bool) -> Result<()> {
     if let Some(fields) = fields.as_ref() {
         match fields {
             Fields::Struct(value) => {
@@ -99,24 +99,7 @@ pub fn generate_decode_struct_body(fn_body: &mut StreamBuilder, crate_name: &str
                     generate_decode_body(fn_body, crate_name, &attributes, index.to_string(), &get_field_type(field), true)?;
                 }
             },
-        }
-
-        // for field in fields.names() {
-        //     let attributes = field.attributes().get_attribute::<FieldAttributes>()?.unwrap_or_default();
-    
-        //     // TODO
-        //     match field {
-        //         IdentOrIndex::Ident { ident, attributes: _attributes } => {
-        //             fn_body.push_parsed(attributes.to_code(false))?;
-
-        //             generate_decode_body(fn_body, crate_name, &attributes, ident.to_string(), false)?;
-        //         },
-        //         IdentOrIndex::Index { index, span: _span, attributes: _attributes } => {
-        //             fn_body.push_parsed(attributes.to_code(false))?;
-        //             generate_decode_body(fn_body, crate_name, &attributes, index.to_string(), true)?;
-        //         },
-        //     }
-        // }    
+        }   
     }
 
     Ok(())
@@ -187,7 +170,7 @@ impl DeriveStruct {
                 }
             }
 
-            generate_decode_struct_body(fn_body, crate_name, &self.fields, false)?;
+            generate_decode_struct_body(fn_body, crate_name, &self.fields, &self.attributes, false)?;
             generate_decode_return(fn_body, &self.fields, None)?;
         }
 
@@ -222,10 +205,18 @@ impl DeriveStruct {
                 else {
                     fn_body.push_parsed(self.attributes.to_code(true))?;
 
+                    if let Some(value) = &self.attributes.get_variable_name && let AttrValue::List(variable_names) = value {
+                        for variable_name in variable_names {
+                            let variable_name_str = variable_name.to_string();
+        
+                            fn_body.push_parsed(format!("let {variable_name_str} = if let Some(cr) = cattr && let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{*value}} else {{0}};"))?;
+                        }
+                    }
+
                     if let Some(fields) = self.fields.as_ref() {
                         for field in fields.names() {
-                            let attributes = field.attributes().get_attribute::<FieldAttributes>()?.unwrap_or_default();
-    
+                            let mut attributes = field.attributes().get_attribute::<FieldAttributes>()?.unwrap_or_default();
+                            attributes.get_variable_name = self.attributes.get_variable_name.clone();
                             fn_body.push_parsed(attributes.to_code(true, false))?;
                             generate_encode_body(fn_body, &attributes, crate_name, &field.to_string(), true)?;
                         }

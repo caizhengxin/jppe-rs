@@ -12,8 +12,6 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 #[derive(Debug, Default)]
 pub struct ContainerAttributes {
     pub is_use: bool,
-    pub name: Option<String>,
-    pub alias: Option<String>,
     pub byteorder: Option<AttrValue>,
     pub get_variable_name: Option<AttrValue>,
     pub default_value: Option<String>,
@@ -73,8 +71,6 @@ impl FromAttribute for ContainerAttributes {
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
-                        "name" => result.name = Some(parse_value_string(&val)?),
-                        "alias" => result.alias = Some(parse_value_string(&val)?),
                         "byteorder" => result.byteorder = Some(AttrValue::parse_byteorder(&val)?),
                         "get_variable_name" => result.get_variable_name = Some(AttrValue::parse_list(&val)?),
                         "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
@@ -117,6 +113,7 @@ pub struct FieldAttributes {
     pub value_encode: Option<String>,
     pub value_decode: Option<String>,
 
+    pub get_variable_name: Option<AttrValue>,
     pub variable_name: Option<AttrValue>,
 
     pub key: Option<AttrValue>,
@@ -150,7 +147,14 @@ pub struct FieldAttributes {
 impl FieldAttributes {
     pub fn to_code(&self, is_self: bool, is_deref: bool) -> String {
         let byteorder = self.byteorder.to_byteorder(is_self);
-        let length = self.length.to_code(is_self, is_deref);
+        let length = if let Some(length) = &self.length
+            && let Some(viariable_name) = &self.get_variable_name
+            && viariable_name.to_string().contains(&length.to_string())
+        {
+            self.length.to_code(false, false)            
+        }
+        else { self.length.to_code(is_self, is_deref) };
+        // let length = self.length.to_code(is_self, is_deref);
         let count = self.count.to_code(is_self, is_deref);
         let mut branch = self.branch.to_code(is_self, is_deref);
         if let Some(branch_option) = &self.branch_option {

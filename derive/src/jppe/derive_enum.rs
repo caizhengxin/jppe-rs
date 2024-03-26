@@ -200,7 +200,7 @@ impl DeriveEnum {
                     variant_case.group(Delimiter::Brace, |variant_body| {
                         variant_body.push_parsed(attributes.to_code(true, true))?;
                         generate_decode_body2(variant_body, &attributes)?;
-                        generate_decode_struct_body(variant_body, crate_name, &variant.fields, true)?;
+                        generate_decode_struct_body(variant_body, crate_name, &variant.fields, &self.attributes, true)?;
                         generate_decode_return(variant_body, &variant.fields, Some(variant))?;
                         Ok(())
                     })?;
@@ -273,6 +273,14 @@ impl DeriveEnum {
                 //     }
                 // }
 
+                if let Some(value) = &self.attributes.get_variable_name && let AttrValue::List(variable_names) = value {
+                    for variable_name in variable_names {
+                        let variable_name_str = variable_name.to_string();
+    
+                        fn_body.push_parsed(format!("let {variable_name_str} = if let Some(cr) = cattr && let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{*value}} else {{0}};"))?;
+                    }
+                }        
+
                 fn_body.push_parsed(self.attributes.to_code(true))?;
                 fn_body.push_parsed("match self")?;
                 fn_body.group(Delimiter::Brace, |variant_case| {
@@ -333,15 +341,21 @@ impl DeriveEnum {
                                 match fields {
                                     Fields::Struct(value) => {
                                         for (ident, field) in value {
-                                            let attributes = field.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
-                                            variant_body.push_parsed(attributes.to_code(false, true))?;
+                                            let mut attributes = field.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
+                                            attributes.get_variable_name = self.attributes.get_variable_name.clone();
+
+                                            if attributes.is_use {
+                                                variant_body.push_parsed(attributes.to_code(false, true))?;
+                                            }
 
                                             generate_encode_body(variant_body, &attributes, crate_name, &ident.to_string(), false)?;
                                         }
                                     },
                                     Fields::Tuple(value) => {
                                         for (index, field) in value.iter().enumerate() {
-                                            let attributes = field.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
+                                            let mut attributes = field.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
+                                            attributes.get_variable_name = self.attributes.get_variable_name.clone();
+
                                             if attributes.is_use {
                                                 variant_body.push_parsed(attributes.to_code(false, false))?;
                                             }

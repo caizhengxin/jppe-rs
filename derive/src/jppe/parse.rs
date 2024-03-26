@@ -1,7 +1,7 @@
 use virtue::prelude::*;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AttrValue {
     String(String),
     Var(String),

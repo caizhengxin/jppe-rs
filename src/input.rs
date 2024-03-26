@@ -85,6 +85,7 @@ impl<'a> InputTrait<'a> for &'a [u8] {
         Err(make_error(input, ErrorKind::SubSequence { offset: input_len }))      
     }
 
+    #[inline]
     fn input_take(&self, length: usize) -> JResult<&'a [u8], &'a [u8]> {
         let mut input = *self;
 

@@ -45,6 +45,12 @@ members = [
 [features]
 derive = ["jppe_derive"]
 jdefault = ["jdefault_derive"]
+full = [
+    "jppe_derive",
+    "jdefault_derive",
+    "jget",
+    "serde"
+]
 
 [dependencies]
 jppe_derive = { path = "derive", version = "0.7.0", optional = true }
