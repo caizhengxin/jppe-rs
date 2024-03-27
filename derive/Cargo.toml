@@ -1,6 +1,6 @@
 [package]
 name = "jppe_derive"
-version = "0.7.0"
+version = "0.8.0"
 authors = [
     "jankincai <jankincai12@gmail.com>"
 ]
