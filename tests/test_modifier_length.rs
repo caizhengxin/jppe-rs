@@ -10,8 +10,8 @@ pub struct StructLengthExample1<'a> {
     pub a: u32,
     #[jppe(length=1)]
     pub b: &'a [u8],
-    #[jppe(length=1)]
-    pub c: Vec<u8,>
+    #[jppe(count=1, length=3)]  // count indicates the Vec size and length indicates bytes of the int type.
+    pub c: Vec<u32>
 }
 
 
@@ -20,9 +20,9 @@ fn test_struct_length_example1() {
     let value = StructLengthExample1 { a: 1, b: &[1], c: vec![1]};
     let mut buf = vec![];
     value.encode(&mut buf, None, None);
-    assert_eq!(buf, vec![0x00, 0x00, 0x01, 0x01, 0x01]);
+    assert_eq!(buf, vec![0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01]);
 
-    let (input, value2) = StructLengthExample1::decode(&[0x00, 0x00, 0x01, 0x01, 0x01], None, None).unwrap();
+    let (input, value2) = StructLengthExample1::decode(&[0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01], None, None).unwrap();
     assert_eq!(value2, value);
     assert_eq!(input.is_empty(), true);
 }

@@ -131,6 +131,7 @@ fn main() {
 - [IPv4解析例子](./examples/ipv4_example.rs)
 - [TCP解析例子](./examples/tcp_example.rs)
 - [HTTP解析例子](./examples/http_example.rs)
+- [HTTP解析例子2](./examples/http_example_2.rs)
 - [解析例子](./examples/parse_example.rs): 包含Ethernet/IPv4/TCP/UDP
 
 ## 常见功能
@@ -175,7 +176,8 @@ fn main() {
 - [x] `byte_count=<1|2|4|8>`: 指定`byte_count`字节数量, 会取走对应字节映射数字, 常常用于下面类型:
   + [x] `String/&str/&[u8]`: 提前取n个字节映射长度, eg: [byte_count](./tests/test_modifier_byte_count.rs).
   + [x] `HexString/HexBytes`: 提前取n个字节映射长度, eg: [byte_count](./tests/test_modifier_byte_count.rs).
-  + [x] `Enum`: 提前取n个字节映射枚举索引, eg: [enum_byte_count](./tests/test_type_enum_byte_count.rs)
+  + [x] `Enum`: 提前取n个字节映射枚举索引, eg: [enum_byte_count](./tests/test_type_enum_byte_count.rs).
+  + [x] `Vec<T>`
 - [x] `skip`: 数据类型需要实现`Default`trait.
 - [x] `skip_encode`: 跳过encode函数.
 - [x] `skip_decode`: 数据类型需要实现`Default`trait.

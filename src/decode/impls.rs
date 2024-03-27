@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
-
-use crate::{BorrowByteDecode, ByteDecode};
+use crate::{get_byteorder, BorrowByteDecode, ByteDecode, InputTrait};
 use crate::{FieldAttrModifiers, ContainerAttrModifiers};
 #[allow(unused_imports)]
 use crate::{JResult, make_error, ErrorKind};
@@ -51,6 +50,7 @@ impl<T: ByteDecode> ByteDecode for Option<T> {
 
 
 impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Option<T> {
+    #[inline]
     fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
         where 
             Self: Sized
@@ -77,14 +77,29 @@ impl<T: ByteDecode> ByteDecode for Vec<T> {
         let mut value;
         let mut value_list = Vec::new();
 
-        if let Some(fattr_tmp) = fattr && let Some(length) = fattr_tmp.length {
-            let mut fattr_tmp = fattr_tmp.clone();
-            fattr_tmp.length = None;
+        if let Some(fattr_tmp) = fattr {
+            let count = if let Some(count) = fattr_tmp.count {
+                count
+            }
+            else if let Some(byte_count) = fattr_tmp.byte_count {
+                let (input_tmp, count) = input.to_bits_usize(get_byteorder(cattr, fattr), byte_count as u8)?;
+                input = input_tmp;
+                count
+            } else { 0 };
 
-            for _i in 0..length {
-                (input, value) = T::decode(input, cattr, Some(&fattr_tmp))?;
+            for _i in 0..count {
+                (input, value) = T::decode(input, cattr, fattr)?;
                 value_list.push(value);
-            }    
+            }  
+        }
+        else {
+            loop {
+                if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
+                    value_list.push(value);
+                    input = input_tmp;
+                }
+                else { break; }
+            }  
         }
 
         Ok((input, value_list))
@@ -93,6 +108,7 @@ impl<T: ByteDecode> ByteDecode for Vec<T> {
 
 
 impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
+    #[inline]
     fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
         where 
             Self: Sized
@@ -101,15 +117,29 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
         let mut value;
         let mut value_list = Vec::new();
 
-        if let Some(fattr_tmp) = fattr && let Some(length) = fattr_tmp.length {
-            let mut fattr_tmp = fattr_tmp.clone();
-            fattr_tmp.length = None;
+        if let Some(fattr_tmp) = fattr {
+            let count = if let Some(count) = fattr_tmp.count {
+                count
+            }
+            else if let Some(byte_count) = fattr_tmp.byte_count {
+                let (input_tmp, count) = input.to_bits_usize(get_byteorder(cattr, fattr), byte_count as u8)?;
+                input = input_tmp;
+                count
+            } else { 0 };
 
-            for _i in 0..length {
-                (input, value) = T::decode(input, cattr, Some(&fattr_tmp))?;
-    
+            for _i in 0..count {
+                (input, value) = T::decode(input, cattr, fattr)?;
                 value_list.push(value);
-            }    
+            }  
+        }
+        else {
+            loop {
+                if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
+                    value_list.push(value);
+                    input = input_tmp;
+                }
+                else { break; }
+            }  
         }
 
         Ok((input, value_list))
@@ -170,12 +200,21 @@ mod tests {
 
     #[test]
     fn test_decode_vec() {
-        let fattr = FieldAttrModifiers { length: Some(1), ..Default::default() };
+        let fattr = FieldAttrModifiers { count: Some(1), ..Default::default() };
         let (input, value) = <Vec<u16>>::decode(&[0x00, 0x01, 0x02], None, Some(&fattr)).unwrap();
         assert_eq!(value, [0x01]);
         assert_eq!(input, [0x02]);
 
-        let fattr = FieldAttrModifiers { length: Some(2), ..Default::default() };
+        let fattr = FieldAttrModifiers { byte_count: Some(1), ..Default::default() };
+        let (input, value) = <Vec<u16>>::decode(&[0x01, 0x00, 0x01, 0x02], None, Some(&fattr)).unwrap();
+        assert_eq!(value, [0x01]);
+        assert_eq!(input, [0x02]);
+
+        let (input, value) = <Vec<u16>>::decode(&[0x00, 0x01, 0x00, 0x02, 0x03], None, None).unwrap();
+        assert_eq!(value, [0x0001, 0x0002]);
+        assert_eq!(input, [0x03]);
+
+        let fattr = FieldAttrModifiers { count: Some(2), ..Default::default() };
         assert_eq!(<Vec<u16>>::decode(&[0x00, 0x01, 0x02], None, Some(&fattr)).is_err(), true);
     }
 }
