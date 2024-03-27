@@ -168,15 +168,19 @@ impl FieldAttributes {
         let byte_count = self.byte_count.to_code(is_self, is_deref);
 
         if self.is_use {
-            format!("let fattr_new = jppe::FieldAttrModifiers {{
+            let value = format!("let fattr_new = jppe::FieldAttrModifiers {{
                 byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
                 split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
                 key: {key}, byte_count: {byte_count},
-                ..Default::default()}}; let fattr_new = Some(&fattr_new);")
+                ..Default::default()}}; let fattr_new = Some(&fattr_new);");
+
+            if value.contains(": Some(") || value.contains(": true") || value.contains("if let Some(") {
+                return value;
+            }
+
         }
-        else {
-            "let fattr_new: Option<&jppe::FieldAttrModifiers> = None;".to_string()
-        }
+
+        "let fattr_new: Option<&jppe::FieldAttrModifiers> = None;".to_string()
     }
 }
 
