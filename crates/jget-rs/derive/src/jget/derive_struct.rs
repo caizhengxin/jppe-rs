@@ -69,22 +69,29 @@ pub fn get_code_string(attributes: &FieldAttributes, return_type: &mut String, f
     else if (return_type.starts_with("Vec<u") || return_type.starts_with("Vec<i")) && return_type != field_type {
         let as_type = return_type.replace("Vec<", "").replace(">", "");
 
-        if field_type.starts_with("Option<") {
+        if field_type.starts_with("Option<Vec<") {
             code_list.push(format!("let value = if let Some(value) = value {{ value.iter().map(| v | *v as {as_type}).collect::<{return_type}>().into() }} else {{ None }};"));  
         }
-        else {
+        else if field_type.starts_with("Vec<") {
             code_list.push(format!("let value = value.iter().map(| v | *v as {as_type}).collect::<{return_type}>();"));
         }
+        else {
+            code_list.push(format!("let value = vec![*value as {as_type}];"));
+        }
     }
-    else if (return_type.starts_with("Option<Vec<u") || return_type.starts_with("Option<Vec<i")) && ((field_type.starts_with("Option<") && return_type != field_type) || (!field_type.starts_with("Option<") && return_type != &format!("Option<{field_type}>"))) {
+    else if (return_type.starts_with("Option<Vec<u") || return_type.starts_with("Option<Vec<i"))
+            && ((field_type.starts_with("Option<") && return_type != field_type) || (!field_type.starts_with("Option<") && return_type != &format!("Option<{field_type}>"))) {
         let as_type = return_type.replace("Option<Vec<", "").replace(">>", "");
         let return_type = return_type.replace("Option<", "").replacen(">", "", 1);
 
-        if field_type.starts_with("Option<") {
+        if field_type.starts_with("Option<Vec<") {
             code_list.push(format!("let value = if let Some(value) = value {{ value.iter().map(| v | *v as {as_type}).collect::<{return_type}>().into() }} else {{ None }};"));  
         }
-        else {
+        else if field_type.starts_with("Vec<") {
             code_list.push(format!("let value = value.iter().map(|v| *v as {as_type}).collect::<{return_type}>().into();"));
+        }
+        else {
+            code_list.push(format!("let value = vec![*value as {as_type}];"));
         }
     }
     else if field_type.starts_with("Option<") && !(return_type.starts_with('&') || return_type.starts_with("Option<&")) {

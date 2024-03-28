@@ -1,5 +1,13 @@
+use std::sync::Mutex;
+use std::collections::HashMap;
 use virtue::prelude::*;
 use virtue::utils::*;
+use lazy_static::lazy_static;
+
+
+lazy_static! {
+    pub static ref CACHE_GET_FIELD: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
+}
 
 
 fn parse_value_string(value: &Literal) -> Result<String> {
@@ -121,6 +129,7 @@ impl FromAttribute for FieldAttributes {
                 ParsedAttribute::Property(key, val) => {
                     // #xxx[xxx=xxx]
                     match key.to_string().as_str() {
+                        "name" => result.name = Some(parse_value_string(&val)?),
                         "get" => result.get_string.extend(parse_value_string_list(&val)?),
                         "get_option" => result.get_string_option.extend(parse_value_string_list(&val)?),
                         // "to_expr" => result.to_expr = Some(parse_value_string(&val)?),

@@ -36,3 +36,18 @@ fn test_jget_vec_example() {
     assert_eq!(value.get_value4(), &vec![]);
     assert_eq!(value.get_value5(), Some(&vec![]));
 }
+
+
+#[derive(Debug, Default, Jget)]
+pub struct JgetVecExample2 {
+    #[jget(get="value:Vec<u16>")]
+    pub value: u8,
+}
+
+
+#[test]
+fn test_jget_vec_example2() {
+    let value = JgetVecExample2::default();
+
+    assert_eq!(value.get_value(), vec![0]);
+}
