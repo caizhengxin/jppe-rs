@@ -12,10 +12,20 @@ macro_rules! encode_string {
                 $input.extend(int_to_vec($value.len(), byte_count, &get_byteorder($cattr, $fattr)));
                 byte_count_status = true;
             }
-            if let Some(key) = &fr.key { $input.extend(key); }
-            if let Some(splits) = &fr.split && let Some(split) = splits.first() {
-                $input.extend(split);
+            else if fr.linend_value.is_none() && fr.length.is_none() {
+                $input.extend(int_to_vec($value.len(), 1, &crate::ByteOrder::Be));
+                byte_count_status = true;
             }
+            else {
+                if let Some(key) = &fr.key { $input.extend(key); }
+                if let Some(splits) = &fr.split && let Some(split) = splits.first() {
+                    $input.extend(split);
+                }    
+            }
+        }
+        else {
+            $input.extend(int_to_vec($value.len(), 1, &crate::ByteOrder::Be));
+            byte_count_status = true;
         }
 
         // value
@@ -29,13 +39,13 @@ macro_rules! encode_string {
                     $input.extend(linend_value)
                 }
             }
-            else if fr.length.is_none() {
-                $input.push(b'\n');
-            }
+            // else if fr.length.is_none() {
+            //     $input.push(b'\n');
+            // }
         }
-        else {
-            $input.push(b'\n');
-        }    
+        // else {
+        //     $input.push(b'\n');
+        // }    
     };
 }
 
@@ -58,6 +68,28 @@ impl BorrowByteEncode for String {
         encode_string!(self, input, cattr, fattr);
     }
 }
+
+
+// macro_rules! encode_str {
+//     ($value:expr, $input:expr, $cattr:expr, $fattr:expr) => {
+//         // key and split
+//         if let Some(fr) = $fattr {
+//             if let Some(byte_count) = fr.byte_count { $input.extend(int_to_vec($value.len(), byte_count, &get_byteorder($cattr, $fattr))); }
+//             if let Some(key) = &fr.key { $input.extend(key); }
+//             if let Some(splits) = &fr.split && let Some(split) = splits.first() {
+//                 $input.extend(split);
+//             }
+//         }
+
+//         $input.extend($value.as_bytes());
+
+//         if let Some(fr) = $fattr && let Some(linend_value_list) = &fr.linend_value && let Some(linend_value) = linend_value_list.first() {
+//             if !$value.as_bytes().ends_with(linend_value) {
+//                 $input.extend(linend_value)
+//             }
+//         }
+//     };
+// }
 
 
 impl ByteEncode for &str {
@@ -90,7 +122,7 @@ mod tests {
         let mut buf = vec![];
         let value = String::from("abc");
         value.encode(&mut buf, None, None);
-        assert_eq!(buf, b"abc\n");
+        assert_eq!(buf, b"\x03abc");
 
         let fattr = FieldAttrModifiers { linend_value: Some(vec!["\r\n".as_bytes().to_vec()]), ..Default::default() };
         let mut buf = vec![];
@@ -122,7 +154,7 @@ mod tests {
         let mut buf = vec![];
         let value = "abc";
         value.encode(&mut buf, None, None);
-        assert_eq!(buf, b"abc\n");
+        assert_eq!(buf, b"\x03abc");
 
         let fattr = FieldAttrModifiers { linend_value: Some(vec!["\r\n".as_bytes().to_vec()]), ..Default::default() };
         let mut buf = vec![];

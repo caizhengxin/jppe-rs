@@ -5,17 +5,22 @@ use crate::InputTrait;
 #[inline]
 fn decode_hex<'da, 'db>(input: &'da [u8], cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> crate::JResult<&'da [u8], &'da [u8]> {
     let mut input = input;
+    let length;
 
-    let length = if let Some(fr) = fattr {
-        if let Some(length) = fr.length {length}
-        else if let Some(byte_count) = fr.byte_count {
-            let (input_tmp, value) = input.to_bits_usize(crate::get_byteorder(cattr, fattr), byte_count as u8)?;
-            input = input_tmp;
-            value
+    if let Some(fr) = fattr {
+        if let Some(length_tmp) = fr.length {
+            length = length_tmp;
         }
-        else { input.len() }
+        else if let Some(byte_count) = fr.byte_count {
+            (input, length) = input.to_bits_usize(crate::get_byteorder(cattr, fattr), byte_count as u8)?;
+        }
+        else { 
+            (input, length) = input.to_be_bits_usize(1)?;
+        }
     }
-    else {input.len()};
+    else {
+        (input, length) = input.to_be_bits_usize(1)?;
+    };
 
     let (input, value) = input.input_take(length)?;
 
@@ -69,6 +74,10 @@ mod tests {
 
     #[test]
     fn test_decode_hex() {
+        let (input, value) = HexString::decode(b"\x03\x00\x01\x02", None, None).unwrap();
+        assert_eq!(value, HexString::from_str("000102").unwrap());
+        assert_eq!(input.is_empty(), true);
+
         let fattr = FieldAttrModifiers { length: Some(3), ..Default::default() };
         let (input, value) = HexString::decode(b"\x00\x01\x02", None, Some(&fattr)).unwrap();
         assert_eq!(value, HexString::from_str("000102").unwrap());

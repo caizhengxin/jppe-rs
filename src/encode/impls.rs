@@ -43,8 +43,13 @@ impl<T: BorrowByteEncode> BorrowByteEncode for Option<T> {
 impl<T: ByteEncode> ByteEncode for Vec<T> {
     fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
     {
-        if let Some(fattr_tmp) = fattr && let Some(byte_count) = fattr_tmp.byte_count {
-            input.extend(int_to_vec(self.len(), byte_count, &get_byteorder(cattr, fattr)));
+        if let Some(fattr_tmp) = fattr {
+            if let Some(byte_count) = fattr_tmp.byte_count {
+                input.extend(int_to_vec(self.len(), byte_count, &get_byteorder(cattr, fattr)));
+            }
+        }
+        else {
+            input.extend(int_to_vec(self.len(), 1, &crate::ByteOrder::Be));
         }
 
         for value in self {
@@ -58,8 +63,13 @@ impl<T: BorrowByteEncode> BorrowByteEncode for Vec<T> {
     #[inline]
     fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
     {
-        if let Some(fattr_tmp) = fattr && let Some(byte_count) = fattr_tmp.byte_count {
-            input.extend(int_to_vec(self.len(), byte_count, &get_byteorder(cattr, fattr)));
+        if let Some(fattr_tmp) = fattr {
+            if let Some(byte_count) = fattr_tmp.byte_count {
+                input.extend(int_to_vec(self.len(), byte_count, &get_byteorder(cattr, fattr)));
+            }
+        }
+        else {
+            input.extend(int_to_vec(self.len(), 1, &crate::ByteOrder::Be));
         }
 
         for value in self {
@@ -128,6 +138,17 @@ mod tests {
         let mut buf = vec![];
         let value: Vec<u16> = vec![1, 2];
         value.encode(&mut buf, None, Some(&fattr));
+        assert_eq!(buf, b"\x02\x00\x01\x00\x02");
+
+        let fattr = FieldAttrModifiers { count: Some(1), ..Default::default() };
+        let mut buf = vec![];
+        let value: Vec<u16> = vec![1, 2];
+        value.encode(&mut buf, None, Some(&fattr));
+        assert_eq!(buf, b"\x00\x01\x00\x02");
+
+        let mut buf = vec![];
+        let value: Vec<u16> = vec![1, 2];
+        value.encode(&mut buf, None, None);
         assert_eq!(buf, b"\x02\x00\x01\x00\x02");
     }
 }

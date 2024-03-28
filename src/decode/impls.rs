@@ -89,7 +89,11 @@ impl<T: ByteDecode> ByteDecode for Vec<T> {
             else if let Some(length) = fattr_tmp.length {
                 length
             }
-            else { 0 };
+            else {
+                let (input_tmp, count) = input.to_be_bits_usize(1)?;
+                input = input_tmp;
+                count
+            };
 
             for _i in 0..count {
                 (input, value) = T::decode(input, cattr, fattr)?;
@@ -97,13 +101,13 @@ impl<T: ByteDecode> ByteDecode for Vec<T> {
             }  
         }
         else {
-            loop {
-                if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
-                    value_list.push(value);
-                    input = input_tmp;
-                }
-                else { break; }
-            }  
+            let (input_tmp, count) = input.to_be_bits_usize(1)?;
+            input = input_tmp;
+
+            for _i in 0..count {
+                (input, value) = T::decode(input, cattr, fattr)?;
+                value_list.push(value);
+            } 
         }
 
         Ok((input, value_list))
@@ -133,7 +137,11 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
             else if let Some(length) = fattr_tmp.length {
                 length
             } 
-            else { 0 };
+            else {
+                let (input_tmp, count) = input.to_be_bits_usize(1)?;
+                input = input_tmp;
+                count
+            };
 
             for _i in 0..count {
                 (input, value) = T::decode(input, cattr, fattr)?;
@@ -141,13 +149,13 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
             }  
         }
         else {
-            loop {
-                if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
-                    value_list.push(value);
-                    input = input_tmp;
-                }
-                else { break; }
-            }  
+            let (input_tmp, count) = input.to_be_bits_usize(1)?;
+            input = input_tmp;
+
+            for _i in 0..count {
+                (input, value) = T::decode(input, cattr, fattr)?;
+                value_list.push(value);
+            }
         }
 
         Ok((input, value_list))
@@ -218,7 +226,7 @@ mod tests {
         assert_eq!(value, [0x01]);
         assert_eq!(input, [0x02]);
 
-        let (input, value) = <Vec<u16>>::decode(&[0x00, 0x01, 0x00, 0x02, 0x03], None, None).unwrap();
+        let (input, value) = <Vec<u16>>::decode(&[0x02, 0x00, 0x01, 0x00, 0x02, 0x03], None, None).unwrap();
         assert_eq!(value, [0x0001, 0x0002]);
         assert_eq!(input, [0x03]);
 

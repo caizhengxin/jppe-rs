@@ -1,20 +1,26 @@
-use crate::{BorrowByteDecode, ByteDecode};
+use crate::{BorrowByteDecode, ByteDecode, InputTrait};
 use crate::{FieldAttrModifiers, ContainerAttrModifiers};
 use crate::decode::impls_bytes::parse_bytes;
 use crate::parser::errors::{ErrorKind, JResult, make_error};
-use crate::parse_subsequence;
+// use crate::parse_subsequence;
 
 
 #[inline]
 fn parse_string<'a>(input: &'a [u8], cattr: Option<&ContainerAttrModifiers>, fattr: Option<&FieldAttrModifiers>) -> JResult<&'a [u8], String> {
-    let mut value_tmp = None;
-    let mut input_tmp = input;
+    let value_tmp;
+    let input_tmp;
 
     if let Ok((input, value)) = parse_bytes(input, cattr, fattr) {
         input_tmp = input;
         value_tmp = Some(value);
     }
-    else if let Ok((input, value)) = parse_subsequence(input, b"\n", false) {
+    // else if let Ok((input, value)) = parse_subsequence(input, b"\n", false) {
+    //     input_tmp = input;
+    //     value_tmp = Some(value);
+    // }
+    else {
+        let (input, length) = input.to_be_bits_usize(1)?;
+        let (input, value) = input.input_take(length)?;
         input_tmp = input;
         value_tmp = Some(value);
     }
@@ -83,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_decode_string() {
-        let (input, value) = String::decode(b"12\n", None, None).unwrap();
+        let (input, value) = String::decode(b"\x0212", None, None).unwrap();
         assert_eq!(value, "12".to_string());
         assert_eq!(input.is_empty(), true);
 

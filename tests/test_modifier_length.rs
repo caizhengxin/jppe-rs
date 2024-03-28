@@ -60,7 +60,7 @@ pub enum EnumLengthExample1<'a> {
         #[jppe(length="a")]
         b: &'a [u8],
         c: u8,
-        // #[jppe(length="c - 1")]
+        #[jppe(length="c - 1")]
         d: &'a [u8],    
     },
     #[jppe(branch_default)]

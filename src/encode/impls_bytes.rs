@@ -2,15 +2,26 @@ use crate::{ByteEncode, BorrowByteEncode};
 use crate::{int_to_vec, get_byteorder};
 
 
+// #[macro_export]
 macro_rules! encode_bytes {
     ($value:expr, $input:expr, $cattr:expr, $fattr:expr) => {
         // key and split
         if let Some(fr) = $fattr {
-            if let Some(byte_count) = fr.byte_count { $input.extend(int_to_vec($value.len(), byte_count, &get_byteorder($cattr, $fattr))); }
-            if let Some(key) = &fr.key { $input.extend(key); }
-            if let Some(splits) = &fr.split && let Some(split) = splits.first() {
-                $input.extend(split);
+            if let Some(byte_count) = fr.byte_count {
+                $input.extend(int_to_vec($value.len(), byte_count, &get_byteorder($cattr, $fattr)));
             }
+            else if fr.linend_value.is_none() && fr.length.is_none() {
+                $input.extend(int_to_vec($value.len(), 1, &crate::ByteOrder::Be));
+            }
+            else {
+                if let Some(key) = &fr.key { $input.extend(key); }
+                if let Some(splits) = &fr.split && let Some(split) = splits.first() {
+                    $input.extend(split);
+                }    
+            }
+        }
+        else {
+            $input.extend(int_to_vec($value.len(), 1, &crate::ByteOrder::Be));
         }
 
         $input.extend($value.to_vec());
@@ -54,7 +65,7 @@ mod tests {
         let mut buf = vec![];
         let value = &[b'a', b'b', b'c'][..];
         value.encode(&mut buf, None, None);
-        assert_eq!(buf, b"abc");
+        assert_eq!(buf, b"\x03abc");
 
         let fattr = FieldAttrModifiers { linend_value: Some(vec!["\r\n".as_bytes().to_vec()]), ..Default::default() };
         let mut buf = vec![];
