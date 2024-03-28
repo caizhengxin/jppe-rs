@@ -85,7 +85,11 @@ impl<T: ByteDecode> ByteDecode for Vec<T> {
                 let (input_tmp, count) = input.to_bits_usize(get_byteorder(cattr, fattr), byte_count as u8)?;
                 input = input_tmp;
                 count
-            } else { 0 };
+            }
+            else if let Some(length) = fattr_tmp.length {
+                length
+            }
+            else { 0 };
 
             for _i in 0..count {
                 (input, value) = T::decode(input, cattr, fattr)?;
@@ -125,7 +129,11 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
                 let (input_tmp, count) = input.to_bits_usize(get_byteorder(cattr, fattr), byte_count as u8)?;
                 input = input_tmp;
                 count
-            } else { 0 };
+            }
+            else if let Some(length) = fattr_tmp.length {
+                length
+            } 
+            else { 0 };
 
             for _i in 0..count {
                 (input, value) = T::decode(input, cattr, fattr)?;

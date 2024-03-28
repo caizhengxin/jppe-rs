@@ -127,8 +127,8 @@ fn main() {
 - [ethernet_example](./examples/ethernet_example.rs)
 - [ipv4_example](./examples/ipv4_example.rs)
 - [tcp_example](./examples/tcp_example.rs)
-- [http_example](./examples/http_example.rs)
-- [http_example](./examples/http_example_2.rs)
+- [http_hashmap_example](./examples/http_example.rs)
+- [http_vec_example](./examples/http_example_2.rs)
 - [parse_example](./examples/parse_example.rs): Including Ethernet/IPv4/TCP/UDP
 
 ## Feature
