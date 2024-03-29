@@ -78,6 +78,7 @@ jppe = { version="0.8.1", features = ["derive", "jdefault"] }
 #![feature(let_chains)]
 use jppe::{ByteEncode, ByteDecode, Jdefault};
 
+// 如果值长度小于0xff, 则可以不用指定byte_count=1, 否则需要指定byte_count=<2|4|8>, 表示多少个字节表示后续数据长度或者其他情况。
 
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode, Jdefault)]
 pub struct SimpleExample {

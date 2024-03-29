@@ -76,6 +76,9 @@ jppe = { version="0.8.1", features = ["derive", "jdefault"] }
 use jppe::{ByteEncode, ByteDecode, Jdefault};
 
 
+// If the value size is less than 0xff, byte_count does not need to be specified,otherwise, byte_count=<2|4|8>
+
+
 #[derive(Debug, PartialEq, Eq, ByteEncode, ByteDecode, Jdefault)]
 pub struct SimpleExample {
     #[jppe(byte_count=1, default="\"123\".to_string()")]

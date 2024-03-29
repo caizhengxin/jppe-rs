@@ -150,13 +150,13 @@ impl DeriveEnum {
                         (input, value) = jppe::parse_usize(input, &jppe::get_byteorder(cattr, fattr), byte_count as u8)?;
                     }
                     else {
-                        // (input, value) = jppe::parse_usize(input, &jppe::ByteOrder::Be, 1)?;
-                        return Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }));
+                        (input, value) = jppe::parse_usize(input, &jppe::ByteOrder::Be, 1)?;
+                        // return Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }));
                     }
                 }
                 else {
-                    // (input, value) = jppe::parse_usize(input, &jppe::ByteOrder::Be, 1)?;
-                    return Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }));
+                    (input, value) = jppe::parse_usize(input, &jppe::ByteOrder::Be, 1)?;
+                    // return Err(jppe::make_error(input, jppe::ErrorKind::InvalidByteLength { offset: input.len() }));
                 }
             ";
             fn_body.push_parsed(code)?;
@@ -327,13 +327,13 @@ impl DeriveEnum {
                                     else if let Some(byte_count) = fr.byte_count {{
                                         input.extend(jppe::int_to_vec({variant_index}, byte_count, &jppe::get_byteorder(cattr, fattr)))
                                     }}
-                                    // else {{
-                                    //     input.push({variant_index} as u8);
-                                    // }}
+                                    else {{
+                                        input.push({variant_index} as u8);
+                                    }}
                                 }}
-                                // else {{
-                                //     input.push({variant_index} as u8);
-                                // }}
+                                else {{
+                                    input.push({variant_index} as u8);
+                                }}
                             ");
                             variant_body.push_parsed(code)?;
 
