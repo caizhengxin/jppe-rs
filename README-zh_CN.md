@@ -12,14 +12,14 @@
 
 ```toml
 [dependencies]
-jppe = { version="0.8.1", features = ["derive"] }
+jppe = { version="0.9.0", features = ["derive"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="0.8.1", features = ["derive", "serde"] }
+jppe = { version="0.9.0", features = ["derive", "serde"] }
 ```
 
 ### 简单例子
@@ -71,7 +71,7 @@ fn main() {
 
 ```toml
 [dependencies]
-jppe = { version="0.8.1", features = ["derive", "jdefault"] }
+jppe = { version="0.9.0", features = ["derive", "jdefault"] }
 ```
 
 ```rust
