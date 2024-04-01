@@ -75,7 +75,7 @@ fn test_struct_length_example3() {
     let value = EnumLengthExample1::Jkc { a: 1, b: &[1], c: 2, d: &[1]} ;
     let mut buf = vec![];
     value.encode(&mut buf, None, None);
-    assert_eq!(buf, input);
+    assert_eq!(buf, [0x00, 0x01, 0x01, 0x02, 0x01]);
 
     let fattr = FieldAttrModifiers { branch: Some(0), ..Default::default() };
     let (input, value2) = EnumLengthExample1::decode(&input, None, Some(&fattr)).unwrap();

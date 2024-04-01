@@ -318,7 +318,6 @@ impl DeriveEnum {
 
                         variant_case.group(Delimiter::Brace, |variant_body| {
                             variant_body.push_parsed(attributes.to_code(true, false))?;
-                            generate_encode_body2(variant_body, &attributes, false)?;
 
                             let code = format!("        
                                 if let Some(fr) = fattr {{
@@ -336,6 +335,8 @@ impl DeriveEnum {
                                 }}
                             ");
                             variant_body.push_parsed(code)?;
+
+                            generate_encode_body2(variant_body, &attributes, false)?;
 
                             if let Some(fields) = &variant.fields {
                                 match fields {

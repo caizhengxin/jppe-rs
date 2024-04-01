@@ -84,7 +84,7 @@ fn test_enum_offset_example1() {
     let value = EnumOffsetExample1::Jkc { a: 1, b: 2};
     let mut buf = vec![];
     value.encode(&mut buf, None, None);
-    assert_eq!(buf, vec![0x00, 0x00, 0x01, 0x00, 0x02]);
+    assert_eq!(buf, vec![0x02, 0x00, 0x00, 0x01, 0x00, 0x02]);
 
     let fattr = FieldAttrModifiers { branch: Some(2), ..Default::default() };
     let (input, value2) = EnumOffsetExample1::decode(&[0x00, 0x00, 0x01, 0x00, 0x02], None, Some(&fattr)).unwrap();
@@ -111,7 +111,7 @@ fn test_enum_offset_example2() {
     let value = EnumOffsetExample2::Jkc { a: 1, b: 2 };
     let mut buf = vec![];
     value.encode(&mut buf, None, None);
-    assert_eq!(buf, vec![0x01, 0x00, 0x00, 0x02]);
+    assert_eq!(buf, vec![0x02, 0x01, 0x00, 0x00, 0x02]);
 
     let fattr = FieldAttrModifiers { branch: Some(2), ..Default::default() };
     let (input, value2) = EnumOffsetExample2::decode(&[0x01, 0x00, 0x00, 0x02], None, Some(&fattr)).unwrap();
@@ -139,10 +139,9 @@ fn test_enum_offset_example3() {
     let value = EnumOffsetExample3::Jkc(1);
     let mut buf = vec![];
     value.encode(&mut buf, None, None);
-    assert_eq!(buf, vec![0x00, 0x01]);
+    assert_eq!(buf, vec![0x02, 0x00, 0x01]);
 
-    let fattr = FieldAttrModifiers { branch: Some(2), ..Default::default() };
-    let (input, value2) = EnumOffsetExample3::decode(&[0x00, 0x01], None, Some(&fattr)).unwrap();
+    let (input, value2) = EnumOffsetExample3::decode(&[0x02, 0x00, 0x01], None, None).unwrap();
     assert_eq!(value2, value);
     assert_eq!(input.is_empty(), true);
 }

@@ -202,7 +202,7 @@ fn test_enum_byteorder_example1() {
     let value = EnumByteorderExample1::Jkc1(1, 2);
     let mut buf = vec![];
     value.encode(&mut buf, None, None);
-    assert_eq!(buf, vec![0x01, 0x00, 0x02, 0x00]);
+    assert_eq!(buf, vec![0x01, 0x01, 0x00, 0x02, 0x00]);
 
     let fattr = FieldAttrModifiers { branch: Some(1), ..Default::default() };
     let (input, value2) = EnumByteorderExample1::decode(&[0x01, 0x00, 0x02, 0x00], None, Some(&fattr)).unwrap();
