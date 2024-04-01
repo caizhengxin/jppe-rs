@@ -12,14 +12,14 @@ This is a Rust-based implementation of byte stream structured serialization/dese
 
 ```toml
 [dependencies]
-jppe = { version="0.9.0", features = ["derive"] }
+jppe = { version="0.10.0", features = ["derive"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="0.9.0", features = ["derive", "serde"] }
+jppe = { version="0.10.0", features = ["derive", "serde"] }
 ```
 
 ### Simple Example
@@ -112,7 +112,7 @@ fn main() {
 
 ```toml
 [dependencies]
-jppe = { version="0.9.0", features = ["derive", "jdefault"] }
+jppe = { version="0.10.0", features = ["derive", "jdefault"] }
 ```
 
 ```rust
