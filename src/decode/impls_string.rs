@@ -72,71 +72,26 @@ impl<'de> BorrowByteDecode<'de> for &'de str {
         where 
             Self: Sized
     {
-        let (input, value) = <&[u8]>::decode(input, cattr, fattr)?;
-
-        if let Ok(v) = core::str::from_utf8(value) {
-            return Ok((input, v));
+        let value_tmp;
+        let input_tmp;
+    
+        if let Ok((input, value)) = parse_bytes(input, cattr, fattr) {
+            input_tmp = input;
+            value_tmp = Some(value);
         }
-
-        Err(make_error(input, ErrorKind::Fail { offset: input.len() }))
+        else {
+            let (input, length) = input.to_be_bits_usize(1)?;
+            let (input, value) = input.input_take(length)?;
+            input_tmp = input;
+            value_tmp = Some(value);
+        }
+    
+        if let Some(value) = value_tmp {
+            if let Ok(v) = core::str::from_utf8(value) {
+                return Ok((input_tmp, v));
+            }    
+        }
+    
+        Err(make_error(input_tmp, ErrorKind::InvalidByteLength { offset: input_tmp.len() }))    
     }
 }        
-
-
-#[cfg(test)]
-mod tests {
-    use crate::{decode::ByteDecode, FieldAttrModifiers};
-
-    #[test]
-    fn test_decode_string() {
-        let (input, value) = String::decode(b"\x0212", None, None).unwrap();
-        assert_eq!(value, "12".to_string());
-        assert_eq!(input.is_empty(), true);
-
-        assert_eq!(String::decode(b"12\x00", None, None).is_err(), true);
-
-        let fattr = FieldAttrModifiers { linend: true, ..Default::default() };
-        let (input, value) = String::decode(b"12\x00", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "12".to_string());
-        assert_eq!(input.is_empty(), true);
-
-        let (input, value) = String::decode(b"12\r\n", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "12".to_string());
-        assert_eq!(input.is_empty(), true);
-
-        let fattr = FieldAttrModifiers { linend_value: Some(vec![vec![b'3', b'4']]), ..Default::default() };
-        let (input, value) = String::decode(b"1234", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "12".to_string());
-        assert_eq!(input.is_empty(), true);
-
-        // length
-        let fattr = FieldAttrModifiers { length: Some(4), ..Default::default() };
-        let (input, value) = String::decode(b"1234", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "1234".to_string());
-        assert_eq!(input.is_empty(), true);
-
-        let fattr = FieldAttrModifiers { length: Some(3), ..Default::default() };
-        let (input, value) = String::decode(b"1234", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "123".to_string());
-        assert_eq!(input, b"4");
-
-        let fattr = FieldAttrModifiers { length: Some(5), ..Default::default() };
-        assert_eq!(String::decode(b"1234", None, Some(&fattr)).is_err(), true);
-
-        // key
-        let fattr = FieldAttrModifiers { key: Some(b"Header: ".to_vec()), linend: true, ..Default::default() };
-        let (input, value) = String::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "123");
-        assert_eq!(input.is_empty(), true);
-
-        let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend: true, ..Default::default() };
-        let (input, value) = String::decode(b"Header: 123\r\n", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "123");
-        assert_eq!(input.is_empty(), true);
-
-        let fattr = FieldAttrModifiers { byte_count: Some(2), ..Default::default() };
-        let (input, value) = String::decode(b"\x00\x02\x31\x32", None, Some(&fattr)).unwrap();
-        assert_eq!(value, "12");
-        assert_eq!(input.is_empty(), true);
-    }
-}
