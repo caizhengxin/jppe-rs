@@ -108,6 +108,8 @@ pub struct FieldAttributes {
 
     pub value_encode: Option<String>,
     pub value_decode: Option<String>,
+    pub from_str_bool: bool,
+    pub from_str: Option<String>,
 
     pub get_variable_name: Option<AttrValue>,
     pub variable_name: Option<AttrValue>,
@@ -207,6 +209,7 @@ impl FromAttribute for FieldAttributes {
                         "skip_encode" => result.skip_encode = true,
                         "skip_decode" => result.skip_decode = true,
                         "default" | "default_value" => result.default_bool = true,
+                        "from_str" => result.from_str_bool = true,
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }
@@ -238,6 +241,7 @@ impl FromAttribute for FieldAttributes {
                         },
                         "value_encode" | "encode_value" => result.value_encode = Some(parse_value_string(&val)?),
                         "value_decode" | "decode_value" => result.value_decode = Some(parse_value_string(&val)?),
+                        "from_str" => result.from_str = Some(parse_value_string(&val)?),
                         // custom encode/decode
                         "with_encode" | "encode_with" => result.with_encode = Some(parse_value_string(&val)?),
                         "with_decode" | "decode_with" => result.with_decode = Some(parse_value_string(&val)?),

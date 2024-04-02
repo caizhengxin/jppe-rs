@@ -190,6 +190,7 @@ fn main() {
 
 > enum branch
 
+- [x] `byte_count_disable`
 - [ ] `branch_enum`
 
 ### FieldAttrModifiers
@@ -222,6 +223,7 @@ fn main() {
 - [x] `skip_decode`: Require implement `Default` trait for data type.
 - [ ] `check_value`
 - [x] `default`: eg: [default example](./crates/jdefault-rs/tests/test_jppe.rs)
+- [x] `from_str`
 
 > enum branch
 

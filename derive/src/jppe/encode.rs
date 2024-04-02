@@ -40,6 +40,12 @@ pub fn generate_encode_body(fn_body: &mut StreamBuilder, attributes: &FieldAttri
     else if attributes.skip || attributes.skip_encode {
         return Ok(());
     }
+    else if attributes.from_str_bool {
+        fn_body.push_parsed(format!("String::encode(&{der_arg}{self_arg}{field}.to_string(), input, cattr_new, fattr_new);"))?;
+    }
+    else if let Some(_) = &attributes.from_str {
+        fn_body.push_parsed(format!("String::encode(&{der_arg}{self_arg}{field}.to_string(), input, cattr_new, fattr_new);"))?;
+    }
 
     if attributes.bits.is_some() || !attributes.untake {
         generate_encode_body2(fn_body, attributes, is_self)?;

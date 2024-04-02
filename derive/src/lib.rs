@@ -49,7 +49,9 @@ use jppe::derive_enum;
 use jppe::derive_struct;
 
 use proc_macro::TokenStream;
+use quote::ToTokens;
 use virtue::prelude::*;
+use syn::{parse_macro_input, DeriveInput};
 
 
 #[proc_macro_derive(ByteDecode, attributes(jppe))]
@@ -70,12 +72,14 @@ fn derive_decode_inner(input: TokenStream) -> Result<TokenStream> {
             derive_struct::DeriveStruct {
                 fields: body.fields,
                 attributes,
+                lifetimes: None,
             }.generate_decode(&mut generator)?;
         }
         Body::Enum(body) => {
             derive_enum::DeriveEnum {
                 variants: body.variants,
                 attributes,
+                lifetimes: None,
             }
             .generate_decode(&mut generator)?;
         }
@@ -88,11 +92,15 @@ fn derive_decode_inner(input: TokenStream) -> Result<TokenStream> {
 
 #[proc_macro_derive(BorrowByteDecode, attributes(jppe))]
 pub fn derive_borrow_decode(input: TokenStream) -> TokenStream {
-    derive_borrow_decode_inner(input).unwrap_or_else(|e|e.into_token_stream())
+    let input_tmp = input.clone();
+    let derive_input = parse_macro_input!(input_tmp as DeriveInput);
+    let lifetimes = derive_input.generics.to_token_stream().to_string();
+
+    derive_borrow_decode_inner(input, lifetimes).unwrap_or_else(|e|e.into_token_stream())
 }
 
 
-fn derive_borrow_decode_inner(input: TokenStream) -> Result<TokenStream> {
+fn derive_borrow_decode_inner(input: TokenStream, lifetimes: String) -> Result<TokenStream> {
     let parse = Parse::new(input)?;
     let (mut generator, attributes, body) = parse.into_generator();
     let attributes = attributes
@@ -104,12 +112,14 @@ fn derive_borrow_decode_inner(input: TokenStream) -> Result<TokenStream> {
             derive_struct::DeriveStruct {
                 fields: body.fields,
                 attributes,
+                lifetimes: if lifetimes.is_empty() { None } else {Some(lifetimes)},
             }.generate_borrow_decode(&mut generator)?;
         }
         Body::Enum(body) => {
             derive_enum::DeriveEnum {
                 variants: body.variants,
                 attributes,
+                lifetimes: if lifetimes.is_empty() { None } else {Some(lifetimes)},
             }
             .generate_borrow_decode(&mut generator)?;
         }
@@ -138,12 +148,14 @@ fn derive_encode_inner(input: TokenStream) -> Result<TokenStream> {
             derive_struct::DeriveStruct {
                 fields: body.fields,
                 attributes,
+                lifetimes: None,
             }.generate_encode(&mut generator)?;
         }
         Body::Enum(body) => {
             derive_enum::DeriveEnum {
                 variants: body.variants,
                 attributes,
+                lifetimes: None,
             }
             .generate_encode(&mut generator)?;
         }
@@ -172,12 +184,14 @@ fn derive_borrow_encode_inner(input: TokenStream) -> Result<TokenStream> {
             derive_struct::DeriveStruct {
                 fields: body.fields,
                 attributes,
+                lifetimes: None,
             }.generate_borrow_encode(&mut generator)?;
         }
         Body::Enum(body) => {
             derive_enum::DeriveEnum {
                 variants: body.variants,
                 attributes,
+                lifetimes: None,
             }
             .generate_borrow_encode(&mut generator)?;
         }

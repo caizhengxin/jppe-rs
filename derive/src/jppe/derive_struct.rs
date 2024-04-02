@@ -12,6 +12,7 @@ use super::parse::AttrValue;
 pub(crate) struct DeriveStruct {
     pub fields: Option<Fields>,
     pub attributes: ContainerAttributes,
+    pub lifetimes: Option<String>,
 }
 
 
@@ -131,12 +132,28 @@ impl DeriveStruct {
 
     pub fn generate_borrow_decode(&self, generator: &mut Generator) -> Result<()> {
         let crate_name = "jppe::BorrowByteDecode";
+        let lifetimes = self.lifetimes.clone().unwrap_or("<'de>".to_string());
 
-        generator
-            .impl_for(format!("{crate_name}<'a>"))
-            // .impl_for_with_lifetimes(crate_name, ["de"])
+        let mut impl_for = if self.lifetimes.is_some() {
+            generator
+            .impl_for(format!("{crate_name}{lifetimes}"))    
+        }
+        else {
+            generator
+            .impl_for_with_lifetimes(crate_name, ["de"])
+        };
+
+        let lifetimes = if self.lifetimes.is_some() {
+            lifetimes.trim_start_matches('<').trim_end_matches('>').split(',').map(|v|v.trim().replace('\'', "")).collect::<Vec<String>>()
+        }
+        else { vec!["de".to_string()] };
+
+        // generator
+        //     .impl_for(format!("{crate_name}<'a>"))
+        //     // .impl_for_with_lifetimes(crate_name, ["de"])
+        impl_for
             .generate_fn("decode")
-            .with_lifetime_deps("da", ["a"])
+            .with_lifetime_deps("da", lifetimes)
             .with_lifetime("db")
             .with_arg("input", "&'da [u8]")
             .with_arg("cattr", "Option<&'db jppe::ContainerAttrModifiers>")
