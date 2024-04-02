@@ -3,12 +3,12 @@ use std::collections::HashMap;
 
 macro_rules! hashmap_encode_bytes {
     ($value:expr, $input:expr, $fattr:expr) => {
-        let mut linend = b"\r\n".to_vec();
+        let mut linend = &b"\r\n"[..];
         let mut split_str = b": ".to_vec();
 
         if let Some(fattr) = $fattr {
-            if let Some(linend_list) = &fattr.linend_value && let Some(linend_tmp) = linend_list.first() {
-                linend = linend_tmp.to_vec();
+            if let Some(linend_value) = &fattr.linend_value {
+                linend = linend_value;
             }
     
             if let Some(split_list) = &fattr.split && let Some(split_tmp) = split_list.first() {
@@ -28,12 +28,12 @@ macro_rules! hashmap_encode_bytes {
 
 macro_rules! hashmap_encode_bytes2 {
     ($value:expr, $input:expr, $fattr:expr) => {
-        let mut linend = b"\r\n".to_vec();
+        let mut linend = &b"\r\n"[..];
         let mut split_str = b": ".to_vec();
 
         if let Some(fattr) = $fattr {
-            if let Some(linend_list) = &fattr.linend_value && let Some(linend_tmp) = linend_list.first() {
-                linend = linend_tmp.to_vec();
+            if let Some(linend_value) = &fattr.linend_value {
+                linend = linend_value;
             }
     
             if let Some(split_list) = &fattr.split && let Some(split_tmp) = split_list.first() {

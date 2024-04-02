@@ -7,13 +7,13 @@ use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 
 #[derive(Debug, Default, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
 pub struct Http<'a> {
-    #[jppe(linend="\x20")]
+    #[jppe(linend=b"\x20")]
     pub method: &'a str,
-    #[jppe(linend="\x20")]
+    #[jppe(linend=b"\x20")]
     pub uri: &'a str,
-    #[jppe(linend="\r\n")]
+    #[jppe(linend=b"\r\n")]
     pub http: &'a str,
-    #[jppe(linend="\r\n")]
+    #[jppe(linend=b"\r\n")]
     pub headers: HashMap<&'a str, &'a str>,
 }
 

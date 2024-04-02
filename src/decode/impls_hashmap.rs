@@ -5,7 +5,7 @@ use crate::parse_subsequence;
 #[derive(Debug)]
 struct KeyValueIterator<'da, 'db> {
     input: &'da [u8],
-    linend: Option<&'db Vec<Vec<u8>>>,
+    linend: Option<&'db [u8]>,
     split_str: Option<&'db Vec<Vec<u8>>>,
     count: usize,
     curruent_count: usize,
@@ -20,7 +20,7 @@ impl<'da, 'db> KeyValueIterator<'da, 'db> {
         let mut split_str = None;
     
         if let Some(fattr) = fattr {
-            linend = fattr.linend_value.as_ref();
+            linend = fattr.linend_value;
             split_str = fattr.split.as_ref();
             count = fattr.count.unwrap_or(50);
         }
@@ -81,11 +81,9 @@ impl<'da, 'db> Iterator for KeyValueIterator<'da, 'db> {
 
         if self.curruent_count < self.count {
             if let Some(linend) = self.linend {
-                for linend in linend {
-                    if let Some(value) = self.parse_subsequence(linend) {
-                        return Some(value);
-                    }
-                }    
+                if let Some(value) = self.parse_subsequence(linend) {
+                    return Some(value);
+                }
             }
             // else if let Some(value) = self.parse_subsequence("\r\n".as_bytes()) {
             //     return Some(value);

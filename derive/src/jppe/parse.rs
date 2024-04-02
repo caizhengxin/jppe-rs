@@ -4,6 +4,7 @@ use virtue::prelude::*;
 #[derive(Debug, Clone)]
 pub enum AttrValue {
     String(String),
+    Bytes(String),
     Var(String),
     Usize(usize),
     Option(String),
@@ -13,7 +14,7 @@ pub enum AttrValue {
 
 #[inline]
 pub fn parse_value_string(s: &Literal) -> Result<String> {
-    let val_string = s.to_string().replace("\\\"", "\"").trim_start_matches('b').to_string();
+    let val_string = s.to_string().replace("\\\"", "\"").to_string();
 
     if val_string.starts_with("\"") && val_string.ends_with("\"") {
         return Ok(val_string[1..val_string.len() - 1].to_string());
@@ -27,6 +28,11 @@ impl AttrValue {
     #[inline]
     pub fn parse_string(s: &Literal) -> Result<Self> {
         Ok(Self::String(parse_value_string(s)?))
+    }
+
+    #[inline]
+    pub fn parse_bytes(s: &Literal) -> Result<Self> {
+        Ok(Self::Bytes(parse_value_string(s)?))
     }
 
     #[inline]
@@ -81,6 +87,7 @@ impl AttrValue {
 
         let code = match self {
             Self::String(v) => format!("{deref_arg}{self_arg}{is_string}{v}{is_string}.into()"),
+            Self::Bytes(v) => format!("{deref_arg}{self_arg}{is_string}{v}{is_string}"),
             Self::Var(v) => format!("({deref_arg}{self_arg}{is_string}{v}{is_string}) as usize"),
             Self::Usize(v) => format!("({deref_arg}{v}) as usize"),
             Self::Option(v) => format!("if let Some(v) = {deref_arg}{self_arg}{is_string}{v} {{Some(v as usize)}} else {{None}}"),
@@ -100,6 +107,7 @@ impl AttrValue {
 
         let code = match self {
             Self::String(v) => format!("{self_arg}{is_string}{v}{is_string}.into()"),
+            Self::Bytes(v) => format!("{self_arg}{is_string}{v}{is_string}"),
             Self::Var(v) => format!("({self_arg}{is_string}{v}{is_string}) as usize"),
             Self::Usize(v) => format!("({v}) as usize"),
             Self::Option(v) => format!("if let Some(v) = {self_arg}{is_string}{v} {{Some(v as usize)}} else {{None}}"),
@@ -131,6 +139,7 @@ impl ToString for AttrValue {
     fn to_string(&self) -> String {
         match self {
             Self::String(v) => v.to_string(),
+            Self::Bytes(v) => v.to_string(),
             Self::Var(v) => v.to_string(),
             Self::Usize(v) => v.to_string(),
             Self::Option(v) => v.to_string(),

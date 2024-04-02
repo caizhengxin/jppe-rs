@@ -89,16 +89,32 @@ impl<T: ByteDecode> ByteDecode for Vec<T> {
             else if let Some(length) = fattr_tmp.length {
                 length
             }
+            else if let Some(count) = fattr_tmp.try_count {
+                count
+            }
             else {
                 let (input_tmp, count) = input.to_be_bits_usize(1)?;
                 input = input_tmp;
                 count
             };
 
-            for _i in 0..count {
-                (input, value) = T::decode(input, cattr, fattr)?;
-                value_list.push(value);
-            }  
+            if fattr_tmp.try_count.is_some() {
+                for _i in 0..count {
+                    if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
+                        input = input_tmp;
+                        value_list.push(value);    
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else {
+                for _i in 0..count {
+                    (input, value) = T::decode(input, cattr, fattr)?;
+                    value_list.push(value);    
+                }      
+            }
         }
         else {
             let (input_tmp, count) = input.to_be_bits_usize(1)?;
@@ -146,18 +162,23 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
                 count
             };
 
-            for _i in 0..count {
-                if fattr_tmp.try_count.is_some() {
+            if fattr_tmp.try_count.is_some() {
+                for _i in 0..count {
                     if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
                         input = input_tmp;
                         value_list.push(value);    
                     }
+                    else {
+                        break;
+                    }
                 }
-                else {
+            }
+            else {
+                for _i in 0..count {
                     (input, value) = T::decode(input, cattr, fattr)?;
                     value_list.push(value);    
-                }    
-            }  
+                }      
+            }
         }
         else {
             let (input_tmp, count) = input.to_be_bits_usize(1)?;

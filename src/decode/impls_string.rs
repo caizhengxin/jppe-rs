@@ -87,9 +87,7 @@ impl<'de> BorrowByteDecode<'de> for &'de str {
         }
     
         if let Some(value) = value_tmp {
-            if let Ok(v) = core::str::from_utf8(value) {
-                return Ok((input_tmp, v));
-            }    
+            return Ok((input_tmp, unsafe { std::str::from_utf8_unchecked(value) }));
         }
     
         Err(make_error(input_tmp, ErrorKind::InvalidByteLength { offset: input_tmp.len() }))    

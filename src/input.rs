@@ -38,6 +38,7 @@ pub trait InputTrait<'a> {
 
 
 impl<'a> InputTrait<'a> for &'a [u8] {
+    #[inline]
     fn find_subsequence<'b>(&self, needle: &'b [u8], is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]> {
         let input = *self;
         let needle_len = needle.len();

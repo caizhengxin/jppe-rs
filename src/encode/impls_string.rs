@@ -37,10 +37,8 @@ macro_rules! encode_string {
         if byte_count_status { return (); }
 
         if let Some(fr) = $fattr {
-            if let Some(linend_value_list) = &fr.linend_value && let Some(linend_value) = linend_value_list.first() {
-                if !$value.as_bytes().ends_with(linend_value) {
-                    $input.extend(linend_value)
-                }
+            if let Some(linend_value) = &fr.linend_value {
+                $input.extend_from_slice(linend_value)
             }
             // else if fr.length.is_none() {
             //     $input.push(b'\n');

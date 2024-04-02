@@ -32,7 +32,7 @@ fn test_type_hashmap() {
 
 #[derive(Debug, PartialEq, Eq, BorrowByteDecode, BorrowByteEncode)]
 pub struct HashMapExample2<'a> {
-    #[jppe(split="=", linend="\r\n")]
+    #[jppe(split="=", linend=b"\r\n")]
     pub kv: HashMap<&'a [u8], &'a [u8]>,
 }
 
@@ -63,7 +63,7 @@ fn test_type_hashmap_key_and_split() {
 
 #[derive(Debug, PartialEq, Eq, BorrowByteDecode, BorrowByteEncode)]
 pub struct HashMapExample3<'a> {
-    #[jppe(split="=", linend="\r\n", count=1)]
+    #[jppe(split="=", linend=b"\r\n", count=1)]
     pub kv: HashMap<&'a [u8], &'a [u8]>,
 }
 
@@ -88,7 +88,7 @@ fn test_type_hashmap_key_split_count() {
 
 #[derive(Debug, PartialEq, Eq, BorrowByteDecode, BorrowByteEncode)]
 pub struct HashMapExample4<'a> {
-    #[jppe(split="\x00,\x01", linend="\r\n")]
+    #[jppe(split="\x00,\x01", linend=b"\r\n")]
     pub kv: HashMap<&'a [u8], &'a [u8]>,
 }
 

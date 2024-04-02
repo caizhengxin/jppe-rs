@@ -4,6 +4,7 @@ use crate::{parser::*, InputTrait};
 use crate::get_byteorder;
 
 
+#[inline]
 pub fn parse_bytes<'a, 'b>(input: &'a [u8], cattr: Option<&'b ContainerAttrModifiers>, fattr: Option<&'b FieldAttrModifiers>) -> JResult<&'a [u8], &'a [u8]> {
     let mut value_tmp = None;
     let mut input = input;
@@ -24,8 +25,8 @@ pub fn parse_bytes<'a, 'b>(input: &'a [u8], cattr: Option<&'b ContainerAttrModif
         //     value_tmp = Some(value);
         //     input_tmp = input;
         // }
-        if let Some(linend_value_list) = &fr.linend_value {
-            let (input, value) = input.find_subsequences2(linend_value_list, false)?;
+        if let Some(linend_value) = fr.linend_value {
+            let (input, value) = input.find_subsequence(linend_value, false)?;
 
             value_tmp = Some(value);
             input_tmp = input;

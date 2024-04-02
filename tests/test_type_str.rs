@@ -4,8 +4,8 @@ use jppe::{BorrowByteDecode, BorrowByteEncode};
 
 #[test]
 fn test_type_str() {
-    // example - #[jppe(linend="\r\n")]
-    let fattr = FieldAttrModifiers { linend_value: Some(vec![b"\r\n".to_vec()]), ..Default::default() };
+    // example - #[jppe(linend=b"\r\n")]
+    let fattr = FieldAttrModifiers { linend_value: Some(b"\r\n"), ..Default::default() };
     let (input, value) = <&str>::decode(b"jankincai\r\n", None, Some(&fattr)).unwrap();
     assert_eq!(value, "jankincai");
     assert_eq!(input.is_empty(), true);
@@ -79,7 +79,7 @@ fn test_type_str_byte_count() {
 #[test]
 fn test_type_str_key_split_linend() {
     // example - #[jppe(key="Header: ", linend=b"\r\n")]
-    let fattr = FieldAttrModifiers { key: Some(b"Header: ".to_vec()), linend_value: Some(vec![b"\r\n".to_vec()]), ..Default::default() };
+    let fattr = FieldAttrModifiers { key: Some(b"Header: ".to_vec()), linend_value: Some(b"\r\n"), ..Default::default() };
     let (input, value) = <&str>::decode(b"Header: jankincai\r\n", None, Some(&fattr)).unwrap();
     assert_eq!(value, "jankincai");
     assert_eq!(input.is_empty(), true);
@@ -88,7 +88,7 @@ fn test_type_str_key_split_linend() {
     assert_eq!(buf, b"Header: jankincai\r\n");
 
     // example - #[jppe(key="Header", split=": ", linend=b"\r\n")]
-    let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend_value: Some(vec![b"\r\n".to_vec()]), ..Default::default() };
+    let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend_value: Some(b"\r\n"), ..Default::default() };
     let (input, value) = <&str>::decode(b"Header: jankincai\r\n", None, Some(&fattr)).unwrap();
     assert_eq!(value, "jankincai");
     assert_eq!(input.is_empty(), true);

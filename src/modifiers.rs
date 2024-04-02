@@ -22,7 +22,7 @@ pub struct ContainerAttrModifiers {
 
 
 #[derive(Debug, Default, Clone)]
-pub struct FieldAttrModifiers {
+pub struct FieldAttrModifiers<'a> {
     // byte stream offset
     pub offset: Option<usize>,
     // string/stream/.. length
@@ -35,7 +35,7 @@ pub struct FieldAttrModifiers {
     // Unmoved byte stream
     pub untake: bool,
     pub linend: bool,
-    pub linend_value: Option<Vec<Vec<u8>>>,
+    pub linend_value: Option<&'a [u8]>,
     pub bits: Option<usize>,
     pub bits_start: bool,
     pub byte_count: Option<usize>,
