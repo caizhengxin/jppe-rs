@@ -29,6 +29,7 @@ pub struct FieldAttrModifiers {
     pub length: Option<usize>,
     // list/vec/.. count
     pub count: Option<usize>,
+    pub try_count: Option<usize>,
     // byte stream byteorder
     pub byteorder: Option<ByteOrder>,
     // Unmoved byte stream

@@ -137,6 +137,9 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
             else if let Some(length) = fattr_tmp.length {
                 length
             } 
+            else if let Some(count) = fattr_tmp.try_count {
+                count
+            }
             else {
                 let (input_tmp, count) = input.to_be_bits_usize(1)?;
                 input = input_tmp;
@@ -144,8 +147,16 @@ impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Vec<T> {
             };
 
             for _i in 0..count {
-                (input, value) = T::decode(input, cattr, fattr)?;
-                value_list.push(value);
+                if fattr_tmp.try_count.is_some() {
+                    if let Ok((input_tmp, value)) = T::decode(input, cattr, fattr) {
+                        input = input_tmp;
+                        value_list.push(value);    
+                    }
+                }
+                else {
+                    (input, value) = T::decode(input, cattr, fattr)?;
+                    value_list.push(value);    
+                }    
             }  
         }
         else {

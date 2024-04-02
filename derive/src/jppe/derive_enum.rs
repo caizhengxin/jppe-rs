@@ -283,7 +283,7 @@ impl DeriveEnum {
 
                 fn_body.push_parsed(self.attributes.to_code(true))?;
                 fn_body.push_parsed("match self")?;
-                fn_body.group(Delimiter::Brace, |variant_case| {
+                fn_body.group(Delimiter::Brace, |variant_case| {            
                     for (variant_index, variant) in self.iter_fields() {
                         let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
 
@@ -318,7 +318,7 @@ impl DeriveEnum {
 
                         variant_case.group(Delimiter::Brace, |variant_body| {
                             variant_body.push_parsed(attributes.to_code(true, false))?;
-
+                            let default_byte_count_1byte_code = if self.attributes.byte_count_disable { "".to_string() } else { format!("input.push({variant_index} as u8);")};
                             let code = format!("        
                                 if let Some(fr) = fattr {{
                                     if let Some(branch) = fr.branch {{
@@ -327,11 +327,11 @@ impl DeriveEnum {
                                         input.extend(jppe::int_to_vec({variant_index}, byte_count, &jppe::get_byteorder(cattr, fattr)))
                                     }}
                                     else {{
-                                        input.push({variant_index} as u8);
+                                        {default_byte_count_1byte_code}
                                     }}
                                 }}
                                 else {{
-                                    input.push({variant_index} as u8);
+                                    {default_byte_count_1byte_code}
                                 }}
                             ");
                             variant_body.push_parsed(code)?;

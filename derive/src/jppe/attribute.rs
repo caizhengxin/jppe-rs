@@ -1,12 +1,6 @@
 use virtue::prelude::*;
 use virtue::utils::*;
-use super::parse::{AttrValue, AttrValueTrait};
-
-
-#[inline]
-fn parse_value_string(value: &Literal) -> Result<String> {
-    Ok(value.to_string().trim_end_matches('"').trim_start_matches('"').to_string())
-}
+use super::parse::{AttrValue, AttrValueTrait, parse_value_string};
 
 
 #[derive(Debug, Default)]
@@ -16,6 +10,7 @@ pub struct ContainerAttributes {
     pub get_variable_name: Option<AttrValue>,
     pub default_value: Option<String>,
     pub default_bool: bool,
+    pub byte_count_disable: bool,
 
     // branch
     pub branch_byte: Option<u8>,
@@ -65,6 +60,7 @@ impl FromAttribute for ContainerAttributes {
                     // #xxx[xxx]
                     match i.to_string().as_str() {
                         "default" | "default_value" => result.default_bool = true,
+                        "byte_count_disable" => result.byte_count_disable = true,
                         _ => return Err(Error::custom_at("Unknown field attribute", i.span())),
                     }
                 }
@@ -74,7 +70,6 @@ impl FromAttribute for ContainerAttributes {
                         "byteorder" => result.byteorder = Some(AttrValue::parse_byteorder(&val)?),
                         "get_variable_name" => result.get_variable_name = Some(AttrValue::parse_list(&val)?),
                         "default_value" | "default" => result.default_value = Some(parse_value_string(&val)?),
-
                         "branch_byte" => result.branch_byte = Some(parse_value_string(&val)?.parse().unwrap()),
                         "branch_byteorder" => result.branch_byteorder = Some(parse_value_string(&val)?),
                         "branch_func" => result.branch_func = Some(parse_value_string(&val)?),
@@ -104,6 +99,7 @@ pub struct FieldAttributes {
     pub untake: bool,
     pub full: Option<AttrValue>,
     pub count: Option<AttrValue>,
+    pub try_count: Option<AttrValue>,
     pub bits: Option<AttrValue>,
     pub bits_start: bool,
     pub byte_count: Option<AttrValue>,
@@ -156,6 +152,7 @@ impl FieldAttributes {
         else { self.length.to_code(is_self, is_deref) };
         // let length = self.length.to_code(is_self, is_deref);
         let count = self.count.to_code(is_self, is_deref);
+        let try_count = self.try_count.to_code(is_self, is_deref);
         let mut branch = self.branch.to_code(is_self, is_deref);
         if let Some(branch_option) = &self.branch_option {
             branch = branch_option.to_code(is_self, is_deref, false);
@@ -169,7 +166,7 @@ impl FieldAttributes {
 
         if self.is_use {
             let value = format!("let fattr_new = jppe::FieldAttrModifiers {{
-                byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count},
+                byteorder: {byteorder}, branch: {branch}, length: {length}, count: {count}, try_count: {try_count},
                 split: {split}, linend_value: {linend}, bits: {bits}, bits_start: {bits_start},
                 key: {key}, byte_count: {byte_count},
                 ..Default::default()}}; let fattr_new = Some(&fattr_new);");
@@ -220,6 +217,7 @@ impl FromAttribute for FieldAttributes {
                         "length" => result.length = Some(AttrValue::parse_usize(&val)?),
                         "offset" => result.offset = Some(AttrValue::parse_usize(&val)?),
                         "count" => result.count = Some(AttrValue::parse_usize(&val)?),
+                        "try_count" => result.try_count = Some(AttrValue::parse_usize(&val)?),
                         "full" => result.full = Some(AttrValue::parse_usize(&val)?),
                         "key" | "starts_with" => result.key = Some(AttrValue::parse_string(&val)?),
                         "split" => result.split = Some(AttrValue::parse_list(&val)?),

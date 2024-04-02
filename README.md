@@ -198,6 +198,7 @@ fn main() {
 - [x] `length=<num|variable>`: Data length, support `int/&str/String/&[u8]` type, eg: [length_example](./tests/test_modifier_length.rs).
 - [x] `offset=<num|variable>`: Byte stream offset.
 - [x] `count==<num|variable>`: Data count, support `Vec/HashMap` type.
+- [x] `try_count==<num|variable>`: Data count, support `Vec/HashMap` type.
 - [x] `full=<int>`: encode full value.
 - [x] `untake`: Bytes are not taken.
 - [x] `linend|end_with=<string|bytes>`: Supporting `String/&str/&[u8]` type.

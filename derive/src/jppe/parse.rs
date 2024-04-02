@@ -11,24 +11,32 @@ pub enum AttrValue {
 }
 
 
+#[inline]
+pub fn parse_value_string(s: &Literal) -> Result<String> {
+    let val_string = s.to_string().replace("\\\"", "\"").trim_start_matches('b').to_string();
+
+    if val_string.starts_with("\"") && val_string.ends_with("\"") {
+        return Ok(val_string[1..val_string.len() - 1].to_string());
+    }
+
+    Ok(val_string)
+}
+
+
 impl AttrValue {
     #[inline]
     pub fn parse_string(s: &Literal) -> Result<Self> {
-        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
-
-        Ok(Self::String(value))
+        Ok(Self::String(parse_value_string(s)?))
     }
 
     #[inline]
     pub fn parse_option_string(s: &Literal) -> Result<Self> {
-        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
-
-        Ok(Self::Option(value))
+        Ok(Self::Option(parse_value_string(s)?))
     }
 
     #[inline]
     pub fn parse_usize(s: &Literal) -> Result<Self> {
-        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+        let value = parse_value_string(s)?;
         let value_type = if value.starts_with("0x") {16} else {10};
 
         if let Ok(v) = usize::from_str_radix(value.trim_start_matches("0x"), value_type) {
@@ -40,7 +48,7 @@ impl AttrValue {
 
     #[inline]
     pub fn parse_list(s: &Literal) -> Result<Self> {
-        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+        let value = parse_value_string(s)?;
         let mut vlist = vec![];
 
         for v in value.split(',') {
@@ -58,7 +66,7 @@ impl AttrValue {
 
     #[inline]
     pub fn parse_byteorder(s: &Literal) -> Result<Self> {
-        let value = s.to_string().trim_end_matches('"').trim_start_matches('"').to_string();
+        let value = parse_value_string(s)?;
 
         match value.as_str() {
             "BE" | "LE" | "0" | "1" | ">" | "<" => Ok(Self::String(value)),

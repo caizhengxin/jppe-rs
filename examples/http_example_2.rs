@@ -5,18 +5,19 @@ use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 
 #[derive(Debug, Default, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
 pub struct Http<'a> {
-    #[jppe(linend="\x20")]
+    #[jppe(linend=b"\x20")]
     pub method: &'a str,
-    #[jppe(linend="\x20")]
+    #[jppe(linend=b"\x20")]
     pub uri: &'a str,
-    #[jppe(linend="\r\n")]
+    #[jppe(linend=b"\r\n")]
     pub version: &'a str,
-    pub headers: Vec<HttpEnum<'a>>,
+    #[jppe(try_count=20)]
+    pub headers: Vec<HttpHeader<'a>>,
 }
 
 
 #[derive(Debug, Default, PartialEq, Eq, BorrowByteEncode, BorrowByteDecode)]
-pub struct HttpEnum<'a> {
+pub struct HttpHeader<'a> {
     #[jppe(linend=": ")]
     pub key: &'a str,
     #[jppe(linend="\r\n")]
