@@ -21,7 +21,7 @@ macro_rules! encode_string {
                     $input.extend(key);
                 }
 
-                if let Some(splits) = &fr.split && let Some(split) = splits.first() {
+                if let Some(split) = fr.split  {
                     $input.extend(split);
                 }    
             }

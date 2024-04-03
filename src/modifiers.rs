@@ -42,7 +42,7 @@ pub struct FieldAttrModifiers<'a> {
 
     // key value
     pub key: Option<Vec<u8>>,
-    pub split: Option<Vec<Vec<u8>>>,
+    pub split: Option<&'a [u8]>,
 
     // branch
     pub branch: Option<usize>,

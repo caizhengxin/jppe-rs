@@ -223,7 +223,7 @@ impl FromAttribute for FieldAttributes {
                         "try_count" => result.try_count = Some(AttrValue::parse_usize(&val)?),
                         "full" => result.full = Some(AttrValue::parse_usize(&val)?),
                         "key" | "starts_with" => result.key = Some(AttrValue::parse_string(&val)?),
-                        "split" => result.split = Some(AttrValue::parse_list(&val)?),
+                        "split" => result.split = Some(AttrValue::parse_bytes(&val)?),
                         "linend" | "end_with" => result.linend = Some(AttrValue::parse_bytes(&val)?),
                         "branch" => result.branch = Some(AttrValue::parse_usize(&val)?),
                         "branch_option" => result.branch_option = Some(AttrValue::parse_option_string(&val)?),

@@ -87,8 +87,8 @@ fn test_type_str_key_split_linend() {
     value.encode(&mut buf, None, Some(&fattr));
     assert_eq!(buf, b"Header: jankincai\r\n");
 
-    // example - #[jppe(key="Header", split=": ", linend=b"\r\n")]
-    let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(vec![b": ".to_vec()]), linend_value: Some(b"\r\n"), ..Default::default() };
+    // example - #[jppe(key="Header", split=b": ", linend=b"\r\n")]
+    let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(b": "), linend_value: Some(b"\r\n"), ..Default::default() };
     let (input, value) = <&str>::decode(b"Header: jankincai\r\n", None, Some(&fattr)).unwrap();
     assert_eq!(value, "jankincai");
     assert_eq!(input.is_empty(), true);

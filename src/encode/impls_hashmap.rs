@@ -4,15 +4,15 @@ use std::collections::HashMap;
 macro_rules! hashmap_encode_bytes {
     ($value:expr, $input:expr, $fattr:expr) => {
         let mut linend = &b"\r\n"[..];
-        let mut split_str = b": ".to_vec();
+        let mut split_str = &b": "[..];
 
         if let Some(fattr) = $fattr {
             if let Some(linend_value) = &fattr.linend_value {
                 linend = linend_value;
             }
     
-            if let Some(split_list) = &fattr.split && let Some(split_tmp) = split_list.first() {
-                split_str = split_tmp.clone();
+            if let Some(split) = &fattr.split {
+                split_str = split;
             }    
         }
 
@@ -29,15 +29,15 @@ macro_rules! hashmap_encode_bytes {
 macro_rules! hashmap_encode_bytes2 {
     ($value:expr, $input:expr, $fattr:expr) => {
         let mut linend = &b"\r\n"[..];
-        let mut split_str = b": ".to_vec();
+        let mut split_str = &b": "[..];
 
         if let Some(fattr) = $fattr {
             if let Some(linend_value) = &fattr.linend_value {
                 linend = linend_value;
             }
     
-            if let Some(split_list) = &fattr.split && let Some(split_tmp) = split_list.first() {
-                split_str = split_tmp.clone();
+            if let Some(split) = &fattr.split {
+                split_str = split;
             }    
         }
 

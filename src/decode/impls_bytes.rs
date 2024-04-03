@@ -15,8 +15,8 @@ pub fn parse_bytes<'a, 'b>(input: &'a [u8], cattr: Option<&'b ContainerAttrModif
             (input, _) = input.find_subsequence(key, false)?;
         }
 
-        if let Some(splits) = &fr.split {
-            (input, _) = input.find_subsequences2(splits, false)?;
+        if let Some(splits) = fr.split {
+            (input, _) = input.find_subsequence(splits, false)?;
         }
 
         // if fr.linend {

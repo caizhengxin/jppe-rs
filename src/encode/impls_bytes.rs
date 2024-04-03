@@ -15,7 +15,7 @@ macro_rules! encode_bytes {
             }
             else {
                 if let Some(key) = &fr.key { $input.extend(key); }
-                if let Some(splits) = &fr.split && let Some(split) = splits.first() {
+                if let Some(split) = fr.split {
                     $input.extend(split);
                 }    
             }

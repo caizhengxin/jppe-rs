@@ -6,7 +6,7 @@ use crate::parse_subsequence;
 struct KeyValueIterator<'da, 'db> {
     input: &'da [u8],
     linend: Option<&'db [u8]>,
-    split_str: Option<&'db Vec<Vec<u8>>>,
+    split_str: Option<&'db [u8]>,
     count: usize,
     curruent_count: usize,
 }
@@ -16,12 +16,11 @@ impl<'da, 'db> KeyValueIterator<'da, 'db> {
     pub fn new(input: &'da [u8], _cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> Self {
         let mut count = 50;
         let mut linend = None;
-        // let mut split_str = vec![b": ".to_vec()];
         let mut split_str = None;
     
         if let Some(fattr) = fattr {
             linend = fattr.linend_value;
-            split_str = fattr.split.as_ref();
+            split_str = fattr.split;
             count = fattr.count.unwrap_or(50);
         }
 
@@ -41,23 +40,12 @@ impl<'da, 'db> KeyValueIterator<'da, 'db> {
     pub fn parse_subsequence(&mut self, linend: &'db [u8]) -> Option<(&'da [u8], &'da [u8], &'da [u8])> {
         match parse_subsequence(self.input, linend, false) {
             Ok((input_tmp, value)) => {
-                let split_default = &vec![b": ".to_vec()];
-                let split_str = self.split_str.unwrap_or(split_default);
-                for split in split_str {
-                    if let Ok((value, key)) = parse_subsequence(value, split, false) {
-                        self.input = input_tmp;
-                        self.curruent_count += 1;
+                let split_str = self.split_str.unwrap_or(b": ");
+                if let Ok((value, key)) = parse_subsequence(value, split_str, false) {
+                    self.input = input_tmp;
+                    self.curruent_count += 1;
 
-                        return Some((input_tmp, key, value));
-                    }
-                    // if let Some(index) = value.find_substring(&split[..]) {
-                    //     let key = &value[..index];
-                    //     let value = &value[split.len() + index..value.len() - linend.len()];
-                    //     self.input = input_tmp;
-                    //     self.curruent_count += 1;
-
-                    //     return Some((input_tmp, key, value));
-                    // }    
+                    return Some((input_tmp, key, value));
                 }
             },
             Err(_e) => {
