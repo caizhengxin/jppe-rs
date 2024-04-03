@@ -159,7 +159,7 @@ impl FieldAttributes {
         if let Some(branch_option) = &self.branch_option {
             branch = branch_option.to_code(is_self, is_deref, false);
         }
-        let key = self.key.to_code_string(false, false, true);
+        let key = self.key.to_code(false, false);
         let split = self.split.to_code(false, false);
         let linend = self.linend.to_code(false, false);
         let bits = self.bits.to_code(is_self, is_deref);
@@ -222,7 +222,7 @@ impl FromAttribute for FieldAttributes {
                         "count" => result.count = Some(AttrValue::parse_usize(&val)?),
                         "try_count" => result.try_count = Some(AttrValue::parse_usize(&val)?),
                         "full" => result.full = Some(AttrValue::parse_usize(&val)?),
-                        "key" | "starts_with" => result.key = Some(AttrValue::parse_string(&val)?),
+                        "key" | "starts_with" => result.key = Some(AttrValue::parse_bytes(&val)?),
                         "split" => result.split = Some(AttrValue::parse_bytes(&val)?),
                         "linend" | "end_with" => result.linend = Some(AttrValue::parse_bytes(&val)?),
                         "branch" => result.branch = Some(AttrValue::parse_usize(&val)?),

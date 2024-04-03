@@ -25,6 +25,7 @@ pub fn parse_value_string(s: &Literal) -> Result<String> {
 
 
 impl AttrValue {
+    #[allow(dead_code)]
     #[inline]
     pub fn parse_string(s: &Literal) -> Result<Self> {
         Ok(Self::String(parse_value_string(s)?))

@@ -4,9 +4,9 @@ use jppe_derive::{ByteDecode, ByteEncode};
 
 #[derive(Debug, PartialEq, Eq, ByteDecode, ByteEncode)]
 pub struct KeyExample {
-    #[jppe(key="Version: ", linend=b"\r\n")]
+    #[jppe(key=b"Version: ", linend=b"\r\n")]
     pub version: String,
-    #[jppe(key="Host: ", linend=b"\r\n")]
+    #[jppe(key=b"Host: ", linend=b"\r\n")]
     pub host: String,
 }
 

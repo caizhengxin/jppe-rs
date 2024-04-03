@@ -17,7 +17,7 @@ macro_rules! encode_string {
                 byte_count_status = true;
             }
             else {
-                if let Some(key) = &fr.key {
+                if let Some(key) = fr.key {
                     $input.extend(key);
                 }
 

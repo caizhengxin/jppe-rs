@@ -14,7 +14,7 @@ macro_rules! encode_bytes {
                 $input.extend(int_to_vec($value.len(), 1, &crate::ByteOrder::Be));
             }
             else {
-                if let Some(key) = &fr.key { $input.extend(key); }
+                if let Some(key) = fr.key { $input.extend(key); }
                 if let Some(split) = fr.split {
                     $input.extend(split);
                 }    

@@ -78,8 +78,8 @@ fn test_type_string_byte_count() {
 
 #[test]
 fn test_type_string_key_split_linend() {
-    // example - #[jppe(key="Header: ", linend=b"\r\n")]
-    let fattr = FieldAttrModifiers { key: Some(b"Header: ".to_vec()), linend_value: Some(b"\r\n"), ..Default::default() };
+    // example - #[jppe(key=b"Header: ", linend=b"\r\n")]
+    let fattr = FieldAttrModifiers { key: Some(b"Header: "), linend_value: Some(b"\r\n"), ..Default::default() };
     let (input, value) = String::decode(b"Header: jankincai\r\n", None, Some(&fattr)).unwrap();
     assert_eq!(value, "jankincai".to_string());
     assert_eq!(input.is_empty(), true);
@@ -87,8 +87,8 @@ fn test_type_string_key_split_linend() {
     value.encode(&mut buf, None, Some(&fattr));
     assert_eq!(buf, b"Header: jankincai\r\n");
 
-    // example - #[jppe(key="Header", split=b": ", linend=b"\r\n")]
-    let fattr = FieldAttrModifiers { key: Some(b"Header".to_vec()), split: Some(b": "), linend_value: Some(b"\r\n"), ..Default::default() };
+    // example - #[jppe(key=b"Header", split=b": ", linend=b"\r\n")]
+    let fattr = FieldAttrModifiers { key: Some(b"Header"), split: Some(b": "), linend_value: Some(b"\r\n"), ..Default::default() };
     let (input, value) = String::decode(b"Header: jankincai\r\n", None, Some(&fattr)).unwrap();
     assert_eq!(value, "jankincai".to_string());
     assert_eq!(input.is_empty(), true);
