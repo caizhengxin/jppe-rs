@@ -39,9 +39,12 @@ impl crate::ByteDecode for Ipv4Addr {
         Self: Sized
     {
         let byteorder = crate::get_byteorder(cattr, fattr);
-        let (input, value) = crate::parse_u128(input, &byteorder, 4)?;
+        let (input, value) = crate::input_take(input, 4)?;
         
-        Ok((input, Ipv4Addr::from_bits(value as u32)))
+        match byteorder {
+            crate::ByteOrder::Be => Ok((input, Ipv4Addr::new(value[0], value[1], value[2], value[3]))),
+            crate::ByteOrder::Le => Ok((input, Ipv4Addr::new(value[3], value[2], value[1], value[0]))),
+        }
     }
 }
 
@@ -65,10 +68,9 @@ impl crate::ByteDecode for Ipv6Addr {
     where 
         Self: Sized
     {
-        let byteorder = crate::get_byteorder(cattr, fattr);
-        let (input, value) = crate::parse_u128(input, &byteorder, 16)?;
+        let (input, value) = <[u16; 8]>::decode(input, cattr, fattr)?;
         
-        Ok((input, Ipv6Addr::from_bits(value)))
+        Ok((input, Ipv6Addr::from(value)))
     }
 }
 
@@ -92,16 +94,18 @@ impl crate::ByteDecode for IpAddr {
     where 
         Self: Sized
     {
-        if let Some(fattr_var) = fattr && let Some(length) = fattr_var.length {
-            if length == 16 {
-                let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-
-                return Ok((input, IpAddr::V6(addr)));
-            }
-            else if length == 4 {
-                let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-
-                return Ok((input, IpAddr::V4(addr)))
+        if let Some(fattr_var) = fattr {
+            if let Some(length) = fattr_var.length {
+                if length == 16 {
+                    let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+    
+                    return Ok((input, IpAddr::V6(addr)));
+                }
+                else if length == 4 {
+                    let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+    
+                    return Ok((input, IpAddr::V4(addr)))
+                }    
             }
         }
         
@@ -141,19 +145,19 @@ mod test {
     fn test_decode_ip_address() {
         let input = b"\x12\x34\x56\x78";
         let (input, value) = Ipv4Addr::decode(input, None, None).unwrap();
-        assert_eq!(value, Ipv4Addr::from_bits(0x12345678));
+        assert_eq!(value, Ipv4Addr::new(0x12, 0x34, 0x56, 0x78));
         assert_eq!(input.is_empty(), true);
 
         let input = b"\x12\x34\x56\x78";
         let fattr = FieldAttrModifiers { byteorder: Some(crate::ByteOrder::Le), ..Default::default() };
         let (input, value) = Ipv4Addr::decode(input, None, Some(&fattr)).unwrap();
-        assert_eq!(value, Ipv4Addr::from_bits(0x78563412));
+        assert_eq!(value, Ipv4Addr::new(0x78, 0x56, 0x34, 0x12));
         assert_eq!(input.is_empty(), true);
 
         let input = b"\x12\x34\x56\x78";
         let fattr = FieldAttrModifiers { byteorder: Some(crate::ByteOrder::Le), length: Some(4), ..Default::default() };
         let (input, value) = IpAddr::decode(input, None, Some(&fattr)).unwrap();
-        assert_eq!(value, Ipv4Addr::from_bits(0x78563412));
+        assert_eq!(value, Ipv4Addr::new(0x78, 0x56, 0x34, 0x12));
         assert_eq!(input.is_empty(), true);
 
         let input = b"\xfe\x80\x00\x00\x00\x00\x00\x00\x41\x59\xf7\xb2\xb9\xed\x96\x89";

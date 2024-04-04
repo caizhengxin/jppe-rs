@@ -39,7 +39,7 @@
 //!     });
 //! }
 //! ```
-// #![feature(let_chains)]
+// 
 extern crate proc_macro;
 
 mod jdefault;

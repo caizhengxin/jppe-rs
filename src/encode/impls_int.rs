@@ -11,15 +11,14 @@ macro_rules! impls_int {
                     Self: Sized
             {
                 let mut byte_tmp = None;
-                let mut byteorder = ByteOrder::Be;
-
                 let mut value = *self;
 
-                if let Some(cr) = cattr && let Some(byteorder_tmp) = cr.byteorder { byteorder = byteorder_tmp; }
+                let byteorder = crate::get_byteorder(cattr, fattr);
 
                 if let Some(fr) = fattr {
-                    if let Some(length) = fr.length && length < $byte { byte_tmp = Some(length); }
-                    if let Some(byteorder_tmp) = fr.byteorder { byteorder = byteorder_tmp; }
+                    if let Some(length) = fr.length {
+                        if length < $byte { byte_tmp = Some(length); }
+                    }
 
                     if let Some(bits) = fr.bits {
                         let mut bits = bits as u128;
@@ -34,10 +33,12 @@ macro_rules! impls_int {
                         if !fr.bits_start {
                             let byte = ($type::BITS / 8) as usize;
     
-                            if input.len() >= byte && let Ok(v) = <[u8; $byte]>::try_from(&input[input.len() - byte..]) {
-                                let prev_bits = $type::from_be_bytes(v);
-                                value |= prev_bits;
-                                for _ in 0..byte { input.pop(); }
+                            if input.len() >= byte {
+                                if let Ok(v) = <[u8; $byte]>::try_from(&input[input.len() - byte..]) {
+                                    let prev_bits = $type::from_be_bytes(v);
+                                    value |= prev_bits;
+                                    for _ in 0..byte { input.pop(); }    
+                                }
                             }    
                         }
                     }

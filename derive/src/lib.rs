@@ -1,6 +1,6 @@
 //!
 //! ```
-//! #![feature(let_chains)]
+//! 
 //! use jppe::{ByteEncode, ByteDecode};
 //! use jppe_derive::{ByteEncode, ByteDecode};
 //!
@@ -39,7 +39,6 @@
 //!     assert_eq!(jppe::encode(value), input);
 //! }
 //! ```
-#![feature(let_chains)]
 extern crate proc_macro;
 
 mod jppe;

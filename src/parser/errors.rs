@@ -59,6 +59,7 @@ impl ErrorKind {
 }
 
 
+#[inline]
 pub fn make_error<I, E: ParseError<I>>(input: I, kind: ErrorKind) -> E {
     E::from_error_kind(input, kind)
 }

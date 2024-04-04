@@ -34,7 +34,7 @@
 //!     assert_eq!(value.get_data(), Some(2));
 //! }
 //! ```
-#![feature(let_chains)]
+#![cfg_attr(feature = "nightly", feature(let_chains))]
 
 #[cfg(feature = "jget_derive")]
 #[allow(unused_imports)]

@@ -5,36 +5,41 @@ pub use errors::*;
 use crate::ByteOrder;
 
 
+#[inline]
 pub fn input_take<T>(input: &[T], length: usize) -> JResult<&[T], &[T]> {
-    let mut input = input;
-
-    if let Some(value) = input.take(..length) {
-        return Ok((input, value));
+    if length <= input.len() {
+        return Ok((&input[length..], &input[..length]));
     }
 
     Err(make_error(input, ErrorKind::InvalidByteLength { offset: input.len() }))
 }
 
 
+#[inline]
 pub fn parse_subsequence<'a, 'b,  T>(input: &'a [T], needle: &'b [T], is_save_needle: bool) -> JResult<&'a [T], &'a [T]>
 where
-    for<'c> &'c [T]: PartialEq,
-    // T: std::fmt::Debug,
+    T: PartialEq,
 {
     let needle_len = needle.len();
     let input_len = input.len();
-    let mut input = input;
 
     if needle_len > input_len {
         return Err(make_error(input, ErrorKind::InvalidByteLength { offset: input_len }));
     }
 
-    if let Some(index) = input
-        .windows(needle_len)
-        .position(|window| window == needle) &&
-       let Some(value) = input.take(..index + needle_len)
-    {
-        return Ok((input, if is_save_needle {value} else {&value[..index]}));
+    for i in 0..input_len {
+        let mut status = false;
+
+        for j in 0..needle_len {
+            if needle[j] != input[i + j] {
+                status = true;
+                break;
+            }
+        }
+
+        if !status {
+            return Ok((&input[i + needle_len..], if is_save_needle {&input[..i + needle_len]} else {&input[..i]}));
+        }
     }
 
     Err(make_error(input, ErrorKind::SubSequence { offset: input_len }))
@@ -43,8 +48,7 @@ where
 
 pub fn parse_subsequences<'a, T>(input: &'a [T], needles: &'a [&'a [T]], is_save_needle: bool) -> JResult<&'a [T], &'a [T]>
 where
-    for<'b> &'b [T]: PartialEq,
-    // T: std::fmt::Debug,
+    T: PartialEq,
 {
     let input_len = input.len();
 

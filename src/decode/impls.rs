@@ -8,9 +8,10 @@ use crate::{ByteOrder, input_take};
 
 
 impl ByteDecode for bool {
+    #[inline]
     fn decode<'da, 'db>(input: &'da [u8], _cattr: Option<&'db ContainerAttrModifiers>, _fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
-        where 
-            Self: Sized
+    where 
+        Self: Sized
     {
         let (input, value) = input_take(input, 1)?;
 
@@ -20,9 +21,10 @@ impl ByteDecode for bool {
 
 
 impl<'de> BorrowByteDecode<'de> for bool {
+    #[inline]
     fn decode<'da: 'de, 'db>(input: &'da [u8], _cattr: Option<&'db ContainerAttrModifiers>, _fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
-        where 
-            Self: Sized
+    where 
+        Self: Sized
     {
         let (input, value) = input_take(input, 1)?;
 
@@ -32,12 +34,17 @@ impl<'de> BorrowByteDecode<'de> for bool {
 
 
 impl<T: ByteDecode> ByteDecode for Option<T> {
+    #[inline]
     fn decode<'da, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
-        where 
-            Self: Sized
+    where 
+        Self: Sized
     {
-        if let Some(fattr) = fattr && let Some(length) = fattr.length && length == 0 {
-            return Ok((input, None));
+        if let Some(fattr) = fattr {
+            if let Some(length) = fattr.length {
+                if length == 0 {
+                    return Ok((input, None));
+                }
+            }
         }
 
         if let Ok((input, value)) = T::decode(input, cattr, fattr) {
@@ -52,11 +59,15 @@ impl<T: ByteDecode> ByteDecode for Option<T> {
 impl<'de, T: BorrowByteDecode<'de>> BorrowByteDecode<'de> for Option<T> {
     #[inline]
     fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
-        where 
-            Self: Sized
+    where 
+        Self: Sized
     {
-        if let Some(fattr) = fattr && let Some(length) = fattr.length && length == 0 {
-            return Ok((input, None));
+        if let Some(fattr) = fattr {
+            if let Some(length) = fattr.length {
+                if length == 0 {
+                    return Ok((input, None));
+                }
+            }
         }
 
         if let Ok((input, value)) = T::decode(input, cattr, fattr) {

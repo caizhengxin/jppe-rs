@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+
 use std::str::FromStr;
 
 use jppe_derive::{ByteEncode, ByteDecode};

@@ -145,14 +145,16 @@ pub struct FieldAttributes {
 impl FieldAttributes {
     pub fn to_code(&self, is_self: bool, is_deref: bool) -> String {
         let byteorder = self.byteorder.to_byteorder(is_self);
-        let length = if let Some(length) = &self.length
-            && let Some(viariable_name) = &self.get_variable_name
-            && viariable_name.to_string().contains(&length.to_string())
-        {
-            self.length.to_code(false, false)            
+
+        let mut length = self.length.to_code(is_self, is_deref);
+        if let Some(length_tmp) = &self.length {
+            if let Some(viariable_name) = &self.get_variable_name {
+                if viariable_name.to_string().contains(&length_tmp.to_string()) {
+                    length = self.length.to_code(false, false);
+                }
+            }
         }
-        else { self.length.to_code(is_self, is_deref) };
-        // let length = self.length.to_code(is_self, is_deref);
+
         let count = self.count.to_code(is_self, is_deref);
         let try_count = self.try_count.to_code(is_self, is_deref);
         let mut branch = self.branch.to_code(is_self, is_deref);

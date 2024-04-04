@@ -57,13 +57,17 @@ pub struct FieldAttrModifiers<'a> {
 
 #[inline]
 pub fn get_byteorder(cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>) -> crate::ByteOrder {
-    if let Some(value) = cattr && let Some(byteorder) = value.byteorder {
-        byteorder
+    if let Some(value) = fattr {
+        if let Some(byteorder) = value.byteorder {
+            return byteorder;
+        }
     }
-    else if let Some(value) = fattr && let Some(byteorder) = value.byteorder {
-        byteorder
+
+    if let Some(value) = cattr {
+        if let Some(byteorder) = value.byteorder {
+            return byteorder;
+        }
     }
-    else {
-        crate::ByteOrder::Be
-    }
+
+    crate::ByteOrder::Be
 }

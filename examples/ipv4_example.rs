@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 use jppe::{BorrowByteDecode, BorrowByteEncode};

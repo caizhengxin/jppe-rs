@@ -68,28 +68,18 @@ impl<'de> BorrowByteDecode<'de> for String {
 
 
 impl<'de> BorrowByteDecode<'de> for &'de str {
+    #[inline]
     fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
         where 
             Self: Sized
     {
-        let value_tmp;
-        let input_tmp;
-    
         if let Ok((input, value)) = parse_bytes(input, cattr, fattr) {
-            input_tmp = input;
-            value_tmp = Some(value);
+            Ok((input, unsafe { std::str::from_utf8_unchecked(value) }))
         }
         else {
             let (input, length) = input.to_be_bits_usize(1)?;
             let (input, value) = input.input_take(length)?;
-            input_tmp = input;
-            value_tmp = Some(value);
+            Ok((input, unsafe { std::str::from_utf8_unchecked(value) }))
         }
-    
-        if let Some(value) = value_tmp {
-            return Ok((input_tmp, unsafe { std::str::from_utf8_unchecked(value) }));
-        }
-    
-        Err(make_error(input_tmp, ErrorKind::InvalidByteLength { offset: input_tmp.len() }))    
     }
 }        

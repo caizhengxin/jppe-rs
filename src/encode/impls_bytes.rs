@@ -26,8 +26,10 @@ macro_rules! encode_bytes {
 
         $input.extend($value.to_vec());
 
-        if let Some(fr) = $fattr && let Some(linend_value) = &fr.linend_value {
-            $input.extend_from_slice(linend_value);
+        if let Some(fr) = $fattr {
+            if let Some(linend_value) = &fr.linend_value {
+                $input.extend_from_slice(linend_value);
+            }
         }
     };
 }

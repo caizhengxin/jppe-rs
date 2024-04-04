@@ -9,12 +9,16 @@ fn parse_decode_int<'da, 'db>(input: &'da [u8], byte: u8, cattr: Option<&'db Con
     let mut byte = byte;
     let mut byteorder = ByteOrder::Be;
 
-    if let Some(cr) = cattr && let Some(byteorder_tmp) = cr.byteorder {
-        byteorder = byteorder_tmp;
+    if let Some(cr) = cattr {
+        if let Some(byteorder_tmp) = cr.byteorder {
+            byteorder = byteorder_tmp;
+        }
     }
 
     if let Some(fr) = fattr {
-        if let Some(length) = fr.length && length < byte.into() { byte = length as u8; }
+        if let Some(length) = fr.length {
+            if length < byte.into() { byte = length as u8; }
+        }
         if let Some(byteorder_tmp) = fr.byteorder { byteorder = byteorder_tmp; }
     }
 
@@ -33,15 +37,17 @@ macro_rules! impls_int {
             {
                 let (input, mut value) = parse_decode_int(input, $byte, cattr, fattr)?;
 
-                if let Some(fr) = fattr && let Some(bits) = fr.bits {
-                    let mut bits = bits as u128;
-                    value &= bits;
-                                            
-                    for _i in 0..$type::BITS {
-                        if bits & 0x01 == 0 {
-                            value >>= 1;
-                            bits >>= 1;
-                        }
+                if let Some(fr) = fattr {
+                    if let Some(bits) = fr.bits {
+                        let mut bits = bits as u128;
+                        value &= bits;
+                                                
+                        for _i in 0..$type::BITS {
+                            if bits & 0x01 == 0 {
+                                value >>= 1;
+                                bits >>= 1;
+                            }
+                        }    
                     }
                 }
 
@@ -57,15 +63,17 @@ macro_rules! impls_int {
             {
                 let (input, mut value) = parse_decode_int(input, $byte, cattr, fattr)?;
 
-                if let Some(fr) = fattr && let Some(bits) = fr.bits {
-                    let mut bits = bits as u128;
-                    value &= bits;
-                                            
-                    for _i in 0..$type::BITS {
-                        if bits & 0x01 == 0 {
-                            value >>= 1;
-                            bits >>= 1;
-                        }
+                if let Some(fr) = fattr {
+                    if let Some(bits) = fr.bits {
+                        let mut bits = bits as u128;
+                        value &= bits;
+                                                
+                        for _i in 0..$type::BITS {
+                            if bits & 0x01 == 0 {
+                                value >>= 1;
+                                bits >>= 1;
+                            }
+                        }    
                     }
                 }
 

@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+
 use jppe_derive::{ByteDecode, ByteEncode};
 
 

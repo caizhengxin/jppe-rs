@@ -5,19 +5,10 @@ macro_rules! encode_float {
     ($t:ident, $as_t:ident) => {
         impl ByteEncode for $t {
             fn encode(&self, input: &mut Vec<u8>, cattr: Option<&ContainerAttrModifiers>, fattr: Option<&FieldAttrModifiers>)
-                where 
-                    Self: Sized
+            where 
+                Self: Sized
             {
-                let mut byteorder = ByteOrder::Be;
-        
-                if let Some(fattr) = fattr && let Some(byteorder_tmp) = fattr.byteorder {
-                    byteorder = byteorder_tmp;
-                }
-                else if let Some(cattr) = cattr && let Some(byteorder_tmp) = cattr.byteorder {
-                    byteorder = byteorder_tmp;
-                }
-
-                match byteorder {
+                match crate::get_byteorder(cattr, fattr) {
                     ByteOrder::Be => input.extend(self.to_be_bytes()),
                     ByteOrder::Le => input.extend(self.to_le_bytes()),
                 }
@@ -27,19 +18,10 @@ macro_rules! encode_float {
 
         impl BorrowByteEncode for $t {
             fn encode(&self, input: &mut Vec<u8>, cattr: Option<&ContainerAttrModifiers>, fattr: Option<&FieldAttrModifiers>)
-                where 
-                    Self: Sized
+            where 
+                Self: Sized
             {
-                let mut byteorder = ByteOrder::Be;
-        
-                if let Some(fattr) = fattr && let Some(byteorder_tmp) = fattr.byteorder {
-                    byteorder = byteorder_tmp;
-                }
-                else if let Some(cattr) = cattr && let Some(byteorder_tmp) = cattr.byteorder {
-                    byteorder = byteorder_tmp;
-                }
-
-                match byteorder {
+                match crate::get_byteorder(cattr, fattr) {
                     ByteOrder::Be => input.extend(self.to_be_bytes()),
                     ByteOrder::Le => input.extend(self.to_le_bytes()),
                 }

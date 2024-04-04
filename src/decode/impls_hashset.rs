@@ -10,11 +10,12 @@ where
     let mut hashset = HashSet::new();
     let mut value;
 
-    if let Some(fr) = fattr && let Some(count) = fr.count {
-
-        for _ in 0..count {
-            (input, value) = T::decode(input, cattr, fattr)?;
-            hashset.insert(value);
+    if let Some(fr) = fattr {
+        if let Some(count) = fr.count {
+            for _ in 0..count {
+                (input, value) = T::decode(input, cattr, fattr)?;
+                hashset.insert(value);
+            }    
         }
     }
 

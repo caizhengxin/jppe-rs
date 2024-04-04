@@ -38,23 +38,37 @@ pub trait InputTrait<'a> {
 
 
 impl<'a> InputTrait<'a> for &'a [u8] {
-    #[inline]
+    // #[inline]
     fn find_subsequence<'b>(&self, needle: &'b [u8], is_save_needle: bool) -> JResult<&'a [u8], &'a [u8]> {
         let input = *self;
         let needle_len = needle.len();
         let input_len = input.len();
-        let mut input = input;
     
         if needle_len > input_len {
             return Err(make_error(input, ErrorKind::InvalidByteLength { offset: input_len }));
         }
     
-        if let Some(index) = input
-            .windows(needle_len)
-            .position(|window| window == needle) &&
-           let Some(value) = input.take(..index + needle_len)
-        {
-            return Ok((input, if is_save_needle {value} else {&value[..index]}));
+        // if let Some(index) = input
+        //     .windows(needle_len)
+        //     .position(|window| window == needle)
+        //     // && let Some(value) = input.take(..index + needle_len)
+        // {
+        //     return Ok((&input[index + needle_len..], if is_save_needle {&input[..index + needle_len]} else {&input[..index]}));
+        // }
+
+        for i in 0..input_len {
+            let mut status = false;
+    
+            for j in 0..needle_len {
+                if needle[j] != input[i + j] {
+                    status = true;
+                    break;
+                }
+            }
+    
+            if !status {
+                return Ok((&input[i + needle_len..], if is_save_needle {&input[..i + needle_len]} else {&input[..i]}));
+            }
         }
 
         Err(make_error(input, ErrorKind::InvalidByteLength { offset: 0 }))
@@ -88,11 +102,11 @@ impl<'a> InputTrait<'a> for &'a [u8] {
 
     #[inline]
     fn input_take(&self, length: usize) -> JResult<&'a [u8], &'a [u8]> {
-        let mut input = *self;
+        let input = *self;
 
-        if let Some(value) = input.take(..length) {
-            return Ok((input, value));
-        }
+        if length <= input.len() {
+            return Ok((&input[length..], &input[..length]));
+        }    
     
         Err(make_error(input, ErrorKind::InvalidByteLength { offset: input.len() }))
     }

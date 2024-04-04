@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+
 use std::collections::HashMap;
 
 use jppe::{BorrowByteDecode, BorrowByteEncode};

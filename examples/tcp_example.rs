@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+
 use jppe::{BorrowByteDecode, BorrowByteEncode};
 use jppe_derive::{BorrowByteEncode, BorrowByteDecode};
 

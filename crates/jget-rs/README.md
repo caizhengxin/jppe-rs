@@ -8,7 +8,7 @@
 
 ```toml
 [dependencies]
-jget = { version = "0.4.0", features = ["derive"] }
+jget = { version = "0.4.1", features = ["derive"] }
 ```
 
 Or

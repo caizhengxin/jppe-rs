@@ -1,5 +1,3 @@
-#![feature(let_chains)]
-#![feature(exclusive_range_pattern)]
 use jppe_derive::{ByteEncode, ByteDecode};
 use jppe::{ByteDecode, ByteEncode};
 

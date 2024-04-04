@@ -1,6 +1,5 @@
 //!
 //! ```
-//! #![feature(let_chains)]
 //! use jppe::{ByteEncode, ByteDecode};
 //! use jppe_derive::{ByteEncode, ByteDecode};
 //!
@@ -39,15 +38,6 @@
 //!     assert_eq!(jppe::encode(value), input);
 //! }
 //! ```
-#![feature(let_chains)]
-#![feature(slice_take)]
-#![feature(byte_slice_trim_ascii)]
-#![feature(extract_if)]
-#![feature(slice_internals)]
-#![feature(const_trait_impl)]
-#![feature(ip_bits)]
-#![feature(array_chunks)]
-
 #[cfg(feature = "jppe_derive")]
 extern crate jppe_derive;
 #[cfg(feature = "jppe_derive")]
@@ -75,7 +65,6 @@ mod input;
 pub use byteorder::ByteOrder;
 pub use decode::*;
 pub use encode::*;
-pub use errors::*;
 pub use parser::*;
 pub use modifiers::*;
 pub use input::*;
@@ -99,7 +88,7 @@ pub mod prelude {
 /// # Examples:
 /// 
 /// ```
-/// #![feature(let_chains)]
+/// 
 /// use jppe_derive::{ByteDecode};
 /// 
 /// #[derive(Debug, PartialEq, Eq, ByteDecode)]
@@ -123,7 +112,7 @@ pub fn decode<'a, T: ByteDecode>(input: &'a [u8]) -> JResult<&'a [u8], T> {
 /// # Examples:
 /// 
 /// ```
-/// #![feature(let_chains)]
+/// 
 /// use jppe_derive::{ByteEncode};
 /// 
 /// #[derive(Debug, PartialEq, Eq, ByteEncode)]
@@ -150,7 +139,7 @@ pub fn encode<'a, T: ByteEncode>(t: T) -> Vec<u8> {
 /// # Examples:
 /// 
 /// ```
-/// #![feature(let_chains)]
+/// 
 /// use jppe_derive::{BorrowByteDecode};
 /// 
 /// #[derive(Debug, PartialEq, Eq, BorrowByteDecode)]
@@ -174,7 +163,7 @@ pub fn decode_borrow<'a, T: BorrowByteDecode<'a>>(input: &'a [u8]) -> JResult<&'
 /// # Examples:
 /// 
 /// ```
-/// #![feature(let_chains)]
+/// 
 /// use jppe_derive::{BorrowByteEncode};
 /// 
 /// #[derive(Debug, PartialEq, Eq, BorrowByteEncode)]

@@ -1,9 +1,9 @@
-use crate::{ByteEncode, ByteDecode, BorrowByteEncode};
+use crate::{ByteEncode, BorrowByteEncode};
 
 
 impl<T, const N: usize> ByteEncode for [T; N]
 where
-    T: std::marker::Copy + ByteDecode + BorrowByteEncode + Default,
+    T: ByteEncode,
 {
     fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 
@@ -18,7 +18,7 @@ where
 
 impl<T, const N: usize> BorrowByteEncode for [T; N]
 where
-    T: std::marker::Copy + ByteDecode + BorrowByteEncode + Default,
+    T: BorrowByteEncode,
 {
     fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>)
         where 

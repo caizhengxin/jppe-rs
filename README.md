@@ -6,6 +6,13 @@
 
 This is a Rust-based implementation of byte stream structured serialization/deserialization general library, can be applied to network packet parsing, network packet group package, network communication, file content parsing, etc., feel good small partners please click like 👍~
 
+## Install
+
+```bash
+$ rustup install nightly
+$ cargo +nightly build release
+```
+
 ## Usage
 
 ### Cargo.toml
@@ -25,8 +32,7 @@ jppe = { version="0.10.0", features = ["derive", "serde"] }
 ### Simple Example
 
 ```rust
-#![feature(let_chains)]
-use jppe_derive::{ByteEncode, ByteDecode};
+use jppe::{ByteEncode, ByteDecode};
 
 
 // If the value size is less than 0xff, byte_count does not need to be specified,otherwise, byte_count=<2|4|8>
@@ -69,7 +75,7 @@ fn main() {
 ### Simple Example2
 
 ```rust
-#![feature(let_chains)]
+
 use jppe::{ByteEncode, ByteDecode};
 
 
@@ -116,7 +122,7 @@ jppe = { version="0.10.0", features = ["derive", "jdefault"] }
 ```
 
 ```rust
-#![feature(let_chains)]
+
 use jppe::{ByteEncode, ByteDecode, Jdefault};
 
 

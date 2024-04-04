@@ -25,10 +25,12 @@ impl crate::ByteEncode for Ipv4Addr {
         let byteorder = get_byteorder(cattr, fattr);
 
         if byteorder == ByteOrder::Be {
-            input.extend(self.to_bits().to_be_bytes());            
+            input.extend(self.octets());            
         }
         else {
-            input.extend(self.to_bits().to_le_bytes());
+            let mut value = self.octets();
+            value.reverse();
+            input.extend(value);
         }
     }
 }
@@ -37,14 +39,7 @@ impl crate::ByteEncode for Ipv4Addr {
 impl crate::BorrowByteEncode for Ipv4Addr {
     #[inline]
     fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>) {
-        let byteorder = get_byteorder(cattr, fattr);
-
-        if byteorder == ByteOrder::Be {
-            input.extend(self.to_bits().to_be_bytes());            
-        }
-        else {
-            input.extend(self.to_bits().to_le_bytes());
-        }
+        crate::ByteEncode::encode(self, input, cattr, fattr)
     }
 }
 
@@ -55,10 +50,12 @@ impl crate::ByteEncode for Ipv6Addr {
         let byteorder = get_byteorder(cattr, fattr);
 
         if byteorder == ByteOrder::Be {
-            input.extend(self.to_bits().to_be_bytes());            
+            input.extend(self.octets());            
         }
         else {
-            input.extend(self.to_bits().to_le_bytes());
+            let mut value = self.octets();
+            value.reverse();
+            input.extend(value);
         }
     }
 }
@@ -67,14 +64,7 @@ impl crate::ByteEncode for Ipv6Addr {
 impl crate::BorrowByteEncode for Ipv6Addr {
     #[inline]
     fn encode(&self, input: &mut Vec<u8>, cattr: Option<&crate::ContainerAttrModifiers>, fattr: Option<&crate::FieldAttrModifiers>) {
-        let byteorder = get_byteorder(cattr, fattr);
-
-        if byteorder == ByteOrder::Be {
-            input.extend(self.to_bits().to_be_bytes());            
-        }
-        else {
-            input.extend(self.to_bits().to_le_bytes());
-        }
+        crate::ByteEncode::encode(self, input, cattr, fattr)
     }
 }
 
@@ -118,18 +108,18 @@ mod test {
     #[test]
     fn test_encode_ip_address() {
         let mut buf = vec![];
-        let value = Ipv4Addr::from_bits(0x12345678);
+        let value = Ipv4Addr::new(0x12, 0x34, 0x56, 0x78);
         value.encode(&mut buf, None, None);
         assert_eq!(buf, [0x12, 0x34, 0x56, 0x78]);
 
         let mut buf = vec![];
-        let value = Ipv4Addr::from_bits(0x12345678);
+        let value = Ipv4Addr::new(0x12, 0x34, 0x56, 0x78);
         let fattr = FieldAttrModifiers { byteorder: Some(ByteOrder::Le), ..Default::default() };
         value.encode(&mut buf, None, Some(&fattr));
         assert_eq!(buf, [0x78, 0x56, 0x34, 0x12]);
 
         let mut buf = vec![];
-        let value = IpAddr::V4(Ipv4Addr::from_bits(0x12345678));
+        let value = IpAddr::V4(Ipv4Addr::new(0x12, 0x34, 0x56, 0x78));
         let fattr = FieldAttrModifiers { byteorder: Some(ByteOrder::Le), ..Default::default() };
         value.encode(&mut buf, None, Some(&fattr));
         assert_eq!(buf, [0x78, 0x56, 0x34, 0x12]);

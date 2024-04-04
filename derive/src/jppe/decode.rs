@@ -69,22 +69,24 @@ pub fn generate_decode_body(fn_body: &mut StreamBuilder, crate_name: &str, attri
     }
 
     // variable_name
-    if let Some(value) = &attributes.variable_name && let AttrValue::List(variable_names) = value {
-        fn_body.push_parsed("
-            let cattr_new2 = jppe::ContainerAttrModifiers::default();
+    if let Some(value) = &attributes.variable_name {
+        if let AttrValue::List(variable_names) = value {
+            fn_body.push_parsed("
+                let cattr_new2 = jppe::ContainerAttrModifiers::default();
 
-            if cattr_new.is_none() {{
-                cattr_new = Some(&cattr_new2);
-            }}
-        ")?;
-
-        for variable_name in variable_names {
-            let variable_name_str = variable_name.to_string();
-            fn_body.push_parsed(format!("
-                if let Some(cattr_new) = cattr_new {{
-                    cattr_new.variable_name.borrow_mut().insert(\"{variable_name_str}\".to_string(), {variable_name_str}.into());
+                if cattr_new.is_none() {{
+                    cattr_new = Some(&cattr_new2);
                 }}
-            "))?;
+            ")?;
+
+            for variable_name in variable_names {
+                let variable_name_str = variable_name.to_string();
+                fn_body.push_parsed(format!("
+                    if let Some(cattr_new) = cattr_new {{
+                        cattr_new.variable_name.borrow_mut().insert(\"{variable_name_str}\".to_string(), {variable_name_str}.into());
+                    }}
+                "))?;
+            }
         }
     }
 

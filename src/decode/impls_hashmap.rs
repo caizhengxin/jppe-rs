@@ -35,29 +35,6 @@ impl<'da, 'db> KeyValueIterator<'da, 'db> {
 }
 
 
-impl<'da, 'db> KeyValueIterator<'da, 'db> {
-    #[inline]
-    pub fn parse_subsequence(&mut self, linend: &'db [u8]) -> Option<(&'da [u8], &'da [u8], &'da [u8])> {
-        match parse_subsequence(self.input, linend, false) {
-            Ok((input_tmp, value)) => {
-                let split_str = self.split_str.unwrap_or(b": ");
-                if let Ok((value, key)) = parse_subsequence(value, split_str, false) {
-                    self.input = input_tmp;
-                    self.curruent_count += 1;
-
-                    return Some((input_tmp, key, value));
-                }
-            },
-            Err(_e) => {
-                // return None;
-            },
-        }
-
-        None
-    }
-}
-
-
 impl<'da, 'db> Iterator for KeyValueIterator<'da, 'db> {
     // (input, key, value)
     type Item = (&'da [u8], &'da [u8], &'da [u8]);
@@ -67,17 +44,19 @@ impl<'da, 'db> Iterator for KeyValueIterator<'da, 'db> {
             return None;
         }
 
+        let split_str = self.split_str.unwrap_or(b": ");
+        let linend = self.linend.unwrap_or(b"\r\n");
+
         if self.curruent_count < self.count {
-            if let Some(linend) = self.linend {
-                if let Some(value) = self.parse_subsequence(linend) {
-                    return Some(value);
+    
+            if let Ok((input, key)) = parse_subsequence(self.input, split_str, false)
+            {
+                if let Ok((input, value)) = parse_subsequence(input, linend, false) {
+                    self.input = input;
+                    self.curruent_count += 1;
+        
+                    return Some((input, key, value));    
                 }
-            }
-            // else if let Some(value) = self.parse_subsequence("\r\n".as_bytes()) {
-            //     return Some(value);
-            // }
-            else {
-                return self.parse_subsequence("\r\n".as_bytes());
             }
         }
 
@@ -115,8 +94,8 @@ impl<'de> crate::BorrowByteDecode<'de> for HashMap<&'de str, &'de str> {
         let keyvalue_iter = KeyValueIterator::new(input, cattr, fattr);
 
         for (remain, key, value) in keyvalue_iter {
-            let key = std::str::from_utf8(key).unwrap_or_default();
-            let value = std::str::from_utf8(value).unwrap_or_default();
+            let key = unsafe { std::str::from_utf8_unchecked(key) };
+            let value = unsafe { std::str::from_utf8_unchecked(value) };
 
             hashmap.insert(key, value);
             input = remain;

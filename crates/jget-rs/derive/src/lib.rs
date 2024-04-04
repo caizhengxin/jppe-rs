@@ -1,5 +1,4 @@
-#![feature(let_chains)]
-#![feature(array_windows)]
+#![cfg_attr(feature = "nightly", feature(let_chains))]
 extern crate proc_macro;
 
 mod jget;

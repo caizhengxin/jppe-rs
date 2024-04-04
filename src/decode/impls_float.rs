@@ -1,24 +1,17 @@
 use crate::parser::parse_u128;
-use crate::{ByteDecode, BorrowByteDecode, ByteOrder, ContainerAttrModifiers, FieldAttrModifiers, JResult};
+use crate::{ByteDecode, BorrowByteDecode, ContainerAttrModifiers, FieldAttrModifiers, JResult};
+use crate::get_byteorder;
 
 
 macro_rules! decode_float {
     ($t:ident, $as_t:ident, $byte:expr) => {
         impl ByteDecode for $t {
+            // #[inline]
             fn decode<'da, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
-                where 
-                    Self: Sized
+            where 
+                Self: Sized
             {
-                let mut byteorder = ByteOrder::Be;
-        
-                if let Some(fattr) = fattr && let Some(byteorder_tmp) = fattr.byteorder {
-                    byteorder = byteorder_tmp;
-                }
-                else if let Some(cattr) = cattr && let Some(byteorder_tmp) = cattr.byteorder {
-                    byteorder = byteorder_tmp;
-                }
-        
-                let (input, value) = parse_u128(input, &byteorder, $byte)?;
+                let (input, value) = parse_u128(input, &get_byteorder(cattr, fattr), $byte)?;
         
                 Ok((input, $t::from_bits(value as $as_t)))
             }
@@ -26,6 +19,7 @@ macro_rules! decode_float {
 
 
         impl<'de> BorrowByteDecode<'de> for $t {
+            // #[inline]
             fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db ContainerAttrModifiers>, fattr: Option<&'db FieldAttrModifiers>) -> JResult<&'da [u8], Self>
                 where 
                     Self: Sized

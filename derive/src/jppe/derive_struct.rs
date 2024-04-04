@@ -179,11 +179,19 @@ impl DeriveStruct {
         else {
             fn_body.push_parsed(self.attributes.to_code(false))?;
 
-            if let Some(value) = &self.attributes.get_variable_name && let AttrValue::List(variable_names) = value {
-                for variable_name in variable_names {
-                    let variable_name_str = variable_name.to_string();
-
-                    fn_body.push_parsed(format!("let {variable_name_str} = if let Some(cr) = cattr && let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{*value}} else {{0}};"))?;
+            if let Some(value) = &self.attributes.get_variable_name {
+                if let AttrValue::List(variable_names) = value {
+                    for variable_name in variable_names {
+                        let variable_name_str = variable_name.to_string();
+    
+                        fn_body.push_parsed(format!("
+                            let mut {variable_name_str} = 0;
+                            if let Some(cr) = cattr {{
+                                if let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{
+                                    {variable_name_str} = *value;
+                                }}
+                            }}
+                        "))?;                    }    
                 }
             }
 
@@ -222,11 +230,20 @@ impl DeriveStruct {
                 else {
                     fn_body.push_parsed(self.attributes.to_code(true))?;
 
-                    if let Some(value) = &self.attributes.get_variable_name && let AttrValue::List(variable_names) = value {
-                        for variable_name in variable_names {
-                            let variable_name_str = variable_name.to_string();
-        
-                            fn_body.push_parsed(format!("let {variable_name_str} = if let Some(cr) = cattr && let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{*value}} else {{0}};"))?;
+                    if let Some(value) = &self.attributes.get_variable_name {
+                        if let AttrValue::List(variable_names) = value {
+                            for variable_name in variable_names {
+                                let variable_name_str = variable_name.to_string();
+            
+                                fn_body.push_parsed(format!("
+                                    let mut {variable_name_str} = 0;
+                                    if let Some(cr) = cattr {{
+                                        if let Some(value) = cr.variable_name.borrow().get(&\"{variable_name_str}\".to_string()) {{
+                                            {variable_name_str} = *value;
+                                        }}
+                                    }}
+                                "))?;  
+                            }    
                         }
                     }
 

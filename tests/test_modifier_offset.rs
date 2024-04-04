@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+
 use jppe::{ByteEncode, ByteDecode, FieldAttrModifiers};
 // use jppe::prelude::*;
 use jppe_derive::{ByteDecode, ByteEncode};

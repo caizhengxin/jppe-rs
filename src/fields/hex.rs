@@ -41,9 +41,14 @@ fn parse_hex<T: AsRef<[u8]>>(t: T) -> Result<Vec<u8>, HexStringParseError> {
 
     let mut vlist = vec![];
 
-    for v in s.array_chunks::<2>() {
-        if let Some(v0) = is_hex(v[0]) && let Some(v1) = is_hex(v[1]) {
-            vlist.push(v0 << 4 | v1);
+    for v in s.chunks(2) {
+        if let Some(v0) = is_hex(v[0]) {
+            if let Some(v1) = is_hex(v[1]) {
+                vlist.push(v0 << 4 | v1);
+            }
+            else {
+                return Err(HexStringParseError::InvalidHexString(std::str::from_utf8(s).unwrap_or_default().to_string()));
+            }
         }
         else {
             return Err(HexStringParseError::InvalidHexString(std::str::from_utf8(s).unwrap_or_default().to_string()));

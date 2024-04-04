@@ -6,24 +6,26 @@ impl crate::ByteDecode for PpeAddress {
     where 
         Self: Sized
     {
-        if let Some(fattr_var) = fattr && let Some(length) = fattr_var.length {
-            match length {
-                4 => {
-                    let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-                    return Ok((input, PpeAddress::V4(addr)))    
-                },
-                6 => {
-                    let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-                    return Ok((input, PpeAddress::Mac(addr)))    
-                },
-                16 => {
-                    let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-                    return Ok((input, PpeAddress::V6(addr)));    
-                },
-                _ => {
-                    let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
-                    return Ok((input, PpeAddress::Usize(addr)));    
-                },
+        if let Some(fattr_var) = fattr {
+            if let Some(length) = fattr_var.length {
+                match length {
+                    4 => {
+                        let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+                        return Ok((input, PpeAddress::V4(addr)))    
+                    },
+                    6 => {
+                        let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+                        return Ok((input, PpeAddress::Mac(addr)))    
+                    },
+                    16 => {
+                        let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+                        return Ok((input, PpeAddress::V6(addr)));    
+                    },
+                    _ => {
+                        let (input, addr) = crate::ByteDecode::decode(input, cattr, fattr)?;
+                        return Ok((input, PpeAddress::Usize(addr)));    
+                    },
+                }    
             }
         }
         

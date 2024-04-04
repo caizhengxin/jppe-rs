@@ -1,48 +1,50 @@
-use super::ByteDecode;
+use std::mem::MaybeUninit;
 
 
 impl<T, const N: usize> crate::ByteDecode for [T; N]
 where
-    T: std::marker::Copy + ByteDecode + Default,
+    T: crate::ByteDecode,
 {
     fn decode<'da, 'db>(input: &'da [u8], cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> crate::JResult<&'da [u8], Self>
-        where 
-            Self: Sized
+    where 
+        Self: Sized
     {
-        let mut array: [T; N] = [T::default(); N];
+        let mut array = MaybeUninit::<[T; N]>::uninit();
         let mut input = input;
         let mut value;
 
-        for _array in array.iter_mut() {
-            (input, value) = T::decode(input, cattr, fattr)?;
+        let ptr = unsafe { &mut *array.as_mut_ptr() };
 
-            *_array = value;
+        for i in 0..N {
+            (input, value) = T::decode(input, cattr, fattr)?;
+            ptr[i] = value;
         }
 
-        Ok((input, array))
+        Ok((input, unsafe { array.assume_init() }))
     }
 }
 
 
 impl<'de, T, const N: usize> crate::BorrowByteDecode<'de> for [T; N]
 where
-    T: std::marker::Copy + crate::BorrowByteDecode<'de> + Default,
+    T: crate::BorrowByteDecode<'de>,
 {
     fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> crate::JResult<&'da [u8], Self>
-        where 
-            Self: Sized
+    where 
+        Self: Sized
     {
-        let mut array: [T; N] = [T::default(); N];
+        let mut array = MaybeUninit::<[T; N]>::uninit();
         let mut input = input;
         let mut value;
 
-        for _array in array.iter_mut() {
-            (input, value) = T::decode(input, cattr, fattr)?;
+        let ptr = unsafe { &mut *array.as_mut_ptr() };
 
-            *_array = value;
+        for i in 0..N {
+            (input, value) = T::decode(input, cattr, fattr)?;
+            ptr[i] = value;
         }
 
-        Ok((input, array))
+        Ok((input, unsafe { array.assume_init() }))
     }
 }
 
