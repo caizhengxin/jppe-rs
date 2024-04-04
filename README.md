@@ -19,14 +19,14 @@ $ cargo +nightly build release
 
 ```toml
 [dependencies]
-jppe = { version="0.10.0", features = ["derive"] }
+jppe = { version="1.0.0", features = ["derive"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="0.10.0", features = ["derive", "serde"] }
+jppe = { version="1.0.0", features = ["derive", "serde"] }
 ```
 
 ### Simple Example
@@ -118,7 +118,7 @@ fn main() {
 
 ```toml
 [dependencies]
-jppe = { version="0.10.0", features = ["derive", "jdefault"] }
+jppe = { version="1.0.0", features = ["derive", "jdefault"] }
 ```
 
 ```rust
