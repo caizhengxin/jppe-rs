@@ -1,4 +1,4 @@
-use thiserror::Error as ThisError;
+use thiserror_no_std::Error as ThisError;
 
 
 pub type JResult<I, O, E = Error<I>> = Result<(I, O), E>;

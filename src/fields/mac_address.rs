@@ -1,12 +1,9 @@
-use std::fmt;
-use std::ops::{Deref, DerefMut};
-use std::string::String;
-use std::str::FromStr;
+use crate::std::*;
 #[cfg(feature = "serde")]
 use serde::{Serialize, Serializer, Deserialize, Deserializer, de::Error as DeError};
 
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror_no_std::Error)]
 pub enum MacAddressParseError {
     #[error("invalid mac address: `{0}`")]
     InvalidMacAddress(String),
@@ -88,7 +85,7 @@ impl MacAddress {
 }
 
 
-impl Deref for MacAddress {
+impl ops::Deref for MacAddress {
     type Target = [u8];
 
     fn deref(&self) -> &Self::Target {
@@ -97,7 +94,7 @@ impl Deref for MacAddress {
 }
 
 
-impl DerefMut for MacAddress {
+impl ops::DerefMut for MacAddress {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }

@@ -1,3 +1,5 @@
+use crate::std::*;
+
 macro_rules! impls_tuple {
     ($($t:ident),+) => {
         #[allow(non_camel_case_types)]

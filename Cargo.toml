@@ -43,6 +43,7 @@ members = [
 ]
 
 [features]
+default = ["std"]
 derive = ["jppe_derive"]
 jdefault = ["jdefault_derive"]
 full = [
@@ -51,14 +52,15 @@ full = [
     "jget",
     "serde"
 ]
+std = ["jkcenum/std", "serde/std"]
 
 [dependencies]
 jppe_derive = { path = "derive", version = "1.0.0", optional = true }
 jdefault_derive = { path = "crates/jdefault-rs", version = "0", optional = true }
 jget = { path = "crates/jget-rs", version = "0", features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, optional = true }
-jkcenum = { version = "0", features = ["derive"] }
-thiserror = "1.0"
+thiserror-no-std = "2.0"
+jkcenum = { version = "0.3.2", default-features = false, features = ["derive"] }
 
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }

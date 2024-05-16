@@ -1,5 +1,4 @@
-use std::string::ToString;
-use std::str::FromStr;
+use crate::std::*;
 use jkcenum::JkcEnum;
 use jkcenum::errors::FromStrParseError;
 #[cfg(feature = "serde")]

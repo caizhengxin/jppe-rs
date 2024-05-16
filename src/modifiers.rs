@@ -1,4 +1,4 @@
-use std::{cell::RefCell, collections::HashMap};
+use crate::std::*;
 use crate::ByteOrder;
 
 
@@ -17,7 +17,7 @@ pub struct ContainerAttrModifiers {
     pub expr: Option<String>,
 
     // cache variable
-    pub variable_name: RefCell<HashMap<String, usize>>,
+    pub variable_name: RefCell<BTreeMap<String, usize>>,
 }
 
 

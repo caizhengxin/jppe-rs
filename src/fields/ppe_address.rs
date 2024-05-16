@@ -1,13 +1,10 @@
-// use std::fmt;
-use std::str::FromStr;
-use std::string::ToString;
-use std::net::{Ipv4Addr, Ipv6Addr};
 use crate::fields::MacAddress;
+use crate::std::*;
 #[cfg(feature = "serde")]
 use serde::{Serialize, Serializer, Deserialize, Deserializer, de::Error as DeError};
 
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror_no_std::Error)]
 pub enum PpeAddressParseError {
     #[error("invalid ppe address: `{0}`")]
     InvalidPpeAddress(String),
@@ -53,7 +50,9 @@ impl PpeAddress {
     #[inline]
     pub fn is_broadcast(&self) -> bool {
         match self {
+    
             Self::V4(v) => v.is_broadcast(),
+    
             Self::Mac(v) => v.is_broadcast(),
             _ => false,
         }
@@ -62,7 +61,9 @@ impl PpeAddress {
     #[inline]
     pub fn is_multicast(&self) -> bool {
         match self {
+    
             Self::V4(v) => v.is_multicast(),
+    
             Self::V6(v) => v.is_multicast(),
             _ => false,
         }

@@ -1,3 +1,4 @@
+use crate::std::*;
 use std::collections::HashMap;
 use crate::parse_subsequence;
 
@@ -94,8 +95,8 @@ impl<'de> crate::BorrowByteDecode<'de> for HashMap<&'de str, &'de str> {
         let keyvalue_iter = KeyValueIterator::new(input, cattr, fattr);
 
         for (remain, key, value) in keyvalue_iter {
-            let key = unsafe { std::str::from_utf8_unchecked(key) };
-            let value = unsafe { std::str::from_utf8_unchecked(value) };
+            let key = unsafe { str::from_utf8_unchecked(key) };
+            let value = unsafe { str::from_utf8_unchecked(value) };
 
             hashmap.insert(key, value);
             input = remain;

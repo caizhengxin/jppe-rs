@@ -38,6 +38,11 @@
 //!     assert_eq!(jppe::encode(value), input);
 //! }
 //! ```
+#![cfg_attr(not(feature = "std"), no_std)]
+
+#[cfg(not(feature = "std"))]
+extern crate alloc;
+
 #[cfg(feature = "jppe_derive")]
 extern crate jppe_derive;
 #[cfg(feature = "jppe_derive")]
@@ -53,6 +58,11 @@ extern crate jdefault_derive;
 #[cfg(feature = "jdefault_derive")]
 pub use jdefault_derive::Jdefault;
 
+#[cfg(not(feature = "std"))]
+use alloc::{
+    vec::Vec,
+};
+
 
 mod decode;
 mod encode;
@@ -61,6 +71,7 @@ pub mod fields;
 mod byteorder;
 mod modifiers;
 mod input;
+mod std;
 
 pub use byteorder::ByteOrder;
 pub use decode::*;
@@ -71,7 +82,7 @@ pub use input::*;
 
 pub mod prelude {
     pub use jkcenum::FromInt;
-    pub use std::str::FromStr;
+    pub use crate::std::FromStr;
     pub use crate::parser::*;
     pub use crate::byteorder::ByteOrder;
     // pub use crate::decode::*;

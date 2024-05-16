@@ -1,4 +1,4 @@
-use std::net::{Ipv4Addr, Ipv6Addr, IpAddr};
+use crate::std::*;
 use crate::fields::MacAddress;
 use crate::{ByteOrder, get_byteorder};
 

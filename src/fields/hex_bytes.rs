@@ -1,3 +1,4 @@
+use crate::std::*;
 #[cfg(feature = "serde")]
 use serde::{Serialize, Serializer};
 
@@ -48,7 +49,7 @@ impl<'a> ToString for HexBytes<'a> {
 }
 
 
-impl<'a> std::ops::Deref for HexBytes<'a> {
+impl<'a> ops::Deref for HexBytes<'a> {
     type Target = [u8];
 
     fn deref(&self) -> &Self::Target {

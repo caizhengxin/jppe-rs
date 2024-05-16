@@ -1,10 +1,11 @@
+use crate::std::*;
 use std::collections::HashSet;
 
 
 #[inline]
 fn hashset_decode<'da, 'db, T>(input: &'da [u8], cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> crate::JResult<&'da [u8], HashSet<T>>
 where
-    T: crate::ByteDecode + std::hash::Hash + std::cmp::Eq,
+    T: crate::ByteDecode + hash::Hash + cmp::Eq,
 {
     let mut input = input;
     let mut hashset = HashSet::new();
@@ -25,7 +26,7 @@ where
 
 impl<T> crate::ByteDecode for HashSet<T>
 where
-    T: crate::ByteDecode + std::hash::Hash + std::cmp::Eq,
+    T: crate::ByteDecode + hash::Hash + cmp::Eq,
 {
     fn decode<'da, 'db>(input: &'da [u8], cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> crate::JResult<&'da [u8], Self>
     where 
@@ -38,7 +39,7 @@ where
 
 impl<'de, T> crate::BorrowByteDecode<'de> for HashSet<T>
 where
-    T: crate::ByteDecode + std::hash::Hash + std::cmp::Eq,
+    T: crate::ByteDecode + hash::Hash + cmp::Eq,
 {
     fn decode<'da: 'de, 'db>(input: &'da [u8], cattr: Option<&'db crate::ContainerAttrModifiers>, fattr: Option<&'db crate::FieldAttrModifiers>) -> crate::JResult<&'da [u8], Self>
     where 

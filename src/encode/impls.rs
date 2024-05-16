@@ -1,3 +1,4 @@
+use crate::std::*;
 use crate::{ByteEncode, BorrowByteEncode};
 use crate::{get_byteorder, int_to_vec};
 
@@ -79,13 +80,13 @@ impl<T: BorrowByteEncode> BorrowByteEncode for Vec<T> {
 }
 
 
-impl<T> ByteEncode for std::marker::PhantomData<T> {
+impl<T> ByteEncode for PhantomData<T> {
     fn encode(&self, _input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, _fattr: Option<&crate::FieldAttrModifiers>) {
     }
 }
 
 
-impl<T> BorrowByteEncode for std::marker::PhantomData<T> {
+impl<T> BorrowByteEncode for PhantomData<T> {
     fn encode(&self, _input: &mut Vec<u8>, _cattr: Option<&crate::ContainerAttrModifiers>, _fattr: Option<&crate::FieldAttrModifiers>) {
     }
 }

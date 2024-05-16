@@ -1,3 +1,4 @@
+use crate::std::*;
 use crate::ByteOrder;
 use crate::{ContainerAttrModifiers, FieldAttrModifiers};
 use super::{BorrowByteEncode, ByteEncode};
@@ -80,14 +81,14 @@ macro_rules! impls_int {
         impls_int!(u16, 2);
         impls_int!(u32, 4);
         impls_int!(u64, 8);
-        impls_int!(usize, 8);
+        impls_int!(usize, (usize::BITS / 8) as usize);
         impls_int!(u128, 16);
         
         impls_int!(i8, 1);
         impls_int!(i16, 2);
         impls_int!(i32, 4);
         impls_int!(i64, 8);
-        impls_int!(isize, 8);     
+        impls_int!(isize, (usize::BITS / 8) as usize);     
         impls_int!(i128, 16);   
     }
 }

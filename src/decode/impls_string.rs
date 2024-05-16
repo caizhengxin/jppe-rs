@@ -1,3 +1,4 @@
+use crate::std::*;
 use crate::{BorrowByteDecode, ByteDecode, InputTrait};
 use crate::{FieldAttrModifiers, ContainerAttrModifiers};
 use crate::decode::impls_bytes::parse_bytes;
@@ -33,7 +34,7 @@ fn parse_string<'a>(input: &'a [u8], cattr: Option<&ContainerAttrModifiers>, fat
         //     Err(_e) => return Err(make_error(input_tmp, ErrorKind::Fail { offset: input_tmp.len() })),
         // }
 
-        match std::str::from_utf8(value) {
+        match str::from_utf8(value) {
             Ok(v) => return Ok((input_tmp, v.to_string())),
             Err(_e) => return Err(make_error(input_tmp, ErrorKind::Fail { offset: input_tmp.len() })),
         }
@@ -74,12 +75,12 @@ impl<'de> BorrowByteDecode<'de> for &'de str {
             Self: Sized
     {
         if let Ok((input, value)) = parse_bytes(input, cattr, fattr) {
-            Ok((input, unsafe { std::str::from_utf8_unchecked(value) }))
+            Ok((input, unsafe { str::from_utf8_unchecked(value) }))
         }
         else {
             let (input, length) = input.to_be_bits_usize(1)?;
             let (input, value) = input.input_take(length)?;
-            Ok((input, unsafe { std::str::from_utf8_unchecked(value) }))
+            Ok((input, unsafe { str::from_utf8_unchecked(value) }))
         }
     }
 }        

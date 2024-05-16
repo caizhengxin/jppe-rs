@@ -1,3 +1,7 @@
+#[cfg(not(feature = "std"))]
+use alloc::{
+    vec::Vec,
+};
 use crate::{ByteOrder, JResult};
 use crate::errors::{make_error, ErrorKind};
 

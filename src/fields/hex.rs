@@ -1,9 +1,9 @@
-use std::str::FromStr;
 #[cfg(feature = "serde")]
 use serde::{Serialize, Serializer, Deserialize, Deserializer, de::Error as DeError};
+use crate::std::*;
 
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror_no_std::Error)]
 pub enum HexStringParseError {
     #[error("invalid hex string: `{0}`")]
     InvalidHexString(String),
@@ -36,7 +36,7 @@ fn parse_hex<T: AsRef<[u8]>>(t: T) -> Result<Vec<u8>, HexStringParseError> {
     let s = t.as_ref();
 
     if s.len() % 2 != 0 {
-        return Err(HexStringParseError::InvalidHexString(std::str::from_utf8(s).unwrap_or_default().to_string()));
+        return Err(HexStringParseError::InvalidHexString(str::from_utf8(s).unwrap_or_default().to_string()));
     }
 
     let mut vlist = vec![];
@@ -47,11 +47,11 @@ fn parse_hex<T: AsRef<[u8]>>(t: T) -> Result<Vec<u8>, HexStringParseError> {
                 vlist.push(v0 << 4 | v1);
             }
             else {
-                return Err(HexStringParseError::InvalidHexString(std::str::from_utf8(s).unwrap_or_default().to_string()));
+                return Err(HexStringParseError::InvalidHexString(str::from_utf8(s).unwrap_or_default().to_string()));
             }
         }
         else {
-            return Err(HexStringParseError::InvalidHexString(std::str::from_utf8(s).unwrap_or_default().to_string()));
+            return Err(HexStringParseError::InvalidHexString(str::from_utf8(s).unwrap_or_default().to_string()));
         }
     }
 
@@ -120,7 +120,7 @@ impl ToString for HexString {
 }
 
 
-impl std::ops::Deref for HexString {
+impl ops::Deref for HexString {
     type Target = [u8];
 
     fn deref(&self) -> &Self::Target {
@@ -129,7 +129,7 @@ impl std::ops::Deref for HexString {
 }
 
 
-impl std::ops::DerefMut for HexString {
+impl ops::DerefMut for HexString {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.inner
     }

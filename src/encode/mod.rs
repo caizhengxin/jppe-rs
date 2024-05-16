@@ -5,13 +5,16 @@ mod impls_bytes;
 mod impls_other;
 mod impls_string;
 mod impls_float;
+#[cfg(feature = "std")]
 mod impls_hashmap;
+#[cfg(feature = "std")]
 mod impls_hashset;
 mod impls_address;
 mod impls_ppe_address;
 mod impls_hex;
 mod impls;
 
+use crate::std::*;
 use crate::{ContainerAttrModifiers, FieldAttrModifiers};
 
 

@@ -4,7 +4,9 @@ mod impls_bytes;
 mod impls_array;
 mod impls_tuple;
 mod impls_float;
+#[cfg(feature = "std")]
 mod impls_hashmap;
+#[cfg(feature = "std")]
 mod impls_hashset;
 mod impls_other;
 mod impls_address;

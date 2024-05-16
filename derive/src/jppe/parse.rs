@@ -155,8 +155,10 @@ pub trait AttrValueTrait {
 
     fn to_code(&self, is_self: bool, is_deref: bool) -> String;
 
+    #[allow(dead_code)]
     fn to_code_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String;
 
+    #[allow(dead_code)]
     fn to_code_option_string(&self, is_self: bool, is_deref: bool, is_string: bool) -> String;
 
     fn to_byteorder(&self, is_self: bool) -> String;

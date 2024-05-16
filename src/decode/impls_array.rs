@@ -1,4 +1,4 @@
-use std::mem::MaybeUninit;
+use crate::std::MaybeUninit;
 
 
 impl<T, const N: usize> crate::ByteDecode for [T; N]
