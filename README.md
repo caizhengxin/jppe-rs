@@ -29,6 +29,13 @@ Or
 jppe = { version="1.0.0", features = ["derive", "serde"] }
 ```
 
+no_std:
+
+```toml
+[dependencies]
+jppe = { version="1.0.0", default-features = false, features = ["derive"] } # default use alloc.
+```
+
 ### Simple Example
 
 ```rust
