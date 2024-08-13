@@ -19,21 +19,21 @@ $ cargo +nightly build release
 
 ```toml
 [dependencies]
-jppe = { version="1.0.0", features = ["derive"] }
+jppe = { version="1.1.0", features = ["derive"] }
 ```
 
 Or
 
 ```toml
 [dependencies]
-jppe = { version="1.0.0", features = ["derive", "serde"] }
+jppe = { version="1.1.0", features = ["derive", "serde"] }
 ```
 
 no_std:
 
 ```toml
 [dependencies]
-jppe = { version="1.0.0", default-features = false, features = ["derive"] } # default use alloc.
+jppe = { version="1.1.0", default-features = false, features = ["derive"] } # default use alloc.
 ```
 
 ### Simple Example
@@ -125,7 +125,7 @@ fn main() {
 
 ```toml
 [dependencies]
-jppe = { version="1.0.0", features = ["derive", "jdefault"] }
+jppe = { version="1.1.0", features = ["derive", "jdefault"] }
 ```
 
 ```rust
