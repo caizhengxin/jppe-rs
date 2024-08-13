@@ -52,7 +52,7 @@ full = [
     "jget",
     "serde"
 ]
-std = ["jkcenum/std", "serde/std"]
+std = ["jkcenum/std"]
 
 [dependencies]
 jppe_derive = { path = "derive", version = "1.1.0", optional = true }
