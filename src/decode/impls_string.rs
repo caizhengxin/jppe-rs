@@ -74,13 +74,18 @@ impl<'de> BorrowByteDecode<'de> for &'de str {
         where 
             Self: Sized
     {
-        if let Ok((input, value)) = parse_bytes(input, cattr, fattr) {
-            Ok((input, unsafe { str::from_utf8_unchecked(value) }))
+        let (input, value) = if let Ok((input, value)) = parse_bytes(input, cattr, fattr) {
+            (input, value)
         }
         else {
             let (input, length) = input.to_be_bits_usize(1)?;
             let (input, value) = input.input_take(length)?;
-            Ok((input, unsafe { str::from_utf8_unchecked(value) }))
+            (input, value)
+        };
+
+        match str::from_utf8(value) {
+            Ok(v) => return Ok((input, v)),
+            Err(_e) => return Err(make_error(input, ErrorKind::Fail { offset: input.len() })),
         }
     }
 }        

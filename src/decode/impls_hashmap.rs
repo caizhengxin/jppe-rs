@@ -95,8 +95,15 @@ impl<'de> crate::BorrowByteDecode<'de> for HashMap<&'de str, &'de str> {
         let keyvalue_iter = KeyValueIterator::new(input, cattr, fattr);
 
         for (remain, key, value) in keyvalue_iter {
-            let key = unsafe { str::from_utf8_unchecked(key) };
-            let value = unsafe { str::from_utf8_unchecked(value) };
+            let key = match str::from_utf8(key) {
+                Ok(v) => v,
+                Err(_e) => return Err(crate::make_error(input, crate::ErrorKind::Fail { offset: input.len() })),
+            };
+
+            let value = match str::from_utf8(value) {
+                Ok(v) => v,
+                Err(_e) => return Err(crate::make_error(input, crate::ErrorKind::Fail { offset: input.len() })),
+            };
 
             hashmap.insert(key, value);
             input = remain;
