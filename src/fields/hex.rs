@@ -1,9 +1,9 @@
 #[cfg(feature = "serde")]
 use serde::{Serialize, Serializer, Deserialize, Deserializer, de::Error as DeError};
 use crate::std::*;
+use crate::parser::ThisError;
 
-
-#[derive(Debug, thiserror_no_std::Error)]
+#[derive(Debug, ThisError)]
 pub enum HexStringParseError {
     #[error("invalid hex string: `{0}`")]
     InvalidHexString(String),

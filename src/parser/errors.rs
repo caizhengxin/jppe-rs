@@ -1,4 +1,7 @@
-use thiserror_no_std::Error as ThisError;
+#[cfg(not(feature = "std"))]
+pub use thiserror_no_std::Error as ThisError;
+#[cfg(feature = "std")]
+pub use thiserror::Error as ThisError;
 
 
 pub type JResult<I, O, E = Error<I>> = Result<(I, O), E>;

@@ -1,10 +1,11 @@
-use crate::fields::MacAddress;
 use crate::std::*;
 #[cfg(feature = "serde")]
 use serde::{Serialize, Serializer, Deserialize, Deserializer, de::Error as DeError};
+use crate::fields::MacAddress;
+use crate::parser::ThisError;
 
 
-#[derive(Debug, thiserror_no_std::Error)]
+#[derive(Debug, ThisError)]
 pub enum PpeAddressParseError {
     #[error("invalid ppe address: `{0}`")]
     InvalidPpeAddress(String),
