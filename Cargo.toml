@@ -1,6 +1,6 @@
 [package]
 name = "jppe"
-version = "1.1.0"
+version = "1.1.1"
 authors = [
     "jankincai <jankincai12@gmail.com>"
 ]
@@ -55,7 +55,7 @@ full = [
 std = ["jkcenum/std"]
 
 [dependencies]
-jppe_derive = { path = "derive", version = "1.1.0", optional = true }
+jppe_derive = { path = "derive", version = "1.1.1", optional = true }
 jdefault_derive = { path = "crates/jdefault-rs", version = "0", optional = true }
 jget = { path = "crates/jget-rs", version = "0", features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, optional = true }
@@ -66,6 +66,6 @@ jkcenum = { version = "0.3.2", default-features = false, features = ["derive"] }
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-jppe_derive = { path = "derive", version = "1.1.0" }
+jppe_derive = { path = "derive", version = "1.1.1" }
 jget = { path = "crates/jget-rs", version = "0", features = ["derive"] }
 jdefault_derive = { path = "crates/jdefault-rs", version = "0" }
