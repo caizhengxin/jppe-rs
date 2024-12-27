@@ -48,6 +48,11 @@ impl<T: ByteEncode> ByteEncode for Vec<T> {
             if let Some(byte_count) = fattr_tmp.byte_count {
                 input.extend(int_to_vec(self.len(), byte_count, &get_byteorder(cattr, fattr)));
             }
+            else if fattr_tmp.count.is_some() { }
+            else if fattr_tmp.try_count.is_some() { }
+            else {
+                input.extend(int_to_vec(self.len(), 1, &crate::ByteOrder::Be));
+            }
         }
         else {
             input.extend(int_to_vec(self.len(), 1, &crate::ByteOrder::Be));
@@ -67,6 +72,11 @@ impl<T: BorrowByteEncode> BorrowByteEncode for Vec<T> {
         if let Some(fattr_tmp) = fattr {
             if let Some(byte_count) = fattr_tmp.byte_count {
                 input.extend(int_to_vec(self.len(), byte_count, &get_byteorder(cattr, fattr)));
+            }
+            else if fattr_tmp.count.is_some() { }
+            else if fattr_tmp.try_count.is_some() { }
+            else {
+                input.extend(int_to_vec(self.len(), 1, &crate::ByteOrder::Be));
             }
         }
         else {

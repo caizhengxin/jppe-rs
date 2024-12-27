@@ -431,16 +431,20 @@ impl<'a> Iterator for EnumVariantIterator<'a> {
         // let mut idx = self.idx;
         let variant = self.variants.get(self.idx)?;
 
-        if let Some(value) = &variant.value {
+        let val_string = if let Some(value) = &variant.value {
             // Literal
-            let val_string = value.to_string();
+            Some(value.to_string())
+        } else if let Ok(Some(attributes)) = variant.attributes.get_attribute::<FieldAttributes>() {
+            attributes.branch_value
+        } else { None };
 
+        if let Some(val_string) = val_string {
             if val_string.starts_with("0x") {
                 self.curruent_idx = usize::from_str_radix(&val_string[2..], 16).unwrap();
             }
             else {
                 self.curruent_idx = val_string.parse::<usize>().unwrap();
-            }
+            }    
         }
 
         let tokens = TokenTree::Literal(Literal::usize_suffixed(self.curruent_idx));
