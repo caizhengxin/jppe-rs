@@ -4,7 +4,7 @@
 [![Crates.io](https://img.shields.io/crates/d/jppe)](https://crates.io/crates/jppe)
 [![License](https://img.shields.io/crates/l/jppe)](LICENSE)
 
-The project has stopped maintenance, follow-up can continue to pay attention to: https://gitee.com/JanKinCai/jbytes
+The project has stopped maintenance, follow-up can continue to pay attention to: https://github.com/caizhengxin/jbytes
 
 ## Install
 
