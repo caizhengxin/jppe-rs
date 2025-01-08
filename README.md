@@ -4,7 +4,7 @@
 [![Crates.io](https://img.shields.io/crates/d/jppe)](https://crates.io/crates/jppe)
 [![License](https://img.shields.io/crates/l/jppe)](LICENSE)
 
-This is a Rust-based implementation of byte stream structured serialization/deserialization general library, can be applied to network packet parsing, network packet group package, network communication, file content parsing, etc., feel good small partners please click like 👍~
+The project has stopped maintenance, follow-up can continue to pay attention to: https://gitee.com/JanKinCai/jbytes
 
 ## Install
 
